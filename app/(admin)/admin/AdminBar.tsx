@@ -12,10 +12,15 @@ export function AdminBar({ name }: { name: string }) {
   }
   return (
     <div className="admin-bar">
-      <h1>Wal<b>Qalum</b> newsroom</h1>
+      {/* The wordmark is the way back to the list. Posts and New were a second
+          route to the two places the page already offers: the list has its own
+          Write a post, and the editor has a breadcrumb. */}
+      <h1>
+        <Link href="/admin/posts">
+          Wal<b>Qalum</b> newsroom
+        </Link>
+      </h1>
       <nav>
-        <Link href="/admin/posts">Posts</Link>
-        <Link href="/admin/posts/new">New</Link>
         <span className="who">{name}</span>
         <button className="admin-btn ghost" onClick={signOut}>
           Sign out

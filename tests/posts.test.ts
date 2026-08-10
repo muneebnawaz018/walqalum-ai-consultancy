@@ -220,6 +220,41 @@ describe("update", () => {
     assert.equal(doc.seo.title.en, "SEO title", "the SEO title was wiped by an unrelated edit");
   });
 
+  test("patching one SEO field leaves the rest of the block alone", async (t) => {
+    if (!ready(t)) return;
+    // seo has defaults of its own, so replacing the sub-document wholesale
+    // blanked the seven fields the caller never mentioned.
+    const s = slug("nested");
+    const seed = {
+      ...draft(s),
+      seo: {
+        title: { en: "Keep me", ar: "" },
+        description: { en: "Keep me too", ar: "" },
+        canonical: "",
+        primaryKeyword: "keep",
+        keywords: ["one", "two"],
+        noindex: false,
+        jsonLd: "",
+      },
+    };
+    const id = idOf(await json("/api/posts", seed, { cookie }));
+    created.push(id);
+
+    await req(`/api/posts/${id}`, {
+      method: "PATCH",
+      cookie,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ seo: { canonical: "https://example.com/elsewhere" } }),
+    });
+
+    const doc = postOf(await req(`/api/posts/${id}`, { cookie }));
+    assert.equal(doc.seo.canonical, "https://example.com/elsewhere", "the field that was sent should change");
+    assert.equal(doc.seo.title.en, "Keep me", "the SEO title was wiped by an unrelated edit");
+    assert.equal(doc.seo.description.en, "Keep me too", "the SEO description was wiped");
+    assert.equal(doc.seo.primaryKeyword, "keep", "the primary keyword was wiped");
+    assert.deepEqual(doc.seo.keywords, ["one", "two"], "the keywords were wiped");
+  });
+
   test("renaming onto a taken slug is refused", async (t) => {
     if (!ready(t)) return;
     const a = slug("rename-a");

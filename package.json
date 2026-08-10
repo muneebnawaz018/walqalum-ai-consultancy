@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx --env-file=.env.local scripts/seed-admin.ts",
-    "db:up": "docker compose --env-file .env.local up -d",
-    "db:down": "docker compose --env-file .env.local down",
-    "db:logs": "docker compose --env-file .env.local logs -f mongo",
-    "seed:demo": "tsx --env-file=.env.local scripts/seed-demo.ts",
-    "test": "node --import tsx --test --env-file=.env.local tests/*.test.ts"
+    "seed:admin": "tsx --env-file=.env.development.local scripts/seed-admin.ts",
+    "seed:demo": "tsx --env-file=.env.development.local scripts/seed-demo.ts",
+    "db:up": "node --env-file=.env.development.local scripts/compose.mjs up -d",
+    "db:down": "node --env-file=.env.development.local scripts/compose.mjs down",
+    "db:logs": "node --env-file=.env.development.local scripts/compose.mjs logs -f mongo",
+    "test": "node --import tsx --test --env-file=.env.development.local tests/*.test.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -21,6 +21,7 @@
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "react-dropzone": "^20.1.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

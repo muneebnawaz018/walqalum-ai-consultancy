@@ -57,7 +57,7 @@ export const ACCOUNT = {
 export async function signIn(): Promise<string> {
   if (!ACCOUNT.email || !ACCOUNT.password) {
     throw new Error(
-      "SEED_EMAIL and SEED_PASSWORD are not set in .env.local. Run `npm run seed:demo` first."
+      "SEED_EMAIL and SEED_PASSWORD are not set in .env.development.local. Run `npm run seed:demo` first."
     );
   }
   const res = await json("/api/auth/login", ACCOUNT);
@@ -108,7 +108,18 @@ export type PostShape = {
   title: { en: string; ar: string };
   body: { en: string; ar: string };
   cover: { url: string; alt: { en: string; ar: string } };
-  seo: { title: { en: string; ar: string }; description: { en: string; ar: string } };
+  tags?: string[];
+  authorName?: string;
+  reviewedBy?: string;
+  seo: {
+    title: { en: string; ar: string };
+    description: { en: string; ar: string };
+    canonical: string;
+    primaryKeyword: string;
+    keywords: string[];
+    noindex: boolean;
+    jsonLd: string;
+  };
 };
 
 export const idOf = (res: Res) => res.json<{ id?: string }>()?.id ?? "";

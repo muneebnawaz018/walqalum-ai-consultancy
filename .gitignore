@@ -30,8 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files. Real secrets live in .env.development.local, which Next loads for
+# `next dev` and which nothing here ever commits. The template is the exception.
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,6 +41,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# local env
-.env.local

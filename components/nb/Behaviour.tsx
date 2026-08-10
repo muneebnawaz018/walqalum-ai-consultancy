@@ -30,10 +30,18 @@ export function Behaviour() {
       cleanups.push(() => t.removeEventListener(ev, fn, opts));
     };
 
-    let ACCENT = "#E5462B";
+    /* The canvas needs colour strings rather than `var()`, so it reads the
+       tokens out of the stylesheet instead of carrying its own copies. The
+       fallbacks only apply if colors.css failed to load at all. */
+    const token = (name: string, fallback: string) =>
+      getComputedStyle(root).getPropertyValue(name).trim() || fallback;
+
+    const LINE = token("--canvas-line", "255 255 255");
+    const DOT = token("--canvas-dot", "rgba(255,255,255,.5)");
+
+    let ACCENT = token("--accent", token("--persimmon", "#E5462B"));
     const readAccent = () => {
-      const v = getComputedStyle(root).getPropertyValue("--accent").trim();
-      if (v) ACCENT = v;
+      ACCENT = token("--accent", ACCENT);
     };
     readAccent();
 
@@ -90,7 +98,7 @@ export function Behaviour() {
             const dy = a.y - b.y;
             const d = Math.sqrt(dx * dx + dy * dy);
             if (d < lim) {
-              ctx.strokeStyle = `rgba(255,255,255,${((1 - d / lim) * 0.22).toFixed(3)})`;
+              ctx.strokeStyle = `rgb(${LINE} / ${((1 - d / lim) * 0.22).toFixed(3)})`;
               ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.moveTo(a.x, a.y);
@@ -111,7 +119,7 @@ export function Behaviour() {
             ctx.fill();
             ctx.globalAlpha = 1;
           } else {
-            ctx.fillStyle = "rgba(255,255,255,.5)";
+            ctx.fillStyle = DOT;
             ctx.beginPath();
             ctx.arc(q.x, q.y, 1.5, 0, 7);
             ctx.fill();

@@ -1,0 +1,142 @@
+/**
+ * Every colour the site uses, in one place.
+ *
+ * Nothing outside this file should contain a hex, an rgb() or a named colour.
+ * If a component needs a shade that is not here, the shade gets a name here
+ * first. That rule is the whole point: the artifact shipped one accent written
+ * out across nine files, so changing the brand meant finding all nine. It is
+ * now a one-line change: `--accent` below.
+ *
+ * Naming is by role, not by hue. `--danger` rather than `--red`, so swapping the
+ * palette never leaves a token whose name contradicts its value.
+ *
+ * The brand is cobalt. The prototype panel can switch `--accent` at runtime
+ * through the `data-accent` attribute at the bottom of this file, so anything
+ * meant to follow the brand must use `var(--accent)` rather than a hue token.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ---- ink: the dark end, used for type and dark panels ---- */
+  --ink: #14151a;
+  --ink-2: #1e2027;
+  --ink-3: #2b2e37;
+  --ink-blue: #1b3a6b;
+
+  /* ---- paper: the light end ---- */
+  --bone: #f6f4ef;
+  --bone-2: #efeae1;
+  --bone-3: #e7e1d6;
+  --paper: #ffffff;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* ---- type ---- */
+  --body-ink: #3c3d44; /* long-form prose, softer than --ink */
+  --body-ink-2: #33343b; /* controls and small print */
+  --body-ink-3: #4a4b52; /* segmented controls */
+  --muted: #5f6067;
+  --muted-2: #8b8c93;
+
+  /* ---- rules and hairlines ---- */
+  --hair: #e4dfd6;
+  --hair-strong: #d5cfc3;
+  --hair-dark: rgba(255, 255, 255, 0.12); /* a hairline on an ink panel */
+
+  /* ---- brand ---- */
+  --accent: var(--cobalt);
+  --accent-press: var(--cobalt-press);
+  --accent-ink: var(--white);
+  /* A wash of the brand, for drag targets and notices that should follow it. */
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, var(--paper));
+  --accent-ring: color-mix(in srgb, var(--accent) 16%, transparent); /* focus rings */
+
+  /* The four the prototype panel offers. Named by hue here because they are
+     swatches in a picker, which is the one place a hue name is the honest one. */
+  --persimmon: #e5462b;
+  --persimmon-press: #c93a22;
+  --cobalt: #1d49e2;
+  --cobalt-press: #193dc0;
+  --emerald: #0e8f5e;
+  --emerald-press: #0b7550;
+  --magenta: #c21e6b;
+  --magenta-press: #a3175a;
+
+  /* ---- tints: chips, badges and soft fills ---- */
+  --orange: #e5462b;
+  --orange-soft: #fdece7;
+  --orange-deep: #b5300f;
+  --blue: var(--cobalt);
+  --blue-soft: #e9eeff;
+
+  /* ---- states ---- */
+  --danger: #b0281a;
+  --danger-soft: color-mix(in srgb, var(--danger) 34%, transparent);
+  --danger-wash: color-mix(in srgb, var(--danger) 9%, var(--paper));
+  --success: #0e8f5e;
+  --success-ink: #0b6f49;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+
+  /* ---- on a dark panel ---- */
+  --on-dark: #ece9e2;
+  --on-dark-soft: rgba(236, 233, 226, 0.78);
+  --on-white-92: rgba(255, 255, 255, 0.92);
+  --on-white-72: rgba(255, 255, 255, 0.72);
+  --on-white-62: rgba(255, 255, 255, 0.62);
+  --on-white-50: rgba(255, 255, 255, 0.5);
+  --on-white-42: rgba(255, 255, 255, 0.42);
+  --on-white-28: rgba(255, 255, 255, 0.28);
+  --on-white-20: rgba(255, 255, 255, 0.2);
+  --on-white-10: rgba(255, 255, 255, 0.1);
+
+  /* ---- greys that sit on ink, for footer and drawer type ---- */
+  --dim: #c9c6bf;
+  --dim-2: #b6b3ac;
+  --dim-3: #a9a49a;
+  --dim-4: #a5a29b;
+  --dim-5: #a09c92;
+  --dim-6: #8b887f;
+
+  /* ---- veils and shadows ---- */
+  --veil-bone: rgba(246, 244, 239, 0.86); /* the sticky header over content */
+  --veil-ink-60: rgba(20, 21, 26, 0.6);
+  --veil-ink-55: rgba(20, 21, 26, 0.55);
+  --veil-ink-50: rgba(20, 21, 26, 0.5);
+  --veil-ink-40: rgba(20, 21, 26, 0.4);
+  /* Colours only. The offsets stay with the rule that draws the shadow. */
+  --shadow-ink-18: rgba(20, 20, 22, 0.18);
+  --shadow-ink-28: rgba(20, 20, 22, 0.28);
+
+  /* ---- the generative canvas ----
+     Channels without an alpha, because the network's line opacity is computed
+     per segment from the distance between two nodes. */
+  --canvas-line: 255 255 255;
+  --canvas-dot: rgba(255, 255, 255, 0.5);
+  --canvas-dot-dim: rgba(255, 255, 255, 0.45);
+
+  /* ---- one borrowed colour ---- */
+  --serp-link: #1a0dab; /* Google's own link blue, in the editor preview only */
+}
+
+/* The prototype panel writes this attribute. Only --accent moves; every tint
+   and state above stays put, because a brand swap should not recolour an error. */
+[data-accent="persimmon"] {
+  --accent: var(--persimmon);
+  --accent-press: var(--persimmon-press);
+}
+
+[data-accent="cobalt"] {
+  --accent: var(--cobalt);
+  --accent-press: var(--cobalt-press);
+}
+
+[data-accent="emerald"] {
+  --accent: var(--emerald);
+  --accent-press: var(--emerald-press);
+}
+
+[data-accent="magenta"] {
+  --accent: var(--magenta);
+  --accent-press: var(--magenta-press);
+}

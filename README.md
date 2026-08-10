@@ -12,8 +12,8 @@ matches what is built.
 
 ```bash
 npm install
-cp .env.example .env.local     # set AUTH_SECRET, MONGO_PASSWORD and MONGODB_URI
-npm run db:up                  # MongoDB in Docker, on 127.0.0.1:27017
+cp .env.example .env.development.local   # fill in every blank in it
+npm run db:up                            # MongoDB in Docker, on 127.0.0.1:27017
 npm run dev
 ```
 
@@ -25,9 +25,11 @@ newsroom has published something.
 `docker-compose.yml` runs MongoDB locally. It is the same thing a hosted cluster
 is, a mongod reached over a connection string, so nothing in the code branches on
 where it lives and moving to Atlas later means changing `MONGODB_URI` and nothing
-else. Credentials come from `.env.local`, which is why the db scripts pass
-`--env-file`. The port is bound to loopback, so the container is not reachable
-from the network, and data survives restarts in a named volume.
+else. Credentials come from `.env.development.local`, the file Next itself loads
+for `next dev`, which is why the db and test scripts pass `--env-file` at it too.
+Nothing but `.env.example` is committed. The port is bound to loopback, so the
+container is not reachable from the network, and data survives restarts in a
+named volume.
 
 ```bash
 npm run db:up      # start
@@ -35,24 +37,56 @@ npm run db:logs    # follow
 npm run db:down    # stop, keeping the volume
 ```
 
-Seed content and an account (there is no sign-up route, deliberately):
+`MONGODB_URI` is the only place the database is described. Compose cannot read a
+connection string, so `npm run db:up` goes through `scripts/compose.mjs`, which
+unpacks the user and password out of the URI and hands them to compose as the
+container's root credentials. They exist for the length of that command and are
+written down nowhere. Locally and on a host, one variable. `MONGODB_DB` is
+optional on top of it, defaulting to `walqalum`.
+
+Seed an account (there is no sign-up route, deliberately):
 
 ```bash
-npm run seed:demo     # a marketing account plus a few bilingual posts
+npm run seed:admin    # the account on its own
+npm run seed:demo     # the same account plus a few bilingual posts
 ```
 
-The account is `SEED_EMAIL` / `SEED_PASSWORD` from `.env.local`. There is no
-default in the script: a password committed to the repo is one that eventually
-reaches a real deployment, so the seed refuses to run until you set your own.
-Re-running is safe: posts are upserted by slug and left alone if they already
-exist, unless you pass `--force`. For a real account instead:
+Both read `SEED_EMAIL`, `SEED_NAME` and `SEED_PASSWORD` from
+`.env.development.local` through `scripts/account.ts`, so the two cannot end up
+describing different logins. There is no default in the code: a password
+committed to the repo is one that eventually reaches a real deployment, so they
+refuse to run until you set your own, and refuse again if it is under 12
+characters.
+
+Arguments override the environment, for a host where you would rather not put a
+password in a file at all:
 
 ```bash
-npm run seed -- editor@walqalum.com "Name" 'a-long-password'
+npm run seed:admin -- editor@walqalum.com "Name" 'a-long-password'
 ```
+
+Running either against an email that already exists **resets that account's
+password**. `seed:admin` says so when it happens. Posts are left alone if their
+slug already exists, unless you pass `--force`.
 
 Sign in at `/admin`. Nothing on the site links to it: the newsroom is reachable
 by URL only, carries `noindex`, and is disallowed in `robots.txt`.
+
+### Deploying
+
+Four variables, and none of the local ones:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://walqalum.com
+MONGODB_URI=<the cluster's connection string>
+MONGODB_DB=<only if the database is not named walqalum>
+AUTH_SECRET=<openssl rand -base64 48, a different one from local>
+```
+
+`AUTH_RATE_LIMIT` is local-only and belongs nowhere near a host; it is ignored in
+production regardless. The `SEED_*` trio is needed only when you seed against
+that database, and there you are better off passing them to `npm run seed:admin`
+as arguments, which leaves the password in no file at all.
 
 ## Tests
 
@@ -80,8 +114,9 @@ called a handler directly would walk straight past the proxy and prove nothing.
 - `tests/ratelimit.test.ts` — the login limiter, called directly
 
 Posts the suite creates are deleted afterwards. `AUTH_RATE_LIMIT=off` in
-`.env.local` stops a run locking itself out of sign-in; the flag is ignored when
-`NODE_ENV` is production, and the limiter is covered directly instead.
+`.env.development.local` stops a run locking itself out of sign-in; the flag is
+ignored when `NODE_ENV` is production, and the limiter is covered directly
+instead.
 
 ## The 2026 rebrand
 
@@ -119,9 +154,13 @@ lib/db.ts         MongoDB
   did it, so there are no `/ar` URLs and no `hreflang` pairs.
 - **The prototype panel ships.** The accent and type switcher is live, so the
   brand colour can still be settled against the real site.
-- **No registration endpoint.** Accounts come from `npm run seed`. Sessions are
-  signed JWTs in an httpOnly cookie, login is rate-limited, and `/admin` plus
-  every mutating API route are checked in `proxy.ts` *and* again on the server.
+- **No registration endpoint.** Accounts come from `npm run seed:admin`, which
+  overwrites the password if the email already exists. Sessions are signed JWTs
+  in an httpOnly cookie, login is rate-limited, and `/admin` plus every mutating
+  API route are checked in `proxy.ts` *and* again on the server. Nothing revokes
+  a session early: the cookie is verified by signature alone, so changing or
+  deleting an account leaves its existing sessions valid for their 7 days.
+  Rotating `AUTH_SECRET` is what ends them all.
 
 ### SEO
 

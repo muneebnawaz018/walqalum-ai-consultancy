@@ -19,7 +19,14 @@ export function AuthArt() {
     if (!cv || !wrap || !ctx) return;
 
     const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
-    const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#E5462B";
+    /* Colours come from colors.css; canvas cannot take a `var()`, so they are
+       read once here. The fallbacks only matter if the stylesheet is missing. */
+    const token = (name: string, fallback: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+
+    const accent = token("--accent", token("--persimmon", "#E5462B"));
+    const line = token("--canvas-line", "255 255 255");
+    const dot = token("--canvas-dot-dim", "rgba(255,255,255,.45)");
 
     let nodes: Array<{ x: number; y: number; vx: number; vy: number; a: boolean }> = [];
     let raf = 0;
@@ -67,7 +74,7 @@ export function AuthArt() {
           const dy = a.y - b.y;
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < lim) {
-            ctx.strokeStyle = `rgba(255,255,255,${((1 - d / lim) * 0.2).toFixed(3)})`;
+            ctx.strokeStyle = `rgb(${line} / ${((1 - d / lim) * 0.2).toFixed(3)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -88,7 +95,7 @@ export function AuthArt() {
           ctx.fill();
           ctx.globalAlpha = 1;
         } else {
-          ctx.fillStyle = "rgba(255,255,255,.45)";
+          ctx.fillStyle = dot;
           ctx.beginPath();
           ctx.arc(q.x, q.y, 1.5, 0, 7);
           ctx.fill();

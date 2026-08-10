@@ -26,21 +26,40 @@ export async function getDb(): Promise<Db> {
   return (await getClient()).db(dbName);
 }
 
+export type Faq = { q: I18n; a: I18n };
+
 export type PostDoc = {
   _id?: ObjectId;
   slug: string;
   status: "draft" | "published";
   publishedAt: Date | null;
   updatedAt: Date;
+  /** Set by hand in the editor when an edit is worth announcing. */
+  lastUpdatedAt?: Date | null;
   category: I18n;
+  /** Who signed in and saved it. `authorName` is the byline the site prints. */
   author: { name: string; id?: ObjectId };
+  authorName?: string;
+  reviewedBy?: string;
+  tags?: string[];
+  /** Always a number on the document: the estimate, or the editor's override. */
   readingMinutes: number;
   featured: boolean;
   cover: { url: string; alt: I18n };
   title: I18n;
   excerpt: I18n;
   body: I18n;
-  seo: { title: I18n; description: I18n };
+  faqs?: Faq[];
+  seo: {
+    title: I18n;
+    description: I18n;
+    ogImage?: { url: string; alt: I18n };
+    canonical?: string;
+    primaryKeyword?: string;
+    keywords?: string[];
+    noindex?: boolean;
+    jsonLd?: string;
+  };
 };
 
 export type UserDoc = {

@@ -4,8 +4,11 @@
 # connection string. Nothing in the code branches on where it lives, so moving
 # to Atlas later is a change to MONGODB_URI and nothing else.
 #
-# Credentials come from .env.local so none of them are committed. Start it with
-# `npm run db:up`, which passes that file through.
+# The root credentials below are unpacked from MONGODB_URI by scripts/compose.mjs,
+# which is what `npm run db:up` runs. Compose cannot read a connection string, so
+# the two variables exist for the length of that one command and appear in no
+# file. MONGODB_URI is the only place the database is described, here or on a
+# host, so a deployment needs the connection string and nothing else from here.
 services:
   mongo:
     image: mongo:7

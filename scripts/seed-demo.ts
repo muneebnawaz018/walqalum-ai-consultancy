@@ -5,27 +5,25 @@
  *
  *   npm run seed:demo
  *
- * The account it creates is SEED_EMAIL / SEED_PASSWORD from `.env.local`, which
- * is also the account the integration suite signs in as. Safe to re-run. Posts are upserted by slug and the account is upserted by
+ * The account it creates is SEED_EMAIL / SEED_PASSWORD from
+ * `.env.development.local`, which is also the account the integration suite
+ * signs in as.
+ *
+ * Safe to re-run. Posts are upserted by slug and the account is upserted by
  * email, so nothing duplicates. Pass --force to overwrite posts you have since
  * edited by hand; without it, existing slugs are left alone.
  */
-import bcrypt from "bcryptjs";
-
-import { ensureIndexes, posts, readingMinutes, users, type PostDoc } from "../lib/db";
+import { posts, readingMinutes, type PostDoc } from "../lib/db";
+import { requireAccount, resolveAccount, upsertAccount } from "./account";
 
 const FORCE = process.argv.includes("--force");
 
 /**
- * Credentials come from the environment with no fallback. A default password
- * living in a committed file is one that reaches a real deployment the first
- * time someone points this script at a hosted database.
+ * The account comes from the same place `seed:admin` gets it, so the two cannot
+ * describe different logins. `--force` is a flag rather than a positional, so
+ * it is filtered out before the account resolver reads argv.
  */
-const ACCOUNT = {
-  email: process.env.SEED_EMAIL || "",
-  name: process.env.SEED_NAME || "Marketing",
-  password: process.env.SEED_PASSWORD || "",
-};
+const ACCOUNT = resolveAccount(process.argv.slice(2).filter((a) => !a.startsWith("--")));
 
 type Seed = Omit<PostDoc, "_id" | "author" | "readingMinutes" | "updatedAt" | "publishedAt"> & {
   daysAgo: number | null;
@@ -83,12 +81,37 @@ const POSTS: Seed[] = [
         "نسأل أي قرار سيتحسّن، ثم نعود إلى أصغر نموذج يحقّقه. هذا الترتيب مهم. البدء من النموذج يُنتج شيئًا مبهرًا لا يستخدمه أحد.",
       ].join("\n"),
     },
+    authorName: "Muneeb Siddique",
+    reviewedBy: "WalQalum data engineering",
+    tags: ["evaluation", "monitoring", "MLOps", "production"],
+    faqs: [
+      {
+        q: { en: "How long does it take to get a model into production?", ar: "كم يستغرق نقل نموذج إلى الإنتاج؟" },
+        a: {
+          en: "The model is rarely the long pole. Evaluation, monitoring and the fallback path are, and they are what turn a demo into something your team can leave running.",
+          ar: "النموذج نادرًا ما يكون العائق. التقييم والمراقبة ومسار البدائل هي ما يحوّل العرض إلى نظام يمكن لفريقك تركه يعمل.",
+        },
+      },
+      {
+        q: { en: "Do we need our own model?", ar: "هل نحتاج إلى نموذج خاص بنا؟" },
+        a: {
+          en: "Usually not at the start. We work back from the decision to the smallest model that reaches it, which is often a hosted one behind good retrieval.",
+          ar: "غالبًا لا في البداية. نعود من القرار إلى أصغر نموذج يحقّقه، وكثيرًا ما يكون نموذجًا مستضافًا خلف استرجاع جيّد.",
+        },
+      },
+    ],
     seo: {
       title: { en: "What production-ready AI actually means", ar: "ماذا يعني الذكاء الاصطناعي الجاهز للإنتاج" },
       description: {
         en: "The work between a notebook and a system your team can run: evaluation, monitoring, fallbacks and audit trails.",
         ar: "العمل الواقع بين الدفتر ونظام يشغّله فريقك: التقييم والمراقبة والبدائل وأثر التدقيق.",
       },
+      ogImage: { url: "", alt: { en: "", ar: "" } },
+      canonical: "",
+      primaryKeyword: "production-ready AI",
+      keywords: ["AI evaluation", "model monitoring", "AI in production"],
+      noindex: false,
+      jsonLd: "",
     },
   },
   {
@@ -134,7 +157,16 @@ const POSTS: Seed[] = [
         "النسخ الاحتياطي والنسخ المتماثلة ومسار تنبيهات المناوبة. التوفير الذي يظهر على شكل انقطاع ليس توفيرًا.",
       ].join("\n"),
     },
-    seo: { title: { en: "", ar: "" }, description: { en: "", ar: "" } },
+    seo: {
+      title: { en: "", ar: "" },
+      description: { en: "", ar: "" },
+      ogImage: { url: "", alt: { en: "", ar: "" } },
+      canonical: "",
+      primaryKeyword: "",
+      keywords: [],
+      noindex: false,
+      jsonLd: "",
+    },
   },
   {
     slug: "designing-for-arabic-lessons-from-real-rtl-work",
@@ -179,7 +211,16 @@ const POSTS: Seed[] = [
         "يُختار الخط لكل نظام كتابة على حدة، وتُعكس كل أيقونة اتجاهية بقاعدة لا يدويًّا. والنص العربي يُكتب ولا يُترجم.",
       ].join("\n"),
     },
-    seo: { title: { en: "", ar: "" }, description: { en: "", ar: "" } },
+    seo: {
+      title: { en: "", ar: "" },
+      description: { en: "", ar: "" },
+      ogImage: { url: "", alt: { en: "", ar: "" } },
+      canonical: "",
+      primaryKeyword: "",
+      keywords: [],
+      noindex: false,
+      jsonLd: "",
+    },
   },
   {
     slug: "notes-on-evaluating-retrieval",
@@ -197,36 +238,22 @@ const POSTS: Seed[] = [
       en: "Retrieval quality is not one number. Recall tells you whether the answer was reachable; precision tells you whether the model had to wade through noise to reach it.\n\nStill writing this one.",
       ar: "",
     },
-    seo: { title: { en: "", ar: "" }, description: { en: "", ar: "" } },
+    seo: {
+      title: { en: "", ar: "" },
+      description: { en: "", ar: "" },
+      ogImage: { url: "", alt: { en: "", ar: "" } },
+      canonical: "",
+      primaryKeyword: "",
+      keywords: [],
+      noindex: false,
+      jsonLd: "",
+    },
   },
 ];
 
 async function main() {
-  if (!process.env.MONGODB_URI) {
-    console.error("MONGODB_URI is not set. Start the database with `npm run db:up` first.");
-    process.exit(1);
-  }
-  if (!ACCOUNT.email || !ACCOUNT.password) {
-    console.error("SEED_EMAIL and SEED_PASSWORD must be set in .env.local. See .env.example.");
-    process.exit(1);
-  }
-  if (ACCOUNT.password.length < 12) {
-    console.error("SEED_PASSWORD is shorter than 12 characters. Use a longer one.");
-    process.exit(1);
-  }
-
-  await ensureIndexes();
-
-  const userCol = await users();
-  const passwordHash = await bcrypt.hash(ACCOUNT.password, 12);
-  const account = await userCol.findOneAndUpdate(
-    { email: ACCOUNT.email.toLowerCase() },
-    {
-      $set: { passwordHash, name: ACCOUNT.name, role: "admin" as const },
-      $setOnInsert: { email: ACCOUNT.email.toLowerCase(), createdAt: new Date(), lastLoginAt: null },
-    },
-    { upsert: true, returnDocument: "after" }
-  );
+  requireAccount(ACCOUNT);
+  const { doc: account } = await upsertAccount(ACCOUNT);
 
   const postCol = await posts();
   let written = 0;
@@ -264,7 +291,7 @@ async function main() {
 
   console.log("");
   console.log(`  Account   ${ACCOUNT.email}`);
-  console.log(`  Password  the value of SEED_PASSWORD in .env.local`);
+  console.log(`  Password  the value of SEED_PASSWORD in .env.development.local`);
   console.log("");
   console.log(`  Posts     ${written} written, ${skipped} left alone${skipped ? " (use --force to overwrite)" : ""}`);
   console.log(`  In the db ${published} published, ${drafts} draft`);

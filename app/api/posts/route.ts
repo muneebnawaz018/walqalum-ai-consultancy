@@ -38,12 +38,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "That slug already exists" }, { status: 409 });
   }
 
+  const { readingMinutes: override, lastUpdatedAt, ...rest } = input;
   const doc: PostDoc = {
-    ...input,
+    ...rest,
     publishedAt: input.status === "published" ? new Date(input.publishedAt || Date.now()) : null,
     updatedAt: new Date(),
+    lastUpdatedAt: lastUpdatedAt ? new Date(lastUpdatedAt) : null,
     author: { name: session.name, id: new ObjectId(session.sub) },
-    readingMinutes: readingMinutes(input.body),
+    // The estimate is the default; a number typed in the editor wins.
+    readingMinutes: override ?? readingMinutes(input.body),
   };
   const res = await col.insertOne(doc);
 
