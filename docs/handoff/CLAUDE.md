@@ -17,7 +17,7 @@ Everything in this repo exists to serve that shift. If a decision seems arbitrar
 ## Where everything is
 
 | You need | Read |
-|---|---|
+| --- | --- |
 | Why the site says what it says | `docs/01-positioning.md` |
 | URLs, redirects, MongoDB schema, auth, SEO layer | `docs/02-build-kickoff.md` |
 | Colours, type, spacing, components | `design/design-system.css` — the real thing, not a description |
@@ -53,7 +53,7 @@ These are decisions already made with the client. Do not revisit them without as
 
 ### 1. English is not prefixed
 
-```
+```text
 English (default)   /about-us          /services/drupal-development
 Arabic              /ar/about-us       /ar/services/drupal-development
 ```

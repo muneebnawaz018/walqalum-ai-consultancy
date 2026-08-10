@@ -1,10 +1,8 @@
-import type { CSSProperties } from "react";
-
 import Link from "next/link";
 
 import { SECTORS } from "@/lib/sectors";
 
-/** Site footer, the closing CTA band and the artifact's prototype controls. */
+/** Site footer and the closing CTA band. */
 export function CtaBand() {
   return (
     <section className="cta-band"><div className="wrap"><div className="in">
@@ -29,21 +27,9 @@ export function Footer() {
             <span>© 2026 WalQalum</span>
             <Link href="/privacy" data-en="Privacy Policy" data-ar="سياسة الخصوصية">Privacy Policy</Link>
             <Link href="/terms" data-en="Terms & Conditions" data-ar="الشروط والأحكام">Terms & Conditions</Link>
-            <span className="sp" data-en="Prototype · design mockup" data-ar="نموذج أولي · تصميم تجريبي">Prototype · design mockup</span>
           </div>
         </div>
       </footer>
-
-
-      <div className="proto" id="proto">
-        <button className="proto-toggle" id="protoToggle" aria-label="Prototype settings" title="Prototype settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4" /></svg></button>
-        <div className="proto-panel" id="protoPanel" hidden>
-          <div className="proto-cap" data-en="Prototype controls" data-ar="أدوات المعاينة">Prototype controls</div>
-          <div className="proto-row"><span className="proto-lbl" data-en="Accent" data-ar="اللون">Accent</span><div className="dots"><button className="sw-dot" data-set="accent" data-val="persimmon" style={{ "--c": "var(--persimmon)" } as CSSProperties} aria-pressed="false" aria-label="Persimmon" title="Persimmon"></button><button className="sw-dot" data-set="accent" data-val="cobalt" style={{ "--c": "var(--cobalt)" } as CSSProperties} aria-pressed="true" aria-label="Cobalt" title="Cobalt"></button><button className="sw-dot" data-set="accent" data-val="emerald" style={{ "--c": "var(--emerald)" } as CSSProperties} aria-pressed="false" aria-label="Emerald" title="Emerald"></button><button className="sw-dot" data-set="accent" data-val="magenta" style={{ "--c": "var(--magenta)" } as CSSProperties} aria-pressed="false" aria-label="Magenta" title="Magenta"></button></div></div>
-          <div className="proto-row"><span className="proto-lbl" data-en="Type" data-ar="الخط">Type</span><div className="seg"><button data-set="type" data-val="editorial" aria-pressed="true">Editorial</button><button data-set="type" data-val="modern" aria-pressed="false">Modern</button></div></div>
-        </div>
-      </div>
-
 
 
     </>

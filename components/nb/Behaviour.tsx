@@ -39,11 +39,9 @@ export function Behaviour() {
     const LINE = token("--canvas-line", "255 255 255");
     const DOT = token("--canvas-dot", "rgba(255,255,255,.5)");
 
-    let ACCENT = token("--accent", token("--persimmon", "#E5462B"));
-    const readAccent = () => {
-      ACCENT = token("--accent", ACCENT);
-    };
-    readAccent();
+    /* Read once. The accent no longer changes at runtime now that the
+       prototype's colour switcher is gone. */
+    const ACCENT = token("--accent", "#1d49e2");
 
     /* ---- generative network canvas, one per image slot ---- */
     let vizSeed = 97;
@@ -334,35 +332,6 @@ export function Behaviour() {
     on(document, "keydown", ((e: KeyboardEvent) => {
       if (e.key === "Escape") drawer?.classList.remove("open");
     }) as EventListener);
-
-    /* ---- prototype controls ---- */
-    const proto = document.getElementById("proto");
-    const protoPanel = document.getElementById("protoPanel");
-    const protoToggle = document.getElementById("protoToggle");
-    if (proto && protoPanel && protoToggle) {
-      on(protoToggle, "click", () => {
-        const closed = protoPanel.hasAttribute("hidden");
-        if (closed) protoPanel.removeAttribute("hidden");
-        else protoPanel.setAttribute("hidden", "");
-        proto.classList.toggle("open", closed);
-      });
-      protoPanel.querySelectorAll<HTMLElement>("[data-set]").forEach((b) => {
-        on(b, "click", () => {
-          const st = b.getAttribute("data-set");
-          const val = b.getAttribute("data-val");
-          if (!st || !val) return;
-          if (st === "accent") {
-            root.setAttribute("data-accent", val);
-            readAccent();
-          } else {
-            root.setAttribute("data-type", val);
-          }
-          protoPanel
-            .querySelectorAll(`[data-set="${st}"]`)
-            .forEach((x) => x.setAttribute("aria-pressed", String(x.getAttribute("data-val") === val)));
-        });
-      });
-    }
 
     return () => cleanups.forEach((c) => c());
   }, []);

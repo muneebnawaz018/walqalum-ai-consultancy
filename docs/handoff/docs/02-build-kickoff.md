@@ -10,7 +10,7 @@ Decisions locked. This is what the developer needs before writing the first rout
 
 Every page you have indexed today sits at an unprefixed path — `/about-us`, `/services/drupal-development`, `/blog`. Adding `/en` in front of them means a site-wide 301 on launch day: recoverable, but it puts every ranking you have through a redirect at once, for no gain.
 
-```
+```text
 English (default)   /about-us              /services/drupal-development
 Arabic              /ar/about-us           /ar/services/drupal-development
 ```
@@ -28,7 +28,7 @@ The mockup uses `#/en/…` only because a single-file hash router needs an expli
 ### 301s required
 
 | From (live today) | To | Why |
-|---|---|---|
+| --- | --- | --- |
 | `/services/it-Infrastructure-and-cloud-ervices` | `/services/it-infrastructure-and-cloud` | Capital `I`, and `ervices` is missing its `s`. Fix the slug, redirect the typo. |
 | `/our-client` | `/our-partners` | Singular, and it serves the Partners page. Optional — see note. |
 
@@ -36,7 +36,7 @@ If you would rather not touch `/our-client`, leave it. It carries almost no inbo
 
 ### Unchanged — no redirect, no action
 
-```
+```text
 /                                    /about-us
 /services                            /our-work
 /blog                                /contact
@@ -97,7 +97,7 @@ Indexes: `posts.slug` unique · `posts.status + publishedAt` descending · `user
 
 ### Routes
 
-```
+```text
 /admin                     login
 /admin/posts               list, filter by status
 /admin/posts/new           create

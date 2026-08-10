@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 export default function AdminRootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" dir="ltr">
-      <body className="admin">{children}</body>
+      {/* Same reason as the site layout: browser extensions add attributes to
+          body before hydration. */}
+      <body className="admin" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

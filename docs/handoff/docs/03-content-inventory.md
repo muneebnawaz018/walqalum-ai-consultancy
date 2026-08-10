@@ -5,7 +5,7 @@
 ## Routes
 
 | Route | Count | Source of content |
-|---|---|---|
+| --- | --- | --- |
 | `/` | 1 | written for the rebrand |
 | `/about-us` | 1 | team and offices real, framing new |
 | `/services` + 4 practices | 5 | new |
@@ -40,7 +40,7 @@ legal structure.
 ## Placeholders — do not fill with plausible substitutes
 
 | What | Where | Waiting on |
-|---|---|---|
+| --- | --- | --- |
 | Case metrics | 7 case studies, rendered as `—` | Client-confirmed numbers |
 | Photography | Home, About Us, Careers | Real photos of team and offices |
 | Partner tier / certifications | `/our-partners` | Evidence of formal status |

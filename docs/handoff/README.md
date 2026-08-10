@@ -13,7 +13,7 @@ are already made.
 
 ## Layout
 
-```
+```text
 CLAUDE.md                        brief for the coding agent — read first
 docs/
   01-positioning.md              why the site says what it says

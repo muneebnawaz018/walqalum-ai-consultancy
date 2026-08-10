@@ -16,7 +16,12 @@ export const metadata: Metadata = {
 export default function ArtifactLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" dir="ltr">
-      <body>{children}</body>
+      {/* Extensions write their own attributes onto body before React hydrates
+          (ColorZilla's cz-shortcut-listen is the usual one), which React then
+          reports as a mismatch we did not cause and cannot prevent. This covers
+          body's own attributes only, so a real mismatch inside the tree still
+          reports. */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

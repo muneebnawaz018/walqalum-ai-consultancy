@@ -5,22 +5,6 @@
    the browser can cache them and the HTML stays small. */
 
 @font-face {
-  font-family: 'Bricolage Grotesque';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/BricolageGrotesque-500.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Bricolage Grotesque';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/BricolageGrotesque-700.woff2') format('woff2');
-}
-
-@font-face {
   font-family: 'Fraunces';
   font-style: normal;
   font-weight: 400;
@@ -154,9 +138,6 @@
   --mono:ui-monospace,'SF Mono',Menlo,monospace;
   --maxw:1360px; --pad:32px;
 }
-[data-type="modern"]{--font-display:'Bricolage Grotesque',system-ui,sans-serif;}
-[data-type="modern"] .display{letter-spacing:-.02em;font-weight:700}
-[dir="rtl"][data-type="modern"] .display{letter-spacing:0}
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{background:var(--bone);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
@@ -197,9 +178,18 @@ button{font-family:inherit}
 /* header */
 header.site{position:sticky;top:0;z-index:60;background:var(--veil-bone);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--hair)}
 header.site .row{display:flex;align-items:center;gap:26px;height:70px}
-.logo{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:.01em}
-[dir="rtl"] .logo{font-family:var(--font-ar-display)}
-.logo b{color:var(--accent);font-weight:inherit}
+/* The lockup is the real artwork, not type, so it does not need a font and is
+   identical in both languages. `color` here feeds the two masks below. */
+.logo{display:inline-flex;align-items:center;gap:11px;color:var(--accent)}
+/* The eagle-over-wordmark lockup ships as one asset cropped to the artwork's
+   alpha bounds, so the spacing between the two is the artwork's own rather than
+   something reconstructed in CSS. It is white on transparency, so it is used as
+   a mask and painted with currentColor: one file serves the light header and
+   the dark footer, and it can never be the wrong colour against its
+   background. */
+.logo-lockup{height:46px;aspect-ratio:495/208;flex:none;background:currentColor;-webkit-mask:url('/brand/walqalum-lockup.png') no-repeat center;-webkit-mask-size:contain;mask:url('/brand/walqalum-lockup.png') no-repeat center;mask-size:contain}
+/* The drawer header is 48px, so the lockup drops a size to keep air around it. */
+.drawer .top .logo-lockup{height:38px}
 nav.main{display:flex;align-items:center;gap:4px;margin-inline-start:18px}
 .has-mega{display:inline-flex;align-items:center}
 nav.main a{font-size:14.5px;color:var(--body-ink-2);padding:9px 13px;border-radius:5px;font-weight:500;transition:color .16s,background .16s;cursor:pointer}
@@ -207,8 +197,11 @@ nav.main a:hover{color:var(--accent)}
 nav.main a.active{color:var(--ink)}
 nav.main a.active::after{content:"";display:block;height:2px;background:var(--accent);margin-top:5px;border-radius:2px}
 .head-cta{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
-.lang{font-family:var(--mono);font-size:12px;border:1px solid var(--hair-strong);background:transparent;border-radius:6px;padding:8px 11px;cursor:pointer;color:var(--body-ink-2);transition:border-color .16s,color .16s}
-.lang:hover{border-color:var(--ink);color:var(--ink)}
+/* Sizing, border and hover all come from .btn.btn-ghost so this sits level with
+   the primary CTA beside it. The only thing left here is the face: the label
+   swaps between العربية and English, and --font-ar carries both scripts, where
+   the body face has no Arabic glyphs at all. */
+.lang{font-family:var(--font-ar)}
 .burger{display:none;background:transparent;border:1px solid var(--hair-strong);border-radius:6px;width:42px;height:40px;cursor:pointer;align-items:center;justify-content:center}
 .burger svg{width:20px;height:20px;stroke:var(--ink);stroke-width:1.8}
 
@@ -472,27 +465,6 @@ footer.site .bottom .sp{margin-inline-start:auto}
 footer.site .bottom a{cursor:pointer;color:var(--dim-6)}
 footer.site .bottom a:hover{color:var(--white)}
 
-/* prototype controls (accent + type switcher) */
-.proto{position:fixed;inset-block-end:20px;inset-inline-end:20px;z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.proto-toggle{width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--white);border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px -12px var(--veil-ink-60);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-.proto-toggle svg{width:22px;height:22px;stroke:var(--white);stroke-width:1.6;fill:none}
-.proto.open .proto-toggle{transform:rotate(60deg);background:var(--accent)}
-.proto-panel{background:var(--paper);border:1px solid var(--hair-strong);border-radius:12px;padding:16px;box-shadow:0 20px 44px -24px var(--veil-ink-50);display:flex;flex-direction:column;gap:14px;min-width:236px}
-.proto-panel[hidden]{display:none}
-.proto-cap{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--hair);padding-bottom:10px}
-.proto-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.proto-lbl{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-[dir="rtl"] .proto-lbl,[dir="rtl"] .proto-cap{letter-spacing:0}
-.seg{display:inline-flex;background:var(--bone-2);border:1px solid var(--hair-strong);border-radius:7px;overflow:hidden}
-.seg button{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--body-ink-3);background:transparent;border:0;padding:8px 11px;cursor:pointer;transition:color .18s,background .18s}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.seg button:not([aria-pressed="true"]):hover{color:var(--ink)}
-.dots{display:inline-flex;gap:9px}
-.sw-dot{width:22px;height:22px;border-radius:50%;background:var(--c);border:0;cursor:pointer;padding:0;transition:transform .15s,box-shadow .15s}
-.sw-dot:hover{transform:scale(1.14)}
-.sw-dot[aria-pressed="true"]{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--c)}
-.sw-dot:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-
 /* image slots (real photography) */
 .ph,.case .img,.case-hero,.teamband{display:block;position:relative;overflow:hidden;background:var(--bone-3);isolation:isolate;padding:0}
 .ph::after,.case .img::after,.case-hero::after{display:none}
@@ -618,9 +590,13 @@ footer.site .bottom a:hover{color:var(--white)}
 .magnetic{will-change:transform}
 
 @media (max-width:960px){
-  nav.main,.head-cta .btn{display:none}
+  /* The burger takes over for nav and the CTA, but the language toggle has no
+     equivalent inside the drawer until it is opened, so it stays in the bar. */
+  nav.main,.head-cta .btn-primary{display:none}
   .burger{display:inline-flex}
   .head-cta{gap:8px}
+  /* Full CTA padding is too wide next to the burger on a 390px bar. */
+  .head-cta .lang{padding:9px 14px;font-size:14px}
   .hero .grid,.sec-head,.ind,.prose,.contact-grid,.cta-band .in{grid-template-columns:1fr}
   .hero-side{border-inline-start:0;padding-inline-start:0;border-top:1px solid var(--hair);padding-top:26px;margin-top:34px}
   .ind .tabs{flex-direction:row;overflow-x:auto;border-inline-end:0;border-bottom:1px solid var(--hair)}
@@ -699,7 +675,7 @@ footer.site .bottom a:hover{color:var(--white)}
    specificity of its heaviest argument, which puts this above all of them. */
 
 html[dir="rtl"] :is(
-  h1, h2, h3, h4, .display, .logo, .manifesto,
+  h1, h2, h3, h4, .display, .manifesto,
   .mega .intro h4, .drawer nav a, .marquee .lg, .vmarquee .vitem,
   .stat .n, .tl .yr, .ind .tabs button, .contact-side .big, .case-meta .v
 ) {
@@ -737,7 +713,7 @@ html[dir="rtl"] :is(
   .mega .col h5, .ph .cap, .svc-row .no, .svc-card .no, .chips li > *,
   .ind .panel ul.tags li, .case .img .cap, .case .meta .tag, .case .meta .yr,
   .filters button, .case-meta .k, .case-hero .cap, .office .flag, .office .ph-n,
-  .appr .no, .field label, footer.site h5, .proto-cap, .proto-lbl, .seg button,
+  .appr .no, .field label, footer.site h5,
   .prod .status, .prod .pcat, .belief .bn
 ) {
   font-family: var(--font-ar);

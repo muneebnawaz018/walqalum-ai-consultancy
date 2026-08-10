@@ -19,7 +19,7 @@ export function Chrome({ route }: { route?: NavKey } = {}) {
       <div id="progress"></div>
       <header className="site">
         <div className="wrap"><div className="row">
-          <Link href="/" className="logo" data-nav="home">Wal<b>Qalum</b></Link>
+          <Link href="/" className="logo" data-nav="home" aria-label="WalQalum, home"><span className="logo-lockup" aria-hidden="true" /></Link>
           <nav className="main">
             <span className="has-mega" style={{ position: "static" }}>
               <Link href="/industries" data-nav="industries" className={`hasmenu ${on("industries") ?? ""}`.trim()} data-en="Industries" data-ar="القطاعات">Industries</Link>
@@ -56,7 +56,7 @@ export function Chrome({ route }: { route?: NavKey } = {}) {
             <Link className={on("contact")} href="/contact" data-nav="contact" data-en="Contact" data-ar="تواصل">Contact</Link>
           </nav>
           <div className="head-cta">
-            <button className="lang" id="langBtn" aria-label="Switch language">العربية</button>
+            <button className="lang btn btn-ghost" id="langBtn" aria-label="Switch language">العربية</button>
             <button className="btn btn-primary" data-nav="contact" data-en="Start a project" data-ar="ابدأ مشروعًا">Start a project</button>
             <button className="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button>
           </div>
@@ -64,7 +64,7 @@ export function Chrome({ route }: { route?: NavKey } = {}) {
       </header>
 
       <div className="drawer" id="drawer">
-        <div className="top"><span className="logo">Wal<b>Qalum</b></span><button className="x" id="drawerX" aria-label="Close menu">×</button></div>
+        <div className="top"><span className="logo" role="img" aria-label="WalQalum"><span className="logo-lockup" aria-hidden="true" /></span><button className="x" id="drawerX" aria-label="Close menu">×</button></div>
         <nav>
           <Link href="/" data-nav="home" data-en="Home" data-ar="الرئيسية">Home</Link>
           <Link href="/industries" data-nav="industries" data-en="Industries" data-ar="القطاعات">Industries</Link>

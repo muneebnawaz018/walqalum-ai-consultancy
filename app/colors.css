@@ -10,9 +10,9 @@
  * Naming is by role, not by hue. `--danger` rather than `--red`, so swapping the
  * palette never leaves a token whose name contradicts its value.
  *
- * The brand is cobalt. The prototype panel can switch `--accent` at runtime
- * through the `data-accent` attribute at the bottom of this file, so anything
- * meant to follow the brand must use `var(--accent)` rather than a hue token.
+ * The brand is cobalt, fixed. Anything meant to follow it must use
+ * `var(--accent)` rather than `var(--cobalt)`, so a future brand change stays
+ * a one-line edit.
  */
 
 :root {
@@ -44,24 +44,18 @@
   --hair-strong: #d5cfc3;
   --hair-dark: rgba(255, 255, 255, 0.12); /* a hairline on an ink panel */
 
-  /* ---- brand ---- */
+  /* ---- brand ----
+     One colour, fixed. The prototype's runtime switcher and the three
+     alternate hues it offered are gone; changing the brand means changing
+     --cobalt here and nowhere else. */
+  --cobalt: #1d49e2;
+  --cobalt-press: #193dc0;
   --accent: var(--cobalt);
   --accent-press: var(--cobalt-press);
   --accent-ink: var(--white);
   /* A wash of the brand, for drag targets and notices that should follow it. */
   --accent-soft: color-mix(in srgb, var(--accent) 10%, var(--paper));
   --accent-ring: color-mix(in srgb, var(--accent) 16%, transparent); /* focus rings */
-
-  /* The four the prototype panel offers. Named by hue here because they are
-     swatches in a picker, which is the one place a hue name is the honest one. */
-  --persimmon: #e5462b;
-  --persimmon-press: #c93a22;
-  --cobalt: #1d49e2;
-  --cobalt-press: #193dc0;
-  --emerald: #0e8f5e;
-  --emerald-press: #0b7550;
-  --magenta: #c21e6b;
-  --magenta-press: #a3175a;
 
   /* ---- tints: chips, badges and soft fills ---- */
   --orange: #e5462b;
@@ -119,24 +113,3 @@
   --serp-link: #1a0dab; /* Google's own link blue, in the editor preview only */
 }
 
-/* The prototype panel writes this attribute. Only --accent moves; every tint
-   and state above stays put, because a brand swap should not recolour an error. */
-[data-accent="persimmon"] {
-  --accent: var(--persimmon);
-  --accent-press: var(--persimmon-press);
-}
-
-[data-accent="cobalt"] {
-  --accent: var(--cobalt);
-  --accent-press: var(--cobalt-press);
-}
-
-[data-accent="emerald"] {
-  --accent: var(--emerald);
-  --accent-press: var(--emerald-press);
-}
-
-[data-accent="magenta"] {
-  --accent: var(--magenta);
-  --accent-press: var(--magenta-press);
-}

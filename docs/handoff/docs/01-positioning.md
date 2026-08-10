@@ -24,7 +24,7 @@ Not invented — it is how the firm is actually built.
 > deck says, late. WalQalum does both, with one accountable team.
 
 | Real asset | What it lets them claim |
-|---|---|
+| --- | --- |
 | Strategy, engineering, marketing and paid social in-house | Strategy through execution, no handoff |
 | ERP bench, 6+ years | Enterprise systems credibility, not just app work |
 | Advisory in the Gulf, engineering in Lahore | Consulting-grade thinking at a cost the global firms cannot run |

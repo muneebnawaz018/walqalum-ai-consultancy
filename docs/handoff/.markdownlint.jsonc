@@ -1,0 +1,13 @@
+{
+  // This config replaces the repo root one for docs/handoff/ rather than
+  // merging with it, so anything still needed here is repeated.
+
+  // The handoff bundle is written one line per paragraph, so a diff shows which
+  // sentence changed rather than a reflowed block. The rest of docs/ wraps at 80.
+  "MD013": false,
+
+  // docs/04-open-items.md numbers its items 1-9 continuously across three
+  // headings. The running count is the point, so the lists keep their start
+  // values instead of restarting at 1 under each heading.
+  "MD029": false
+}

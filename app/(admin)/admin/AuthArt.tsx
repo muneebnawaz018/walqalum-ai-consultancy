@@ -24,7 +24,7 @@ export function AuthArt() {
     const token = (name: string, fallback: string) =>
       getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 
-    const accent = token("--accent", token("--persimmon", "#E5462B"));
+    const accent = token("--accent", "#1d49e2");
     const line = token("--canvas-line", "255 255 255");
     const dot = token("--canvas-dot-dim", "rgba(255,255,255,.45)");
 
