@@ -1,0 +1,504 @@
+/* The newsroom, in the site's own theme.
+   It imports artifact.css for the tokens and fonts, then dresses a set of tools
+   rather than a page: same bone, same persimmon, same Fraunces and Hanken, but
+   denser, and with the chrome a person editing all day actually needs. */
+
+.admin {
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  min-height: 100vh;
+}
+
+.admin-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 26px var(--pad) 90px;
+}
+
+/* ---- top bar ---- */
+.admin-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--hair-strong);
+  margin-bottom: 30px;
+}
+
+.admin-bar h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+}
+
+.admin-bar h1 b {
+  color: var(--accent);
+  font-weight: inherit;
+}
+
+.admin-bar .who {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-bar nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.admin a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.16s, border-color 0.16s;
+}
+
+.admin-bar nav a:hover,
+.admin-note a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ---- surfaces ---- */
+.admin-card {
+  background: var(--paper);
+  border: 1px solid var(--hair-strong);
+  border-radius: 10px;
+  padding: 26px;
+}
+
+/* ---- sign-in: split page, ink panel on the left, form on bone ---- */
+.auth {
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  min-height: 100vh;
+}
+
+/* An `fr` track keeps min-width:auto, so the form's own measure became a floor
+   the column could not shrink below and the page overflowed on a phone. */
+.auth-side,
+.auth-main {
+  min-width: 0;
+}
+
+.auth-side {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--ink) 0%, var(--ink-2) 100%);
+  color: #ece9e2;
+}
+
+.auth-side::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 6px 6px;
+  pointer-events: none;
+}
+
+.auth-viz {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.auth-side-in {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 42px 48px;
+}
+
+.auth-logo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  color: #fff;
+}
+
+.auth-logo b {
+  color: var(--accent);
+  font-weight: inherit;
+}
+
+.auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.auth-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.auth-eyebrow.dark {
+  color: var(--muted);
+}
+
+.auth-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(30px, 3.4vw, 44px);
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  color: #fff;
+  margin-top: 18px;
+  max-width: 15ch;
+}
+
+.auth-facts {
+  list-style: none;
+  margin-top: 34px;
+  border-top: 1px solid var(--hair-dark);
+  max-width: 46ch;
+}
+
+.auth-facts li {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--hair-dark);
+  font-size: 14.5px;
+  color: rgba(236, 233, 226, 0.78);
+}
+
+.auth-facts li span {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  flex: none;
+}
+
+.auth-foot {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.42);
+  max-width: 56ch;
+  line-height: 1.7;
+}
+
+.auth-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--pad);
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 27rem;
+}
+
+.auth-h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(38px, 4.6vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 16px 0 12px;
+}
+
+.admin-btn.block {
+  width: 100%;
+  justify-content: center;
+  padding: 14px 22px;
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.admin-arrow {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex: none;
+}
+
+@media (max-width: 900px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+  /* The panel is atmosphere, not information. On a phone the form gets the screen. */
+  .auth-side {
+    display: none;
+  }
+  .auth-main {
+    min-height: 100vh;
+  }
+}
+
+/* ---- fields ---- */
+.admin label {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.admin label > span {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+.admin input[type="text"],
+.admin input[type="email"],
+.admin input[type="password"],
+.admin input[type="date"],
+.admin input:not([type]),
+.admin select,
+.admin textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--hair-strong);
+  border-radius: 6px;
+  padding: 11px 13px;
+  transition: border-color 0.16s, box-shadow 0.16s;
+}
+
+.admin textarea {
+  min-height: 260px;
+  line-height: 1.6;
+  resize: vertical;
+  font-family: var(--mono);
+  font-size: 13.5px;
+}
+
+.admin input:focus,
+.admin select:focus,
+.admin textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.admin input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--accent);
+  margin-inline-end: 8px;
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0 20px;
+}
+
+/* ---- buttons ---- */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.admin-btn:hover {
+  background: var(--accent-press);
+}
+
+.admin-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.admin-btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--hair-strong);
+}
+
+.admin-btn.ghost:hover {
+  background: transparent;
+  border-color: var(--ink);
+}
+
+.admin-btn.danger {
+  background: transparent;
+  color: #b0281a;
+  border-color: color-mix(in srgb, #b0281a 34%, transparent);
+}
+
+.admin-btn.danger:hover {
+  background: #b0281a;
+  color: #fff;
+  border-color: #b0281a;
+}
+
+.admin a.admin-btn {
+  border-bottom-style: solid;
+}
+
+/* ---- filter tabs ---- */
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.admin-tabs button {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--hair-strong);
+  background: transparent;
+  color: #33343b;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.admin-tabs button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* ---- the post list ---- */
+.admin-list {
+  border-top: 1px solid var(--hair-strong);
+}
+
+.admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--hair);
+  transition: background 0.18s, padding 0.18s;
+}
+
+.admin-item:hover {
+  background: var(--paper);
+  padding-inline: 14px;
+}
+
+.admin-item h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+
+.admin-item .actions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.admin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* The site's .pill is a blue chip; draft and published need telling apart. */
+.admin .pill {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin .pill.published {
+  background: color-mix(in srgb, #0e8f5e 14%, transparent);
+  color: #0b6f49;
+}
+
+.admin .pill.draft {
+  background: var(--bone-3);
+  color: #5f6067;
+}
+
+/* ---- messages ---- */
+.admin-note {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.admin-error {
+  background: var(--orange-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  color: var(--orange-deep);
+  border-radius: 6px;
+  padding: 11px 14px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-inline-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.admin-inline-upload input[type="file"] {
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+@media (max-width: 700px) {
+  .admin-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .admin-bar {
+    align-items: flex-start;
+  }
+}
