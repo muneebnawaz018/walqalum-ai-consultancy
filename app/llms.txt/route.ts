@@ -1,12 +1,12 @@
 import { CASES } from "@/lib/cases";
 import { PRODUCTS } from "@/lib/products";
 import { listPosts } from "@/lib/posts";
-import { abs, ROUTES } from "@/lib/seo";
-
-export const revalidate = 3600;
+import { ROUTES, absOn, originFromRequest } from "@/lib/seo";
 
 /** A plain-text map of the site for language models that read llms.txt. */
 export async function GET() {
+  const origin = await originFromRequest();
+  const abs = (path: string) => absOn(origin, path);
   const posts = await listPosts();
 
   const body = [

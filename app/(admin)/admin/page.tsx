@@ -13,9 +13,6 @@ export default async function AdminLogin({ searchParams }: PageProps<"/admin">) 
       <aside className="auth-side">
         <AuthArt />
         <div className="auth-side-in">
-          <div className="auth-logo">
-            Wal<b>Qalum</b>
-          </div>
           <div>
             <span className="auth-eyebrow">Newsroom · internal</span>
             <h2 className="auth-display">Where the writing gets published.</h2>

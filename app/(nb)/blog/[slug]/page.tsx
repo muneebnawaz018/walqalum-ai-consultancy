@@ -6,10 +6,9 @@ import { Chrome } from "@/components/nb/Chrome";
 import { CtaBand, Footer } from "@/components/nb/Footer";
 import { getPost } from "@/lib/posts";
 import { schemaFor } from "@/lib/schema-org";
+import { SITE_URL as SITE } from "@/lib/seo";
 
 export const revalidate = 300;
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://walqalum.com";
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const { slug } = await params;

@@ -2,11 +2,16 @@ import type { MetadataRoute } from "next";
 import { CASES } from "@/lib/cases";
 import { PRODUCTS } from "@/lib/products";
 import { listPosts } from "@/lib/posts";
-import { abs, ROUTES } from "@/lib/seo";
+import { ROUTES, absOn, originFromRequest } from "@/lib/seo";
 
-export const revalidate = 3600;
-
+/**
+ * Built per request rather than cached, so the URLs it lists are on the domain
+ * that served it. `revalidate` is gone with the caching it configured: reading
+ * the host is a request-time API, which opts this route out either way.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const origin = await originFromRequest();
+  const abs = (path: string) => absOn(origin, path);
   const now = new Date();
   const pages: MetadataRoute.Sitemap = ROUTES.map((path) => ({
     url: abs(path),

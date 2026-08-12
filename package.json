@@ -10,9 +10,6 @@
     "lint:md": "markdownlint-cli2",
     "seed:admin": "tsx --env-file=.env.development.local scripts/seed-admin.ts",
     "seed:demo": "tsx --env-file=.env.development.local scripts/seed-demo.ts",
-    "db:up": "node --env-file=.env.development.local scripts/compose.mjs up -d",
-    "db:down": "node --env-file=.env.development.local scripts/compose.mjs down",
-    "db:logs": "node --env-file=.env.development.local scripts/compose.mjs logs -f mongo",
     "test": "node --import tsx --test --env-file=.env.development.local tests/*.test.ts"
   },
   "dependencies": {

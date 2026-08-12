@@ -1,10 +1,71 @@
 /* The newsroom, in the site's own theme.
-   It imports artifact.css for the tokens and fonts, then dresses a set of tools
-   rather than a page: same bone, same accent, same Fraunces and Hanken, but
-   denser, and with the chrome a person editing all day actually needs. */
+   It dresses a set of tools rather than a page: the same palette and the same
+   two typefaces as the public site, but denser, and with the chrome a person
+   editing all day actually needs. */
 
+/* ---- the design's palette, in the vocabulary this file was written in ----
+   The admin was built against the old sixty-three-token palette, where `--ink`
+   meant near-black and the ground was always a warm bone. The 2026 design took
+   over four of those names — `ink`, `muted`, `accent`, `danger` — and inverted
+   what two of them mean: `--ink` is now the *text* colour, near-white in the
+   dark theme that ships as default. That is what left the sign-in heading
+   invisible, white on bone.
+
+   Rather than rename a thousand lines, the old names are re-pointed at the new
+   tokens here. Everything below then themes for free, and the admin follows
+   whatever the visitor chose on the site. `--ink` and `--muted` are deliberately
+   absent: both already mean the right thing in the new palette. */
 .admin {
-  background: var(--bone);
+  /* Surfaces, lightest ground to raised panel. */
+  --bone: var(--bg);
+  --bone-2: var(--surface);
+  --bone-3: var(--surface);
+  --paper: var(--bg);
+
+  /* Secondary text. The old scale had five weights of near-black; the design
+     has one, and the distinctions were never load-bearing. */
+  --ink-2: var(--muted-2);
+  --ink-3: var(--muted-2);
+  --body-ink: var(--muted-2);
+  --body-ink-2: var(--muted-2);
+  --body-ink-3: var(--muted-2);
+  --muted-2: var(--muted);
+
+  /* Rules. */
+  --hair: var(--hairline);
+  --hair-strong: var(--hairline-strong);
+  --hair-dark: var(--hairline);
+
+  /* Text that sits on the accent or on a filled chip. One colour in both
+     themes, as the design has it. */
+  --white: var(--on-accent);
+  --on-dark: var(--on-accent);
+  --on-dark-soft: var(--on-accent);
+  --accent-press: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-ring: color-mix(in srgb, var(--accent) 30%, transparent);
+  --danger-soft: color-mix(in srgb, var(--danger) 34%, transparent);
+  --danger-wash: color-mix(in srgb, var(--danger) 9%, var(--bg));
+  --success-ink: var(--success);
+  --orange-deep: var(--danger);
+  --serp-link: var(--accent);
+
+  /* Overlays. The old ones were built from literal white and literal ink, so
+     they only worked over a light ground. */
+  --on-white-92: var(--surface);
+  --on-white-62: var(--muted);
+  --on-white-42: var(--muted-3);
+  --on-white-20: var(--hairline);
+  --veil-ink-55: color-mix(in srgb, var(--bg) 55%, transparent);
+  --shadow-ink-18: var(--shadow);
+  --shadow-ink-28: var(--shadow-strong);
+
+  /* The design's two faces, in place of Fraunces and Hanken. */
+  --font-display: "Inter Tight", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter Tight", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 15px;
@@ -21,35 +82,39 @@
 }
 
 /* ---- top bar ---- */
+/* A thin strip under the site header rather than a masthead of its own. The
+   header carries the identity now; this carries only the session. */
 .admin-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--hair-strong);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--hairline);
   margin-bottom: 30px;
 }
 
-.admin-bar h1 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 22px;
-  letter-spacing: 0.01em;
+/* ---- corrections to artifact.css ----
+   The newsroom borrows a handful of primitives from the outgoing stylesheet.
+   Two of them fill with `--ink` and label in `--white`, which was legible only
+   while `--ink` meant near-black. On the dark theme that is white on white, so
+   the label follows the ground instead. */
+.admin .filters button[aria-pressed="true"],
+.admin .btn-dark {
+  color: var(--bg);
 }
 
-.admin-bar h1 b {
+.admin .prod .status {
+  color: var(--bg);
+}
+
+.admin-bar .who a {
+  color: inherit;
+}
+
+.admin-bar .who a:hover {
   color: var(--accent);
-  font-weight: inherit;
-}
-
-.admin-bar h1 a {
-  border-bottom: none;
-}
-
-.admin-bar h1 a:hover b {
-  color: var(--accent-press);
 }
 
 .admin-bar .who {
@@ -67,7 +132,9 @@
   font-size: 14px;
 }
 
-.admin a {
+/* Scoped to the page, not the document: the site header lives outside `main`
+   now, and this was repainting its CTA label the same colour as its own fill. */
+.admin main a {
   color: var(--ink);
   text-decoration: none;
   border-bottom: 1px solid transparent;
@@ -88,11 +155,13 @@
   padding: 26px;
 }
 
-/* ---- sign-in: split page, ink panel on the left, form on bone ---- */
+/* ---- sign-in: split page, panel on the left, form on the ground ---- */
 .auth {
   display: grid;
   grid-template-columns: 1.02fr 0.98fr;
-  min-height: 100vh;
+  /* The site header sits above this now, so a full viewport height here would
+     push the page into a scroll for the sake of 68 pixels. */
+  min-height: calc(100svh - 68px);
 }
 
 /* An `fr` track keeps min-width:auto, so the form's own measure became a floor
@@ -102,11 +171,16 @@
   min-width: 0;
 }
 
+/* The panel used to be a slab of near-black with white type on it, which only
+   worked because the page could never be anything but light. It is now the
+   raised surface, one step off the ground in whichever theme is running, and
+   its type is ordinary body colour. */
 .auth-side {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(150deg, var(--ink) 0%, var(--ink-2) 100%);
-  color: var(--on-dark);
+  background: linear-gradient(150deg, var(--surface) 0%, var(--bg) 100%);
+  color: var(--ink);
+  border-inline-end: 1px solid var(--hairline);
 }
 
 .auth-side::after {
@@ -138,18 +212,8 @@
   padding: 42px 48px;
 }
 
-.auth-logo {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--white);
-}
-
-.auth-logo b {
-  color: var(--accent);
-  font-weight: inherit;
-}
-
+/* The site's own lockup: the gradient mark beside the wordmark, not the old
+   serif bicolour one. */
 .auth-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -158,7 +222,7 @@
   font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--on-white-62);
+  color: var(--muted);
 }
 
 .auth-eyebrow::before {
@@ -177,8 +241,8 @@
   font-weight: 600;
   font-size: clamp(30px, 3.4vw, 44px);
   line-height: 1.06;
-  letter-spacing: -0.018em;
-  color: var(--white);
+  letter-spacing: -0.03em;
+  color: var(--ink);
   margin-top: 18px;
   max-width: 15ch;
 }
@@ -195,9 +259,9 @@
   gap: 16px;
   align-items: baseline;
   padding: 13px 0;
-  border-bottom: 1px solid var(--hair-dark);
+  border-bottom: 1px solid var(--hairline);
   font-size: 14.5px;
-  color: var(--on-dark-soft);
+  color: var(--muted-2);
 }
 
 .auth-facts li span {
@@ -211,7 +275,7 @@
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.05em;
-  color: var(--on-white-42);
+  color: var(--muted-3);
   max-width: 56ch;
   line-height: 1.7;
 }
@@ -230,10 +294,13 @@
 
 .auth-h1 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: clamp(38px, 4.6vw, 56px);
   line-height: 1.02;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  /* Stated, not inherited. Inheriting is how this went white-on-bone the day
+     `--ink` changed meaning. */
+  color: var(--ink);
   margin: 16px 0 12px;
 }
 
@@ -263,7 +330,7 @@
     display: none;
   }
   .auth-main {
-    min-height: 100vh;
+    min-height: calc(100svh - 68px);
   }
 }
 
@@ -493,7 +560,7 @@
 
 .np-status.draft {
   background: color-mix(in srgb, var(--ink) 74%, transparent);
-  color: var(--on-dark);
+  color: var(--bg);
 }
 
 /* Everything below the card is the editing half: quieter, mono, hairline off. */
@@ -583,7 +650,7 @@
 
 .np-tools > *:hover {
   background: var(--ink);
-  color: var(--white);
+  color: var(--bg);
 }
 
 .np-tools > .danger:hover {
@@ -670,7 +737,7 @@
 .modal-x:hover {
   background: var(--ink);
   border-color: var(--ink);
-  color: var(--white);
+  color: var(--bg);
 }
 
 .modal-x svg {
@@ -1421,7 +1488,7 @@
   flex: none;
   border-radius: 50%;
   background: var(--ink);
-  color: var(--white);
+  color: var(--bg);
   font-family: var(--font-display);
   font-size: 12px;
 }

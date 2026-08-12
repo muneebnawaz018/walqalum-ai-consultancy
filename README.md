@@ -13,7 +13,6 @@ matches what is built.
 ```bash
 npm install
 cp .env.example .env.development.local   # fill in every blank in it
-npm run db:up                            # MongoDB in Docker, on 127.0.0.1:27017
 npm run dev
 ```
 
@@ -22,27 +21,29 @@ newsroom has published something.
 
 ### The database
 
-`docker-compose.yml` runs MongoDB locally. It is the same thing a hosted cluster
-is, a mongod reached over a connection string, so nothing in the code branches on
-where it lives and moving to Atlas later means changing `MONGODB_URI` and nothing
-else. Credentials come from `.env.development.local`, the file Next itself loads
-for `next dev`, which is why the db and test scripts pass `--env-file` at it too.
-Nothing but `.env.example` is committed. The port is bound to loopback, so the
-container is not reachable from the network, and data survives restarts in a
-named volume.
+MongoDB is hosted. There is no local container and no Docker in this repo: every
+environment, including a developer's laptop, talks to the cluster over
+`MONGODB_URI`. Nothing in the code branches on where the database lives, so the
+connection string is the whole of its configuration.
 
-```bash
-npm run db:up      # start
-npm run db:logs    # follow
-npm run db:down    # stop, keeping the volume
-```
+That includes the database name, which lives in the string's path
+(`.../walqalum?...`) rather than in a variable or a constant. One newsroom for
+one company, described in one place. The path is not optional: without it the
+driver falls back to `test`, and the site renders as an empty blog instead of
+failing.
 
-`MONGODB_URI` is the only place the database is described. Compose cannot read a
-connection string, so `npm run db:up` goes through `scripts/compose.mjs`, which
-unpacks the user and password out of the URI and hands them to compose as the
-container's root credentials. They exist for the length of that command and are
-written down nowhere. Locally and on a host, one variable. `MONGODB_DB` is
-optional on top of it, defaulting to `walqalum`.
+The string lives in `.env.development.local`, the file Next itself loads for
+`next dev`, which is why the seed and test scripts pass `--env-file` at it too.
+Nothing but `.env.example` is committed.
+
+Two consequences of a shared cluster worth knowing before you run anything:
+
+- **The integration tests write to whatever `MONGODB_URI` points at.** They
+  create and delete posts through the API. Isolating a run means pointing
+  `MONGODB_URI` at another database — change the name in its path.
+- **Access is by IP allowlist on the provider, not by anything in this repo.** A
+  connection that hangs and then times out is usually an address that has not
+  been added, not a wrong password: a bad password fails fast and says so.
 
 Seed an account (there is no sign-up route, deliberately):
 
@@ -74,27 +75,35 @@ by URL only, carries `noindex`, and is disallowed in `robots.txt`.
 
 ### Deploying
 
-Four variables, and none of the local ones:
+Two variables, and none of the local ones:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://walqalum.com
-MONGODB_URI=<the cluster's connection string>
-MONGODB_DB=<only if the database is not named walqalum>
+MONGODB_URI=<the cluster's connection string, ending /walqalum>
 AUTH_SECRET=<openssl rand -base64 48, a different one from local>
 ```
 
-`AUTH_RATE_LIMIT` is local-only and belongs nowhere near a host; it is ignored in
-production regardless. The `SEED_*` trio is needed only when you seed against
-that database, and there you are better off passing them to `npm run seed:admin`
-as arguments, which leaves the password in no file at all.
+The site's own address is not one of them. `lib/seo.ts` works it out from where
+the app is running — the Vercel project domain in production, the branch URL on
+a preview, the dev server's port locally — in the same order Next resolves
+`metadataBase`. `robots.txt`, `sitemap.xml` and `llms.txt` go further and answer
+on whatever host requested them, so a staging domain describes itself rather
+than production.
+
+The `SEED_*` trio is needed only when you seed against that database, and there
+you are better off passing them to `npm run seed:admin` as arguments, which
+leaves the password in no file at all.
 
 ## Tests
 
 ```bash
-npm run db:up && npm run seed:demo    # once
-npm run dev                           # one terminal
-npm test                              # another
+npm run seed:demo    # once
+npm run dev          # one terminal
+npm test             # another
 ```
+
+The suite writes through the API to whatever `MONGODB_URI` points at, and that
+cluster is shared. Change the database name in its path if a run must not touch
+real content.
 
 The suite signs in as the same `SEED_EMAIL` / `SEED_PASSWORD` the seed created,
 so there is no second pair of credentials to keep in step. Without them the
@@ -113,10 +122,10 @@ called a handler directly would walk straight past the proxy and prove nothing.
 - `tests/uploads.test.ts` — magic-byte sniffing, SVG refusal, size cap, ETags
 - `tests/ratelimit.test.ts` — the login limiter, called directly
 
-Posts the suite creates are deleted afterwards. `AUTH_RATE_LIMIT=off` in
-`.env.development.local` stops a run locking itself out of sign-in; the flag is
-ignored when `NODE_ENV` is production, and the limiter is covered directly
-instead.
+Posts the suite creates are deleted afterwards. There is no switch that turns
+the login limiter off for a test run: the allowance is thirty failed attempts
+per address per fifteen minutes, which a run never approaches, so the limiter
+under test is the one that runs in production.
 
 ## The 2026 rebrand
 

@@ -37,7 +37,10 @@ export function requireAccount(account: Account): Account {
   };
 
   if (!process.env.MONGODB_URI) {
-    fail("MONGODB_URI is not set. Start the database with `npm run db:up` first.");
+    fail(
+      "MONGODB_URI is not set. Copy .env.example to .env.development.local and\n" +
+        "  put the cluster's connection string in it.",
+    );
   }
   if (!account.email || !account.email.includes("@")) {
     fail(

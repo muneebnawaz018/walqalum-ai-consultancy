@@ -1,4 +1,5 @@
-@import "./colors.css";
+/* Colours are generated from `lib/theme.ts` and injected by the root layout,
+   so there is no colour import here. Everything below reads them as var(). */
 
 /* The 2026 rebrand, taken from the design artifact.
    Fonts were embedded as base64 in the artifact; they are real files here so

@@ -1,0 +1,26 @@
+/**
+ * The design's two faces.
+ *
+ * Split out of `wq.css` because the admin needs them too, and the alternative
+ * was either importing the whole site stylesheet into the newsroom or keeping a
+ * second copy of these declarations in step by hand.
+ *
+ * Both are variable fonts: one file covers every weight the design uses, which
+ * is why there is a range here rather than five separate files. The design
+ * pulled these from Google Fonts over the network; they are local files here so
+ * the browser can cache them and no page has a third-party dependency.
+ */
+@font-face {
+  font-family: "Inter Tight";
+  src: url("/fonts/InterTight.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono.woff2") format("woff2-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}

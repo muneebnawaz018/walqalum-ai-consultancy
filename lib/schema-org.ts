@@ -1,9 +1,11 @@
 import type { PostDoc } from "./db";
+import { SITE_URL as SITE } from "./seo";
 
 type Block = Record<string, unknown>;
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://walqalum.com";
-
+/* The origin is resolved in one place. This file used to read the environment
+   itself, with its own fallback, which meant a deployment that set the variable
+   one way could still emit JSON-LD pointing somewhere else. */
 const abs = (url: string) => (url.startsWith("http") ? url : `${SITE}${url}`);
 
 /**

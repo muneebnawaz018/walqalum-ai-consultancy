@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { DESIGN } from "@/lib/theme";
 
 /**
  * The site's generative network, redrawn for the sign-in panel.
@@ -19,14 +20,19 @@ export function AuthArt() {
     if (!cv || !wrap || !ctx) return;
 
     const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
-    /* Colours come from colors.css; canvas cannot take a `var()`, so they are
-       read once here. The fallbacks only matter if the stylesheet is missing. */
+    /* Canvas cannot take a `var()`, so the custom properties are resolved once
+       here. The fallbacks come from the same palette that emitted them, so a
+       missing stylesheet degrades to the right colours instead of invented
+       ones. */
     const token = (name: string, fallback: string) =>
       getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 
-    const accent = token("--accent", "#1d49e2");
-    const line = token("--canvas-line", "255 255 255");
-    const dot = token("--canvas-dot-dim", "rgba(255,255,255,.45)");
+    const accent = token("--accent", DESIGN.dark.accent);
+    /* The ink channels, so the constellation is drawn in whatever colour the
+       running theme uses for text. It was literal white, which was only ever
+       legible because the panel behind it could not be anything but near-black.
+       Now the panel follows the theme, so the drawing has to as well. */
+    const line = token("--rgb-ink", DESIGN.dark.rgbInk).replace(/,/g, " ");
 
     let nodes: Array<{ x: number; y: number; vx: number; vy: number; a: boolean }> = [];
     let raf = 0;
@@ -95,7 +101,7 @@ export function AuthArt() {
           ctx.fill();
           ctx.globalAlpha = 1;
         } else {
-          ctx.fillStyle = dot;
+          ctx.fillStyle = `rgb(${line} / 0.45)`;
           ctx.beginPath();
           ctx.arc(q.x, q.y, 1.5, 0, 7);
           ctx.fill();

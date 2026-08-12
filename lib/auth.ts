@@ -16,30 +16,38 @@ export async function requireSession(): Promise<Session> {
   return s;
 }
 
-/** Five attempts per IP per fifteen minutes, in memory. */
-const attempts = new Map<string, { n: number; until: number }>();
-const WINDOW = 15 * 60 * 1000;
-const LIMIT = 5;
-
 /**
- * The integration suite signs in for real over HTTP, and a tripped limiter locks
- * the whole run out for fifteen minutes — including the correct password, since
- * the check runs before the password is read. The escape hatch is explicit and
- * refuses to apply in production, and the counting itself is covered directly in
- * tests/ratelimit.test.ts so turning it off here costs no coverage.
+ * Login attempts per IP, in memory.
+ *
+ * The limit is deliberately wide. Its job is to make automated credential
+ * stuffing pointless, not to police typing: this is a private newsroom used by
+ * a few people, and the cost of a false lockout — an editor barred for a quarter
+ * of an hour, with no self-service reset — is higher than the cost of an
+ * attacker getting thirty guesses instead of five. Against a bcrypt hash,
+ * thirty guesses is nothing; against a script working a password list, a ceiling
+ * of a hundred and twenty an hour makes the attempt worthless.
+ *
+ * A correct password clears the count (see the login route), so the only
+ * attempts that accumulate are failures.
+ *
+ * There is no way to turn this off. It used to have one for the test suite,
+ * which meant the code path running in production was not the one under test.
+ * The limit is now loose enough that a full test run never approaches it.
  */
-const bypassed = () => process.env.AUTH_RATE_LIMIT === "off" && process.env.NODE_ENV !== "production";
+export const RATE_WINDOW_MS = 15 * 60 * 1000;
+export const RATE_LIMIT = 30;
+
+const attempts = new Map<string, { n: number; until: number }>();
 
 export function rateLimit(ip: string): boolean {
-  if (bypassed()) return true;
   const now = Date.now();
   const rec = attempts.get(ip);
   if (!rec || rec.until < now) {
-    attempts.set(ip, { n: 1, until: now + WINDOW });
+    attempts.set(ip, { n: 1, until: now + RATE_WINDOW_MS });
     return true;
   }
   rec.n += 1;
-  return rec.n <= LIMIT;
+  return rec.n <= RATE_LIMIT;
 }
 
 export function clearRateLimit(ip: string) {

@@ -262,6 +262,8 @@ page, so it stays its own batch either way.
   HTML (done), semantic headings (batch 4), structured data (batch 3), and
   `robots.txt` not blocking the agent (batch 1). No single file does it.
 - `humans.txt` does nothing. Skipped deliberately.
-- `NEXT_PUBLIC_SITE_URL` must be set in production. Everything above falls back
-  to `https://walqalum.com` otherwise, and a wrong origin silently breaks every
-  canonical, OG URL and JSON-LD `@id`.
+- The origin is not configured any more. `lib/seo.ts` derives it from the
+  deployment (Vercel's project or branch domain, or the dev server's port) and
+  falls back to `https://walqalum.com` only when nothing announces itself.
+  `robots.txt`, `sitemap.xml` and `llms.txt` use the requesting host instead,
+  which is why they are dynamic routes.

@@ -1,0 +1,1203 @@
+/**
+ * The 2026 design's own layer.
+ *
+ * Colours are not here — they are generated from `lib/theme.ts` and injected by
+ * the root layout. This file is type, resets and the primitives the design
+ * reuses across sections.
+ *
+ * It exists alongside the outgoing `artifact.css` while pages move across. The
+ * two never style the same element: everything here is namespaced under `.wq-`
+ * or a `[data-wq-*]` attribute, so the old pages keep rendering untouched until
+ * they are replaced and `artifact.css` is deleted.
+ */
+
+/* The faces live in `fonts.css`, which the admin imports too. */
+@import "./fonts.css";
+
+/* ---- the shell ----
+   Scoped to the body class so the admin and the outgoing pages are unaffected. */
+.wq {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter Tight", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+.wq *,
+.wq *::before,
+.wq *::after {
+  box-sizing: border-box;
+}
+.wq h1,
+.wq h2,
+.wq h3,
+.wq h4,
+.wq p,
+.wq figure {
+  margin: 0;
+}
+
+/* The design's rhythm: one gutter and one measure, reused by every section. */
+.wq-wrap {
+  max-width: 1720px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 48px);
+}
+/* Section padding, as the design writes it. */
+.wq-sec {
+  padding-block: clamp(120px, 14vw, 200px);
+}
+
+/* Hairlines are the ink colour at low alpha rather than a grey of their own, so
+   they invert with the theme without a second token. */
+.wq-rule {
+  border-color: var(--hairline);
+}
+
+/* ---- type ----
+   The display face is set tight and optically aligned: at these sizes the
+   default tracking reads loose, and the left stem needs pulling to the margin. */
+.wq-display {
+  font-weight: 700;
+  font-size: clamp(44px, 8.2vw, 132px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.wq-h2 {
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.wq-lede {
+  font-size: clamp(16px, 1.2vw, 19px);
+  line-height: 1.62;
+  color: var(--muted-2);
+  max-width: 52ch;
+}
+/* The eyebrow: mono, spaced, and the one place the design uses uppercase. */
+.wq-eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wq-accent {
+  color: var(--accent);
+}
+
+/* ---- controls ---- */
+.wq a:focus-visible,
+.wq button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+/* The primary action inverts against the page rather than carrying the brand,
+   and only picks up the accent on hover. */
+.wq-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 2px;
+  border: 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.wq-cta:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---- desktop / mobile ----
+   The design's own breakpoint, at 1023px rather than a round number. */
+/* Scoped to `.wq` on body so these outrank the single-class component rules
+   below them — `.wq-icon-btn { display: flex }` would otherwise win on
+   specificity alone and leave the burger showing on desktop. */
+.wq .wq-desktop {
+  display: flex;
+}
+.wq .wq-mobile {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .wq .wq-desktop {
+    display: none !important;
+  }
+  .wq .wq-mobile {
+    display: flex !important;
+  }
+}
+
+/* ---- motion ----
+   Everything the design animates is opt-in through these, so honouring a
+   reduced-motion preference is one rule rather than a hunt through sections. */
+@media (prefers-reduced-motion: reduce) {
+  .wq *,
+  .wq *::before,
+  .wq *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- header ----
+   Fixed, not sticky: the design runs the hero full-bleed underneath it and
+   only draws a hairline once something has scrolled behind it. */
+.wq-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-bottom: 1px solid transparent;
+  transition: background 0.25s, border-color 0.25s, backdrop-filter 0.25s;
+}
+.wq-header[data-scrolled] {
+  background: var(--header-veil);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom-color: var(--hairline);
+}
+/* Three tracks rather than space-between: with the logo and the actions being
+   different widths, space-between leaves the nav sitting left of centre and
+   drifting as the actions change (the language button, the sound toggle). The
+   1fr on each side pins it to the middle of the header at every width. */
+.wq-header-in {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 68px;
+  max-width: 1720px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 48px);
+}
+.wq-header-in > .wq-logo {
+  justify-self: start;
+}
+.wq-header-in > .wq-actions {
+  justify-self: end;
+}
+/* Below 1024px the nav and most actions are hidden, so the middle track would
+   collapse and leave the logo adrift. */
+@media (max-width: 1023px) {
+  .wq-header-in {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+/* The mark is a gradient, so unlike the old lockup it cannot be recoloured
+   with currentColor — it ships as an image and the wordmark is live type
+   beside it. */
+.wq-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.wq-logo img {
+  display: block;
+  width: 30px;
+  height: auto;
+}
+.wq-logo span {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.wq-nav {
+  align-items: center;
+  gap: 30px;
+}
+.wq-nav a {
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  padding-block: 6px;
+  transition: color 0.2s;
+}
+.wq-nav a:hover,
+.wq-nav a[aria-current="page"] {
+  color: var(--ink);
+}
+
+.wq-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.wq-icon-btn {
+  background: none;
+  border: 0;
+  padding: 8px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.wq-icon-btn:hover {
+  color: var(--accent);
+}
+.wq-lang {
+  background: none;
+  border: 0;
+  padding: 8px 4px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.wq-lang:hover {
+  color: var(--ink);
+}
+
+/* ---- mega panel ----
+   The design gave one of these to Services alone; the brief is to give one to
+   every tab. Values are the design's own: the overlay tint, the 18px blur, the
+   8px rise and its easing. */
+.wq-mega {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--veil);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-block: 1px solid var(--hairline);
+  transform-origin: 50% 0;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  /* Hidden rather than merely transparent, so the links inside a closed panel
+     cannot be tabbed into. The zero-length visibility transition is delayed to
+     the end of the fade on the way out, and immediate on the way in. */
+  visibility: hidden;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s,
+    visibility 0s 0.3s;
+}
+.wq-mega[data-open] {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s,
+    visibility 0s;
+}
+.wq-mega-in {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: 40px clamp(20px, 4vw, 48px) 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+/* A single-group panel (Insights) would otherwise sit in one half of a
+   two-column grid with a hole beside it. */
+.wq-mega-in[data-cols="1"] {
+  grid-template-columns: minmax(0, 560px);
+}
+.wq-mega-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+.wq-mega-list {
+  display: grid;
+  gap: 4px;
+}
+.wq-mega-list a {
+  display: block;
+  text-decoration: none;
+  padding: 10px 12px;
+  /* Pulled back by its own padding so the text lines up with the label above
+     while the hover tint still reads as a full-width row. */
+  margin-inline-start: -12px;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.wq-mega-list a:hover {
+  background: var(--tint);
+}
+.wq-mega-name {
+  display: block;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.wq-mega-desc {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 3px;
+}
+/* The tab whose panel is showing reads as active while it is open. */
+.wq-nav a[data-open] {
+  color: var(--ink);
+}
+/* Below 1024px the tabs themselves are gone and the drawer takes over, so the
+   panels have nothing to hang off. */
+@media (max-width: 1023px) {
+  .wq-mega {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wq-mega {
+    transition: opacity 0.15s, visibility 0s 0.15s;
+    transform: none;
+  }
+  .wq-mega[data-open] {
+    transform: none;
+  }
+}
+
+/* Anchor targets have to clear the fixed header, or a panel link lands with
+   its heading tucked underneath it. */
+.wq [id] {
+  scroll-margin-top: 92px;
+}
+
+/* ---- mobile drawer ---- */
+.wq-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px clamp(20px, 4vw, 48px) 26px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--hairline);
+}
+.wq-drawer[hidden] {
+  display: none;
+}
+.wq-drawer nav {
+  display: flex;
+  flex-direction: column;
+}
+.wq-drawer nav a {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.wq-drawer .wq-cta {
+  margin-top: 18px;
+  justify-content: center;
+}
+
+/* The header is out of flow, so pages have to start below it. */
+.wq-below-header {
+  padding-top: 68px;
+}
+
+/* ---- footer ---- */
+.wq-footer {
+  background: var(--bg);
+  color: var(--ink);
+  border-top: 1px solid var(--hairline);
+  overflow: hidden;
+}
+.wq-fcols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  max-width: 1720px;
+  margin-inline: auto;
+  padding: clamp(56px, 8vw, 110px) clamp(20px, 4vw, 48px) clamp(40px, 5vw, 64px);
+}
+@media (max-width: 900px) {
+  .wq-fcols {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 540px) {
+  .wq-fcols {
+    grid-template-columns: 1fr;
+  }
+}
+.wq-flogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wq-flogo img {
+  display: block;
+  width: 34px;
+  height: auto;
+}
+.wq-flogo span {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.wq-fabout {
+  margin-top: 16px;
+  max-width: 34ch;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.wq-fsocial {
+  display: flex;
+  gap: 20px;
+  margin-top: 22px;
+}
+.wq-fsocial a {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.wq-fsocial a:hover {
+  color: var(--ink);
+}
+/* Column headings are mono and spaced, the same device as the section eyebrow. */
+.wq-fhead {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-3);
+  margin-bottom: 18px;
+}
+.wq-flist {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.wq-flist a {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.wq-flist a:hover {
+  color: var(--accent);
+}
+.wq-office {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.wq-office a {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12.5px;
+  color: var(--muted-3);
+}
+.wq-fbottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1720px;
+  margin-inline: auto;
+  padding: 22px clamp(20px, 4vw, 48px) 34px;
+  border-top: 1px solid var(--hairline);
+  font-size: 12.5px;
+  color: var(--muted-3);
+}
+.wq-fbottom-links {
+  display: flex;
+  gap: 20px;
+}
+.wq-fbottom a {
+  color: var(--muted-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.wq-fbottom a:hover {
+  color: var(--ink);
+}
+
+/* ---- hero ----
+   `100svh` rather than `100vh`: on mobile the dynamic toolbar makes `vh` taller
+   than the visible area, which pushes the buttons under the chrome on load. */
+.wq-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: 140px clamp(20px, 4vw, 48px) 80px;
+  max-width: 1720px;
+  margin-inline: auto;
+}
+.wq-hero-in {
+  position: relative;
+  max-width: 1200px;
+}
+.wq-hero-eyebrow {
+  font-size: 12px;
+  margin-bottom: 32px;
+}
+.wq-hero-h1 {
+  margin: 0 0 40px;
+  font-size: clamp(3.5rem, 9vw, 9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.wq-hero-line {
+  display: block;
+}
+.wq-hero-lede {
+  margin: 0 0 44px;
+  max-width: 560px;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.wq-hero-cta {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.wq-cta-lg {
+  font-size: 15px;
+  padding: 16px 32px;
+}
+/* The quiet second action: underlined on hover rather than boxed, so it reads
+   as secondary to the filled button beside it. */
+.wq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 15px;
+  border-bottom: 1px solid var(--underline);
+  padding-bottom: 3px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.wq-link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+/* ---- the cycling word ----
+   Items are stacked on top of each other and faded between. The ghost is an
+   invisible copy of the longest word that holds the box open, so the rest of
+   the line never reflows as the word changes. */
+.wq-cycle {
+  position: relative;
+  display: inline-grid;
+  vertical-align: baseline;
+  color: var(--accent);
+}
+.wq-cycle-ghost {
+  visibility: hidden;
+}
+.wq-cycle-item {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(0.12em);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.wq-cycle-item[data-on] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Visible to a screen reader, absent from the page. */
+.wq-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- section scaffolding ---- */
+.wq-sec-b {
+  padding-bottom: clamp(120px, 14vw, 200px);
+}
+.wq-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 56px;
+}
+.wq-h2-lg {
+  margin: 20px 0 0;
+  font-size: clamp(34px, 4.5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.wq-grid2 {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) 1fr;
+  gap: clamp(32px, 6vw, 96px);
+}
+.wq-grid2-start {
+  align-items: start;
+}
+.wq-grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 44px);
+}
+.wq-grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(24px, 3vw, 44px);
+}
+@media (max-width: 1023px) {
+  .wq-grid2,
+  .wq-grid3 {
+    grid-template-columns: 1fr;
+  }
+  .wq-grid4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .wq-grid4 {
+    grid-template-columns: 1fr;
+  }
+}
+.wq-side {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 56px);
+}
+/* The section marker: a rule that fades downward out of the accent. */
+.wq-tick {
+  width: 1px;
+  height: clamp(60px, 10vw, 140px);
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  margin-inline-start: 2px;
+}
+.wq-side-note {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 240px;
+  text-wrap: pretty;
+}
+.wq-statement {
+  font-size: clamp(26px, 3.2vw, 46px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.22;
+  text-wrap: pretty;
+}
+.wq-statement em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+/* ---- marquee ----
+   Two identical halves translated by exactly -50% so the loop is seamless.
+   Width is max-content, so the animation distance does not depend on how many
+   names there are. */
+.wq-marquee {
+  border-block: 1px solid var(--hairline);
+  padding-block: 28px;
+  overflow: hidden;
+}
+.wq-track {
+  display: flex;
+  width: max-content;
+  animation: wq-scroll 42s linear infinite;
+}
+.wq-track-pass {
+  display: flex;
+}
+.wq-track span {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: clamp(28px, 4vw, 64px);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted-3);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+@keyframes wq-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wq-track {
+    animation: none;
+  }
+}
+
+/* ---- capabilities ---- */
+.wq-sticky-col {
+  position: sticky;
+  top: 120px;
+}
+.wq-bignum {
+  font-size: clamp(80px, 10vw, 160px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  margin-top: 24px;
+}
+.wq-bignum span {
+  color: var(--accent);
+}
+.wq-sticky-col .wq-side-note {
+  max-width: 320px;
+  margin-top: 24px;
+}
+.wq-cap {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  border-top: 1px solid var(--hairline-strong);
+  padding-block: clamp(32px, 3.5vw, 52px);
+  opacity: 0.34;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wq-cap[data-on] {
+  opacity: 1;
+}
+.wq-cap-num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+.wq-cap h3 {
+  margin: 0 0 12px;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.wq-cap p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15.5px;
+  line-height: 1.6;
+  max-width: 520px;
+  text-wrap: pretty;
+}
+
+/* ---- process ---- */
+.wq-process-h2 {
+  margin: 0 0 64px;
+}
+.wq-progress {
+  position: relative;
+  height: 1px;
+  background: var(--hairline-strong);
+  margin-bottom: 40px;
+}
+.wq-progress-bar {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+.wq-step-num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.wq-step-name {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.wq-step-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ---- work cards ---- */
+.wq-card {
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+}
+.wq-card-media {
+  aspect-ratio: 4 / 3;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+  transition: border-color 0.25s;
+}
+.wq-card:hover .wq-card-media {
+  border-color: var(--accent);
+}
+.wq-card-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+.wq-card-row h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.wq-arrow {
+  color: var(--accent);
+  font-size: 20px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wq-card:hover .wq-arrow {
+  transform: translate(3px, -3px);
+}
+.wq-card-tags {
+  margin: 8px 0 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+/* ---- stats ---- */
+.wq-stats {
+  border-block: 1px solid var(--hairline);
+  padding: clamp(56px, 7vw, 100px) clamp(20px, 4vw, 48px);
+}
+.wq-wrap-inner {
+  max-width: 1720px;
+  margin-inline: auto;
+}
+.wq-stat-num {
+  font-size: clamp(48px, 5.5vw, 88px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  /* Tabular figures: without them the number jitters sideways as it counts. */
+  font-variant-numeric: tabular-nums;
+}
+.wq-stat-label {
+  margin: 14px 0 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+/* ---- insights ---- */
+.wq-post {
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+  border-top: 1px solid var(--hairline-strong);
+  padding-top: 24px;
+  transition: color 0.2s;
+}
+.wq-post:hover {
+  color: var(--accent);
+}
+.wq-post-meta {
+  margin: 0 0 16px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.wq-post h3 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+  color: inherit;
+  text-wrap: balance;
+}
+
+/* ---- closing call to action ---- */
+.wq-cta-band {
+  border-top: 1px solid var(--hairline);
+  padding: clamp(120px, 16vw, 220px) clamp(20px, 4vw, 48px);
+  text-align: center;
+}
+.wq-cta-band h2 {
+  margin: 0 0 48px;
+  font-size: clamp(2.8rem, 7vw, 7rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+.wq-cta-xl {
+  font-size: 16px;
+  padding: 18px 40px;
+}
+
+/* The "see all" arrow leans out on hover. */
+.wq-link-arrowed svg {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wq-link-arrowed:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ---- custom cursor ----
+   Only applied once the script has mounted the elements, so a visitor with no
+   JavaScript keeps their real cursor rather than losing it to `cursor: none`
+   with nothing drawn in its place. */
+.wq-has-cursor,
+.wq-has-cursor body,
+.wq-has-cursor a,
+.wq-has-cursor button,
+.wq-has-cursor [role="button"],
+.wq-has-cursor input,
+.wq-has-cursor textarea,
+.wq-has-cursor select,
+.wq-has-cursor label {
+  cursor: none;
+}
+.wq-cursor-dot,
+.wq-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+}
+.wq-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+  z-index: 99999;
+}
+.wq-cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--ring-border);
+  z-index: 99998;
+  transition: opacity 0.3s;
+}
+
+/* ---- inner page furniture ---- */
+.wq-pagehead {
+  padding-top: calc(68px + clamp(80px, 11vw, 160px));
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+.wq-pagehead-h1 {
+  margin: 28px 0 0;
+  font-size: clamp(40px, 6.4vw, 104px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-wrap: balance;
+  max-width: 18ch;
+}
+.wq-pagehead-lede {
+  margin-top: 32px;
+  color: var(--muted);
+}
+.wq-rows {
+  display: grid;
+}
+/* The row list borrows the capability row, minus the scroll-driven dimming —
+   there is no sticky counter on these pages to justify it. */
+.wq-cap-static,
+.wq-cap-link {
+  opacity: 1;
+}
+.wq-cap-link {
+  text-decoration: none;
+  color: var(--ink);
+  transition: opacity 0.25s;
+}
+.wq-cap-link:hover h3 {
+  color: var(--accent);
+}
+.wq-cap h3 {
+  transition: color 0.2s;
+}
+.wq-rows > :last-child {
+  border-bottom: 1px solid var(--hairline-strong);
+}
+
+.wq-office-card h3 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.wq-office-card p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.wq-office-card a {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12.5px;
+  color: var(--muted-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.wq-office-card a:hover {
+  color: var(--accent);
+}
+
+/* ---- insights list ---- */
+.wq-insight-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 12px 24px;
+  text-decoration: none;
+  color: var(--ink);
+  border-top: 1px solid var(--hairline-strong);
+  padding-block: clamp(28px, 3vw, 44px);
+  transition: color 0.2s;
+}
+.wq-insight-row .wq-post-meta {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+}
+.wq-insight-row h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.wq-insight-row:hover {
+  color: var(--accent);
+}
+
+/* ---- contact ---- */
+.wq-contact-direct {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.wq-contact-direct > a {
+  font-size: 17px;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--underline);
+  padding-bottom: 3px;
+  align-self: flex-start;
+  transition: color 0.2s, border-color 0.2s;
+}
+.wq-contact-direct > a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.wq-form {
+  display: grid;
+  gap: 22px;
+  max-width: 640px;
+}
+.wq-field {
+  display: grid;
+  gap: 8px;
+}
+.wq-field label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-3);
+}
+.wq-field input,
+.wq-field textarea {
+  background: var(--surface);
+  border: 1px solid var(--field-border);
+  border-radius: 2px;
+  color: var(--ink);
+  font-family: inherit;
+  /* 16px minimum, or iOS Safari zooms the page when the field takes focus. */
+  font-size: 16px;
+  padding: 13px 14px;
+  transition: border-color 0.2s;
+}
+.wq-field input:focus,
+.wq-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.wq-field textarea {
+  resize: vertical;
+}
+.wq-form-foot {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.wq-cta[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+.wq-form-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 14px;
+}
+.wq-form-done h2 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.wq-form-done p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.wq-case-media {
+  aspect-ratio: 16 / 9;
+  max-width: 1100px;
+}
+.wq-case-note {
+  margin-top: 32px;
+}
