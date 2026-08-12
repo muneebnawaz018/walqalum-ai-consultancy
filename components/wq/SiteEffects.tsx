@@ -38,6 +38,37 @@ export function SiteEffects() {
     document.addEventListener("mouseover", onOver, true);
     document.addEventListener("click", onClick, true);
 
+    /* --- the reading progress bar ---
+       A two-pixel accent rule across the very top, scaled to how far down the
+       document you are. Values are the design's own, down to the transform
+       origin flipping for RTL so the bar fills from the right.
+
+       It is created here rather than rendered in the header for the same reason
+       the design does it in script: it belongs to the document's scroll, not to
+       any component, and building it from JS keeps it out of the markup for
+       anyone who has scripting off, where it could only ever sit at zero. */
+    const bar = document.createElement("div");
+    bar.id = "wq-topbar";
+    bar.setAttribute("aria-hidden", "true");
+    if (document.documentElement.dir === "rtl") bar.style.transformOrigin = "100% 50%";
+    document.body.appendChild(bar);
+
+    let barFrame = 0;
+    const drawBar = () => {
+      barFrame = 0;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+      bar.style.transform = `scaleX(${progress.toFixed(4)})`;
+    };
+    /* Coalesced to one write per frame: scroll fires far more often than the
+       screen refreshes, and each write here is a layer transform. */
+    const onScroll = () => {
+      if (!barFrame) barFrame = requestAnimationFrame(drawBar);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", drawBar);
+    drawBar();
+
     const fine = window.matchMedia("(pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -139,6 +170,10 @@ export function SiteEffects() {
     }
 
     return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", drawBar);
+      if (barFrame) cancelAnimationFrame(barFrame);
+      bar.remove();
       document.removeEventListener("pointerdown", unlock, true);
       document.removeEventListener("mouseover", onOver, true);
       document.removeEventListener("click", onClick, true);

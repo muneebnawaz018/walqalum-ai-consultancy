@@ -17,6 +17,9 @@
 /* ---- the shell ----
    Scoped to the body class so the admin and the outgoing pages are unaffected. */
 .wq {
+  /* The browser's default 8px on body. Unreset, it pushed the fixed header off
+     the top edge and every section down the page by the same eight pixels. */
+  margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: "Inter Tight", system-ui, -apple-system, sans-serif;
@@ -31,12 +34,11 @@
 .wq *::after {
   box-sizing: border-box;
 }
-.wq h1,
-.wq h2,
-.wq h3,
-.wq h4,
-.wq p,
-.wq figure {
+/* Wrapped in `:where()` so the reset carries no specificity of its own.
+   Written as `.wq h1` it scored 0,1,1 — one point above every `.wq-*` class in
+   this file — so it silently deleted the bottom margin from every heading and
+   paragraph rule below it, including the hero's 32/40/44 rhythm. */
+.wq :where(h1, h2, h3, h4, p, figure) {
   margin: 0;
 }
 
@@ -83,6 +85,10 @@
 /* The eyebrow: mono, spaced, and the one place the design uses uppercase. */
 .wq-eyebrow {
   font-family: "JetBrains Mono", ui-monospace, monospace;
+  /* The design sets no global line-height, so its eyebrows sit at `normal`.
+     Ours inherit 1.5 from the shell, which made every one of them two pixels
+     taller and pushed the whole page down by that much per section. */
+  line-height: normal;
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0.16em;
@@ -271,6 +277,24 @@
 }
 .wq-lang:hover {
   color: var(--ink);
+}
+
+/* ---- reading progress ----
+   Two pixels of accent across the top, scaled from zero to one as the document
+   scrolls. Created by SiteEffects; the styling lives here rather than in that
+   file so it themes with everything else. */
+#wq-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  /* Above the header's 1000, so it reads as the top edge of the page. */
+  z-index: 1001;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
 }
 
 /* ---- mega panel ----
@@ -621,7 +645,11 @@
   vertical-align: baseline;
   color: var(--accent);
 }
+/* Stacked in the same cell as the words it is measuring. Without an explicit
+   cell it auto-placed into a second grid row, which gave the headline a third
+   line of empty space and pushed everything below it down. */
 .wq-cycle-ghost {
+  grid-area: 1 / 1;
   visibility: hidden;
 }
 .wq-cycle-item {
@@ -666,10 +694,14 @@
   font-weight: 700;
   letter-spacing: -0.03em;
 }
+/* The design's own tracks. Ours had a fixed-width label column and a wider
+   gutter, which left the right-hand column narrower than the design's at every
+   width — so capability rows wrapped to more lines and the statement to fewer,
+   and the page drifted further out of step with each section. */
 .wq-grid2 {
   display: grid;
-  grid-template-columns: minmax(200px, 320px) 1fr;
-  gap: clamp(32px, 6vw, 96px);
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(32px, 5vw, 80px);
 }
 .wq-grid2-start {
   align-items: start;
@@ -677,14 +709,15 @@
 .wq-grid3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(24px, 3vw, 44px);
+  gap: clamp(20px, 2.5vw, 40px);
 }
 .wq-grid4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(24px, 3vw, 44px);
+  gap: clamp(20px, 2.5vw, 40px);
 }
-@media (max-width: 1023px) {
+/* 900px, as the design has it, not 1023. */
+@media (max-width: 900px) {
   .wq-grid2,
   .wq-grid3 {
     grid-template-columns: 1fr;
