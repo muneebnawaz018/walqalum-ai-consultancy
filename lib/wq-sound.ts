@@ -56,18 +56,34 @@ class SoundEngine {
     return this.enabled;
   }
 
-  /** Creates the context. Safe to call repeatedly. */
+  /**
+   * Creates the context, and wakes it if it has gone to sleep. Safe to call
+   * repeatedly, and called before every sound rather than only once.
+   *
+   * The waking is the part that matters. An `AudioContext` is born *suspended*
+   * unless it happens to be constructed inside a user gesture, and browsers
+   * suspend a running one again whenever the tab goes to the background. A
+   * suspended context accepts every node, every connection and every schedule
+   * without complaint and plays none of it — so the failure is completely
+   * silent in both senses. Creating it once and assuming it stays awake is why
+   * interface sound tends to work in testing and not afterwards.
+   */
   unlock() {
-    if (this.ctx) return this.ctx;
-    try {
-      const Ctor =
-        window.AudioContext ??
-        (window as unknown as { webkitAudioContext?: typeof AudioContext })
-          .webkitAudioContext;
-      if (Ctor) this.ctx = new Ctor();
-    } catch {
-      /* Audio unavailable. Everything below then no-ops. */
+    if (!this.ctx) {
+      try {
+        const Ctor =
+          window.AudioContext ??
+          (window as unknown as { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
+        if (Ctor) this.ctx = new Ctor();
+      } catch {
+        /* Audio unavailable. Everything below then no-ops. */
+      }
     }
+    /* `resume` rejects when called outside a gesture and the browser is not
+       willing yet. That is expected, not exceptional — the next press will be
+       inside one. */
+    if (this.ctx?.state === "suspended") void this.ctx.resume().catch(() => {});
     return this.ctx;
   }
 
@@ -115,11 +131,20 @@ class SoundEngine {
     s.start();
   }
 
-  /** Hover. Throttled hard: sweeping a nav would otherwise machine-gun. */
+  /**
+   * Hover. Throttled hard: sweeping a nav would otherwise machine-gun.
+   *
+   * Deliberately does not *create* the context — only wakes one that already
+   * exists. A hover is not a user gesture, so constructing it here would make a
+   * suspended context and a console warning, and buy nothing: the browser would
+   * refuse to play it anyway.
+   */
   tick() {
+    if (!this.ctx || !this.enabled) return;
     const now = performance.now();
     if (now - this.lastTick < 90) return;
     this.lastTick = now;
+    this.unlock();
     this.tone("triangle", 1050, 0.04, 0.018);
   }
 
