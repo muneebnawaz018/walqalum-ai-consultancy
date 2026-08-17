@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { LocaleLink } from "@/components/wq/LocaleLink";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_THEME, THEME_STORAGE_KEY, type ThemeName } from "@/lib/theme";
+import { BurgerIcon, CloseIcon } from "@/components/wq/Icons";
+import { LangSwitch } from "@/components/wq/LangSwitch";
+import type { Dictionary } from "@/lib/dictionaries/en";
+import { SoundToggle, ThemeToggle } from "@/components/wq/Toggles";
 import { NAV } from "@/lib/wq-menu";
 import { sound } from "@/lib/wq-sound";
 
@@ -23,17 +26,13 @@ const CLOSE_DELAY_MS = 180;
  * the design lets the hero run under it and only draws the hairline once there
  * is content behind it to separate.
  */
-export function Header() {
+export function Header({ labels }: { labels: Dictionary["actions"] }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [theme, setTheme] = useState<ThemeName>(DEFAULT_THEME);
   const [menu, setMenu] = useState(false);
   /* Which tab's panel is showing, by href. Null is closed. */
   const [mega, setMega] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  /* Starts at the design's default so server and client markup agree; the
-     stored preference is read after mount, below. */
-  const [soundOn, setSoundOn] = useState(true);
 
   const openMega = (href: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -63,16 +62,6 @@ export function Header() {
     [],
   );
 
-  useEffect(() => setSoundOn(sound.restore()), []);
-
-  /* The boot script has already stamped data-theme before paint. Reading it
-     back here keeps the button's icon honest without a second source of truth
-     and without a hydration mismatch. */
-  useEffect(() => {
-    const current = document.documentElement.getAttribute("data-theme");
-    if (current === "light" || current === "dark") setTheme(current);
-  }, []);
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -86,18 +75,6 @@ export function Header() {
     setMenu(false);
     setMega(null);
   }, [pathname]);
-
-  const swapTheme = () => {
-    const next: ThemeName = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-    } catch {
-      /* Safari in private mode throws on write. The theme still applies for
-         this page view; only the memory of it is lost. */
-    }
-  };
 
   return (
     <header
@@ -116,7 +93,7 @@ export function Header() {
       }}
     >
       <div className="wq-header-in">
-        <Link href="/" className="wq-logo" aria-label="WalQalum home" data-magnetic="4">
+        <LocaleLink href="/" className="wq-logo" aria-label="WalQalum home" data-magnetic="4">
           <Image
             src="/brand/walqalum-eagle.png"
             alt=""
@@ -125,7 +102,7 @@ export function Header() {
             priority
           />
           <span>WALQALUM</span>
-        </Link>
+        </LocaleLink>
 
         <nav
           className="wq-nav wq-desktop"
@@ -133,7 +110,7 @@ export function Header() {
           onMouseLeave={() => closeMega()}
         >
           {NAV.map((item) => (
-            <Link
+            <LocaleLink
               key={item.href}
               href={item.href}
               aria-current={pathname === item.href ? "page" : undefined}
@@ -144,38 +121,19 @@ export function Header() {
               onFocus={() => openMega(item.href)}
             >
               {item.label}
-            </Link>
+            </LocaleLink>
           ))}
         </nav>
 
         <div className="wq-actions">
-          <button
-            type="button"
-            className="wq-icon-btn"
-            onClick={() => setSoundOn(sound.toggle())}
-            aria-label="Toggle interface sound"
-            aria-pressed={soundOn}
-          >
-            {soundOn ? <WaveIcon /> : <MuteIcon />}
-          </button>
+          <SoundToggle />
+          <ThemeToggle />
 
-          <button
-            type="button"
-            className="wq-icon-btn"
-            onClick={swapTheme}
-            aria-label="Toggle light and dark theme"
-            aria-pressed={theme === "light"}
-          >
-            {theme === "dark" ? <MoonIcon /> : <SunIcon />}
-          </button>
+          <LangSwitch label={labels.switchLanguage} />
 
-          <button type="button" className="wq-lang wq-desktop" aria-label="Switch language">
-            EN / AR
-          </button>
-
-          <Link href="/contact" className="wq-cta wq-desktop" data-magnetic="6">
-            Start a project
-          </Link>
+          <LocaleLink href="/contact" className="wq-cta wq-desktop" data-magnetic="6">
+            {labels.startProject}
+          </LocaleLink>
 
           <button
             type="button"
@@ -184,7 +142,7 @@ export function Header() {
               sound.menu();
               setMenu((v) => !v);
             }}
-            aria-label={menu ? "Close menu" : "Open menu"}
+            aria-label={menu ? labels.closeMenu : labels.openMenu}
             aria-expanded={menu}
             aria-controls="wq-drawer"
           >
@@ -218,10 +176,10 @@ export function Header() {
                         <span className="wq-mega-desc">{entry.desc}</span>
                       </a>
                     ) : (
-                      <Link key={entry.href} href={entry.href}>
+                      <LocaleLink key={entry.href} href={entry.href}>
                         <span className="wq-mega-name">{entry.name}</span>
                         <span className="wq-mega-desc">{entry.desc}</span>
-                      </Link>
+                      </LocaleLink>
                     ),
                   )}
                 </div>
@@ -236,14 +194,14 @@ export function Header() {
       <div id="wq-drawer" className="wq-drawer" data-open={menu ? "" : undefined} hidden={!menu}>
         <nav aria-label="Primary, mobile">
           {NAV.map((item) => (
-            <Link key={item.href} href={item.href}>
+            <LocaleLink key={item.href} href={item.href}>
               {item.label}
-            </Link>
+            </LocaleLink>
           ))}
         </nav>
-        <Link href="/contact" className="wq-cta">
-          Start a project
-        </Link>
+        <LocaleLink href="/contact" className="wq-cta">
+          {labels.startProject}
+        </LocaleLink>
       </div>
     </header>
   );
@@ -254,41 +212,3 @@ function panelId(href: string) {
   return `wq-mega-${href === "/" ? "home" : href.replace(/\W+/g, "-").replace(/^-|-$/g, "")}`;
 }
 
-const MoonIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-  </svg>
-);
-
-const SunIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="4" />
-    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-  </svg>
-);
-
-/* The design's own waveform, six bars rising and falling. */
-const WaveIcon = () => (
-  <svg width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-    <path d="M1 7 L1 7 M4 4.5 L4 9.5 M7 2 L7 12 M10 4 L10 10 M13 6 L13 8 M16 5 L16 9" />
-  </svg>
-);
-
-/* Muted collapses the waveform to a single flat line. */
-const MuteIcon = () => (
-  <svg width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-    <path d="M1 7 L16 7" />
-  </svg>
-);
-
-const BurgerIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-    <path d="M3 7h18M3 12h18M3 17h18" />
-  </svg>
-);
-
-const CloseIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);

@@ -530,6 +530,9 @@
 .wq-flist a:hover {
   color: var(--accent);
 }
+.wq-femail {
+  color: var(--ink);
+}
 .wq-office {
   display: flex;
   flex-direction: column;
@@ -550,7 +553,7 @@
   align-items: center;
   max-width: 1720px;
   margin-inline: auto;
-  padding: 22px clamp(20px, 4vw, 48px) 34px;
+  padding: 18px clamp(20px, 4vw, 48px);
   border-top: 1px solid var(--hairline);
   font-size: 12.5px;
   color: var(--muted-3);
@@ -566,6 +569,80 @@
 }
 .wq-fbottom a:hover {
   color: var(--ink);
+}
+/* The availability line, with the design's slow pulse on the dot. */
+.wq-favail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wq-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: wq-pulse 2.2s ease-in-out infinite;
+}
+@keyframes wq-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wq-pulse {
+    animation: none;
+  }
+}
+.wq-ftoggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- the oversized wordmark that closes the page ----
+   Height and font-size are both written by script, which fits the letters to
+   this box; the values here only cover the moment before that runs. */
+.wq-wm {
+  position: relative;
+  overflow: hidden;
+  height: 0;
+  will-change: transform;
+  transform: scale(0.97);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wq-wm[data-shown] {
+  transform: scale(1);
+}
+.wq-wm-row {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.78;
+  color: var(--ink);
+  user-select: none;
+}
+.wq-wm-letter {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.wq-wm[data-shown] .wq-wm-letter {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wq-wm,
+  .wq-wm-letter {
+    transition: none;
+  }
 }
 
 /* ---- hero ----
@@ -1233,4 +1310,45 @@
 }
 .wq-case-note {
   margin-top: 32px;
+}
+
+/* ==== Arabic ====
+   Direction itself needs almost nothing: the layout is built on `margin-inline`
+   and flex/grid, both of which already follow `dir`, and the handful of
+   physical offsets in this file are symmetric pairs (`left:0;right:0`) or
+   centring, which read the same either way.
+
+   Typography is the part that does not come free. */
+:lang(ar) {
+  font-family: "IBM Plex Sans Arabic", "Inter Tight", system-ui, sans-serif;
+}
+
+/* Arabic is cursive: letters join, and letter-spacing cuts the joins apart into
+   something that reads as broken rather than airy. The design's negative
+   tracking is a Latin display device and has no Arabic equivalent — so it is
+   dropped wholesale rather than tuned. */
+:lang(ar) * {
+  letter-spacing: normal;
+}
+
+/* Arabic has no letter case. `text-transform: uppercase` is a no-op on the
+   script itself, but it still uppercases any Latin mixed into the same run —
+   which is how "AI" ends up shouting inside an Arabic eyebrow. */
+:lang(ar) .wq-eyebrow,
+:lang(ar) .wq-fhead,
+:lang(ar) .wq-mega-label {
+  text-transform: none;
+}
+
+/* The wordmark is the Latin brand name and stays Latin, tracking included. */
+:lang(ar) .wq-wm-row {
+  font-family: "Inter Tight", system-ui, sans-serif;
+  letter-spacing: -0.045em;
+}
+
+/* Arrows point at the reading direction, so in RTL they have to turn round.
+   A transform rather than a different glyph: one arrow in the markup, and no
+   chance of the two copies drifting apart. */
+[dir="rtl"] .wq-arrow {
+  transform: scaleX(-1);
 }

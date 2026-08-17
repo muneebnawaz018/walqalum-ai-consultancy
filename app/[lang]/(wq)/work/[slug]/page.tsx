@@ -9,7 +9,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/work/[slug]">): Promise<Metadata> {
+}: PageProps<"/[lang]/work/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const item = WORK.find((w) => w.slug === slug);
   return item
@@ -25,7 +25,7 @@ export async function generateMetadata({
  * So this states plainly that the detail is pending instead of padding the page
  * with invented narrative or an unconfirmed metric.
  */
-export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
+export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slug]">) {
   const { slug } = await params;
   const item = WORK.find((w) => w.slug === slug);
   if (!item) notFound();

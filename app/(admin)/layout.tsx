@@ -5,6 +5,7 @@ import "../artifact.css";
 import "./admin.css";
 import { ThemeStyle } from "@/components/ThemeStyle";
 import { Header } from "@/components/wq/Header";
+import { en } from "@/lib/dictionaries/en";
 import { DEFAULT_THEME } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -34,7 +35,10 @@ export default function AdminRootLayout({ children }: LayoutProps<"/">) {
           Same reason as the site layout for suppressHydrationWarning: browser
           extensions add attributes to body before hydration. */}
       <body className="wq admin" suppressHydrationWarning>
-        <Header />
+        {/* The admin is not localised, so it takes the English labels directly
+            rather than through the dictionary, which reads a route parameter
+            that only exists under [lang]. */}
+        <Header labels={en.actions} />
         <main id="main" className="wq-below-header">
           {children}
         </main>

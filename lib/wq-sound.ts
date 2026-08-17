@@ -21,6 +21,28 @@ class SoundEngine {
   private lastTick = 0;
   /** Session-scoped, not persistent: the design treats it as a per-visit choice. */
   enabled = true;
+  private listeners = new Set<(on: boolean) => void>();
+
+  /**
+   * Watch the on/off state.
+   *
+   * The design puts a sound toggle in both the header and the footer, and one
+   * of them can be off screen when the other is pressed. Without this, pressing
+   * the footer's button would leave the header's icon showing the old state
+   * until something else re-rendered it.
+   *
+   * Returns the unsubscribe function, so an effect can return it directly.
+   */
+  subscribe(fn: (on: boolean) => void) {
+    this.listeners.add(fn);
+    return () => {
+      this.listeners.delete(fn);
+    };
+  }
+
+  private announce() {
+    for (const fn of this.listeners) fn(this.enabled);
+  }
 
   /** Reads the stored preference. Called on mount, not at module load, because
    *  `sessionStorage` does not exist while rendering on the server. */
@@ -30,6 +52,7 @@ class SoundEngine {
     } catch {
       /* Private mode and blocked storage both throw. Default to on. */
     }
+    this.announce();
     return this.enabled;
   }
 
@@ -124,6 +147,7 @@ class SoundEngine {
       /* Non-persistent is fine; the in-memory flag still holds for this page. */
     }
     if (this.enabled) this.click();
+    this.announce();
     return this.enabled;
   }
 }

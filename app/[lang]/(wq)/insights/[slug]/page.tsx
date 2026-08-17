@@ -9,7 +9,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/insights/[slug]">): Promise<Metadata> {
+}: PageProps<"/[lang]/insights/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const post = POSTS.find((p) => p.slug === slug);
   return post ? { title: `${post.title} · WalQalum`, description: post.meta } : {};
@@ -23,7 +23,7 @@ export async function generateMetadata({
  * written yet — these three headlines come from the design — so the page states
  * that plainly rather than inventing an article under someone's byline.
  */
-export default async function Article({ params }: PageProps<"/insights/[slug]">) {
+export default async function Article({ params }: PageProps<"/[lang]/insights/[slug]">) {
   const { slug } = await params;
   const post = POSTS.find((p) => p.slug === slug);
   if (!post) notFound();
