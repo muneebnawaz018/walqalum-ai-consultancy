@@ -12,16 +12,12 @@ import { themeBootScript, themeCss } from "@/lib/theme";
 export function ThemeStyle() {
   return (
     <>
-      <style
-        // eslint-disable-next-line react/no-danger -- generated from a typed
-        // token map in this repo, never from user input.
-        dangerouslySetInnerHTML={{ __html: themeCss() }}
-      />
-      <script
-        // eslint-disable-next-line react/no-danger -- same, and it must run
-        // before first paint to avoid a flash of the wrong theme.
-        dangerouslySetInnerHTML={{ __html: themeBootScript }}
-      />
+      {/* Generated from the typed token map in `lib/theme.ts`, never from user
+          input — there is no interpolation path a visitor can reach. */}
+      <style dangerouslySetInnerHTML={{ __html: themeCss() }} />
+      {/* Same source, and it has to run before first paint or a visitor who
+          chose dark is shown a light page first. */}
+      <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
     </>
   );
 }

@@ -1,12 +1,25 @@
 /**
- * The home page's copy, lifted from the design.
+ * The home page's *structure*.
  *
- * Kept out of the components so the sections stay layout-only and the words can
- * be edited — or later translated — without touching markup. Copy is the
- * design's own; nothing here is invented.
+ * What is left here after localisation is everything that is not a word: the
+ * order things appear in, the slugs that form URLs, and the figures the counter
+ * animates. All prose lives in `lib/dictionaries/*.json` and arrives through the
+ * builder functions below.
+ *
+ * Lists are keyed by a stable id rather than being arrays of translated objects.
+ * That is what makes the type check bite: an array of six capabilities and an
+ * array of five both satisfy `{name,desc}[]`, but a record missing the `cloud`
+ * key does not satisfy the English record's type. Order lives here, in code,
+ * because it is layout — not something a translator should be able to change by
+ * moving lines around in a JSON file.
  */
 
-/** Client names for the marquee. */
+import type { Dictionary } from "@/lib/dictionaries/en";
+
+/** "01", "02", … — the design's numbering, derived from position, never stored. */
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Client names for the marquee. Proper nouns: the same in every language. */
 export const CLIENTS = [
   "Tutors",
   "Securance",
@@ -18,109 +31,81 @@ export const CLIENTS = [
 
 export type Capability = { num: string; name: string; desc: string };
 
-export const CAPABILITIES: Capability[] = [
-  {
-    num: "01",
-    name: "AI Agents & Automation",
-    desc: "Autonomous and semi-autonomous agents that run real operations: triage, research, reporting, workflow orchestration, with guardrails and audit trails built in.",
-  },
-  {
-    num: "02",
-    name: "LLM Integration & RAG Systems",
-    desc: "Language models grounded in your documents and data. Retrieval pipelines, evaluation harnesses and versioned prompts, not a thin wrapper around an API.",
-  },
-  {
-    num: "03",
-    name: "Machine Learning Engineering",
-    desc: "Models trained, served and monitored as production software: feature pipelines, drift detection, rollback paths.",
-  },
-  {
-    num: "04",
-    name: "Data Intelligence",
-    desc: "The layer AI depends on: warehouses, pipelines and decision dashboards that make your data usable before anything clever touches it.",
-  },
-  {
-    num: "05",
-    name: "Custom Software & SaaS",
-    desc: "Fifteen years of product engineering. Web platforms, internal tools and SaaS products built to outlive their launch.",
-  },
-  {
-    num: "06",
-    name: "Cloud & DevOps",
-    desc: "Infrastructure as code, CI/CD, observability and cost control across AWS, Azure and GCP.",
-  },
-];
+/** Display order. The number beside each one is its position, not a stored value. */
+export const CAPABILITY_IDS = [
+  "agents",
+  "rag",
+  "ml",
+  "data",
+  "software",
+  "cloud",
+] as const;
+
+export function capabilities(t: Dictionary): Capability[] {
+  return CAPABILITY_IDS.map((id, i) => ({
+    num: pad(i + 1),
+    name: t.capabilities[id].name,
+    desc: t.capabilities[id].desc,
+  }));
+}
 
 export type Step = { num: string; name: string; desc: string };
 
-export const STEPS: Step[] = [
-  {
-    num: "STEP 01",
-    name: "Discover",
-    desc: "We audit your data, workflows and constraints, and tell you plainly what AI can and cannot do for them.",
-  },
-  {
-    num: "STEP 02",
-    name: "Prototype",
-    desc: "A working system on your real data within weeks, measured against success criteria we agree up front.",
-  },
-  {
-    num: "STEP 03",
-    name: "Ship",
-    desc: "Hardening for production: evals, monitoring, access control, failure modes handled before launch day.",
-  },
-  {
-    num: "STEP 04",
-    name: "Scale",
-    desc: "Extend across teams and geographies. We hand over cleanly or stay on as your engineering partner.",
-  },
-];
+export const STEP_IDS = ["discover", "prototype", "ship", "scale"] as const;
 
-export type WorkItem = { slug: string; name: string; tags: string };
-
-export const WORK: WorkItem[] = [
-  {
-    slug: "audit-platform",
-    name: "Automated Website Audit Platform",
-    tags: "AI AGENTS · N8N · AUTOMATION",
-  },
-  {
-    slug: "securance",
-    name: "Securance: Document Intelligence",
-    tags: "RAG · LLM · COMPLIANCE",
-  },
-  {
-    slug: "epictory",
-    name: "Epictory: Rendering at Scale",
-    tags: "ENGINEERING · CLOUD",
-  },
-];
+export function steps(t: Dictionary): Step[] {
+  return STEP_IDS.map((id, i) => ({
+    /* "STEP 01" is a translated word plus a derived number, not one string —
+       otherwise the word "STEP" would be retyped four times per language. */
+    num: `${t.home.stepLabel} ${pad(i + 1)}`,
+    name: t.steps[id].name,
+    desc: t.steps[id].desc,
+  }));
+}
 
 export type Stat = { n: number; suffix: string; label: string };
 
-export const STATS: Stat[] = [
-  { n: 15, suffix: "", label: "YEARS SHIPPING" },
-  { n: 30, suffix: "+", label: "ENGINEERS" },
-  { n: 3, suffix: "", label: "COUNTRIES" },
-  { n: 120, suffix: "+", label: "PROJECTS DELIVERED" },
-];
+/** The figures are data, not copy — they do not change with the language. */
+const STAT_FIGURES = [
+  { id: "years", n: 15, suffix: "" },
+  { id: "engineers", n: 30, suffix: "+" },
+  { id: "countries", n: 3, suffix: "" },
+  { id: "projects", n: 120, suffix: "+" },
+] as const;
+
+export function stats(t: Dictionary): Stat[] {
+  return STAT_FIGURES.map((s) => ({
+    n: s.n,
+    suffix: s.suffix,
+    label: t.stats[s.id],
+  }));
+}
+
+export type WorkItem = { slug: string; name: string; tags: string };
+
+/** Slugs are URLs, so they stay in English in both locales. */
+export const WORK_SLUGS = ["audit-platform", "securance", "epictory"] as const;
+
+export function work(t: Dictionary): WorkItem[] {
+  return WORK_SLUGS.map((slug) => ({
+    slug,
+    name: t.works[slug].name,
+    tags: t.works[slug].tags,
+  }));
+}
 
 export type Post = { slug: string; meta: string; title: string };
 
-export const POSTS: Post[] = [
-  {
-    slug: "rag-security-review",
-    meta: "JUL 2026 · RAG",
-    title: "Why RAG pilots fail security review, and how to design past it",
-  },
-  {
-    slug: "agent-evals",
-    meta: "JUN 2026 · AGENTS",
-    title: "Agent evals: what to measure before you let it touch production",
-  },
-  {
-    slug: "boring-model",
-    meta: "MAY 2026 · STRATEGY",
-    title: "Choose the boring model. Spend the budget on your data instead.",
-  },
-];
+export const POST_SLUGS = [
+  "rag-security-review",
+  "agent-evals",
+  "boring-model",
+] as const;
+
+export function posts(t: Dictionary): Post[] {
+  return POST_SLUGS.map((slug) => ({
+    slug,
+    meta: t.posts[slug].meta,
+    title: t.posts[slug].title,
+  }));
+}

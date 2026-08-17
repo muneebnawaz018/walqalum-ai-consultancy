@@ -1,49 +1,20 @@
 /**
- * The site's own words, in English.
+ * The English dictionary, and the shape every other locale has to match.
  *
- * This file is the source of truth for the interface chrome — the strings that
- * are the same on every page. Page and section prose still lives in
- * `wq-content.ts` and `wq-pages.ts`; those are the next thing to move here, and
- * are deliberately not half-moved, because copy split across two systems is
- * worse than copy in one place that has not been translated yet.
+ * The words themselves live in `en.json`. This file exists only to give them a
+ * type: a JSON import widens its values to `string`, so `typeof en` describes
+ * the *shape* — every key, nested exactly as written — without pinning any key
+ * to its English text. That is what makes `ar.json` checkable against it.
  *
- * `ar.ts` is typed against this, so adding a key here without adding it there
- * is a type error rather than a blank space on the Arabic site.
+ * Keeping the content as JSON rather than TypeScript is the point of the split.
+ * A translator, or a translation service, can open `ar.json`; nobody should have
+ * to edit a `.ts` file to change a sentence, and nobody editing a sentence
+ * should be able to break the build with a stray bracket in code.
  */
 
-/* No `as const`: the literal types it produces would make every Arabic
-   string a type error against its English original. */
-export const en = {
-  nav: {
-    home: "Home",
-    about: "About",
-    industries: "Industries",
-    work: "Work",
-    insights: "Insights",
-    contact: "Contact",
-  },
-  actions: {
-    startProject: "Start a project",
-    allWork: "All work",
-    allInsights: "All insights",
-    openMenu: "Open menu",
-    closeMenu: "Close menu",
-    toggleSound: "Toggle interface sound",
-    toggleTheme: "Toggle light and dark theme",
-    switchLanguage: "Switch language",
-  },
-  footer: {
-    about:
-      "An AI consultancy and engineering agency. Fifteen years of production software under everything we ship.",
-    links: "LINKS",
-    explore: "EXPLORE",
-    contact: "CONTACT",
-    available: "Available for new projects",
-    rights: "All rights reserved.",
-    privacy: "Privacy",
-    terms: "Terms",
-  },
-};
+import en from "./en.json";
+
+export { en };
 
 /** The shape every other locale has to satisfy. */
 export type Dictionary = typeof en;

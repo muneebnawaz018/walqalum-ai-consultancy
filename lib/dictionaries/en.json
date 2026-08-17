@@ -1,0 +1,391 @@
+{
+  "meta": {
+    "siteTitle": "WalQalum · AI that makes it past the pilot",
+    "siteDescription": "An AI consultancy and engineering agency. We design and run production AI systems: agents, RAG platforms and automation pipelines, on fifteen years of real software engineering.",
+    "aboutTitle": "About · WalQalum",
+    "industriesTitle": "Industries · WalQalum",
+    "industriesDescription": "Eight sectors where we already know the constraints: healthcare, finance, real estate, retail, education, manufacturing, fintech and legal.",
+    "workTitle": "Work · WalQalum",
+    "workDescription": "Selected projects: AI agents, document intelligence and rendering at scale. Built, shipped and still running.",
+    "insightsTitle": "Insights · WalQalum",
+    "insightsDescription": "Notes from the field on RAG, agent evaluation and choosing where AI is worth the budget.",
+    "contactTitle": "Contact · WalQalum"
+  },
+
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "industries": "Industries",
+    "work": "Work",
+    "insights": "Insights",
+    "contact": "Contact"
+  },
+
+  "actions": {
+    "startProject": "Start a project",
+    "allWork": "All work",
+    "allInsights": "All insights",
+    "seeWork": "See selected work",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "toggleSound": "Toggle interface sound",
+    "toggleTheme": "Toggle light and dark theme",
+    "switchLanguage": "Switch language"
+  },
+
+  "aria": {
+    "logoHome": "WalQalum home",
+    "primaryNav": "Primary",
+    "mobileNav": "Primary, mobile",
+    "footerLinks": "Footer links",
+    "explore": "Explore",
+    "intro": "Intro",
+    "clients": "Clients",
+    "positioning": "Positioning",
+    "capabilities": "Capabilities",
+    "process": "Process",
+    "selectedWork": "Selected work",
+    "stats": "Stats",
+    "insights": "Insights",
+    "cta": "Call to action"
+  },
+
+  "footer": {
+    "about": "An AI consultancy and engineering agency. Fifteen years of production software under everything we ship.",
+    "links": "LINKS",
+    "explore": "EXPLORE",
+    "contact": "CONTACT",
+    "available": "Available for new projects",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+
+  "home": {
+    "heroEyebrow": "AI Consultancy & Engineering · UAE · PK · AU",
+    "heroLine1": "AI that makes it",
+    "heroLine2": "past the",
+    "heroCycle": ["pilot.", "prototype.", "concept.", "demo."],
+    "heroLede": "Adaptive to your business, your growth, your future. We design and run production AI systems: agents, RAG platforms, automation pipelines, on fifteen years of real software engineering.",
+
+    "positionEyebrow": "01 / Position",
+    "positionNote": "Fifteen years of production engineering, applied only where AI earns its place.",
+    "statementLead": "Most AI initiatives stall between the demo and the deployment.",
+    "statementEm": "We close that gap.",
+    "statementTail": "Applied AI on fifteen years of production engineering, so the agent that impressed the board still runs, audited and monitored, a year later.",
+
+    "capabilitiesEyebrow": "02 / Capabilities",
+    "capabilitiesNote": "Six disciplines, one team. Every engagement draws on all of them.",
+
+    "processEyebrow": "03 / How we work",
+    "processTitle": "Four steps. No theatre.",
+    "stepLabel": "STEP",
+
+    "workEyebrow": "04 / Selected work",
+    "workTitle": "Built, shipped, running.",
+
+    "insightsEyebrow": "06 / Insights",
+    "insightsTitle": "Notes from the field.",
+
+    "ctaTitle": "Have a system in mind?"
+  },
+
+  "about": {
+    "eyebrow": "01 / About",
+    "titleLead": "Strategy and delivery, from",
+    "titleAccent": "one team.",
+    "lede": "An AI consultancy and engineering agency. Fifteen years of production software under everything we ship, across three offices and eight sectors.",
+    "positionLabel": "02 / Position",
+    "positionNote": "Fifteen years of production engineering, applied only where AI earns its place.",
+    "officesLabel": "03 / Offices",
+    "officesNote": "Three time zones, one team."
+  },
+
+  "industries": {
+    "eyebrow": "01 / Industries",
+    "titleLead": "Eight sectors where the constraints are",
+    "titleAccent": "already known.",
+    "lede": "What a model may decide, and what the data looks like underneath, differ by sector. These are the ones we have shipped into.",
+    "ctaTitle": "Working in one of these?"
+  },
+
+  "work": {
+    "eyebrow": "01 / Work",
+    "titleLead": "Built, shipped,",
+    "titleAccent": "running.",
+    "lede": "A selection of systems in production. Client-confirmed outcomes are published once the client confirms them, and not before.",
+    "ctaTitle": "Want something like this?",
+    "casePending": "The full write-up for this project is with the client for approval. We publish outcomes once they are confirmed, and not before."
+  },
+
+  "insights": {
+    "eyebrow": "01 / Insights",
+    "titleLead": "Notes from the",
+    "titleAccent": "field.",
+    "lede": "What we learned building the last thing, written down before we forget it.",
+    "ctaTitle": "Want to talk it through instead?",
+    "articlePending": "This piece is still being written. We publish once it says something we would stand behind in a review, and not before."
+  },
+
+  "contact": {
+    "eyebrow": "01 / Contact",
+    "titleLead": "Tell us what you are",
+    "titleAccent": "building.",
+    "lede": "Tell us what you are trying to build, or what has stalled. We reply with a straight answer about whether we are the right team for it.",
+    "directLabel": "Direct"
+  },
+
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "company": "Company",
+    "message": "What are you building?",
+    "submit": "Send enquiry",
+    "sending": "Sending…",
+    "doneTitle": "Thanks — that reached us.",
+    "doneBody": "We read every enquiry ourselves and reply with a straight answer.",
+    "error": "That did not go through. Try again, or email us directly."
+  },
+
+  "capabilities": {
+    "agents": {
+      "name": "AI Agents & Automation",
+      "desc": "Autonomous and semi-autonomous agents that run real operations: triage, research, reporting, workflow orchestration, with guardrails and audit trails built in."
+    },
+    "rag": {
+      "name": "LLM Integration & RAG Systems",
+      "desc": "Language models grounded in your documents and data. Retrieval pipelines, evaluation harnesses and versioned prompts, not a thin wrapper around an API."
+    },
+    "ml": {
+      "name": "Machine Learning Engineering",
+      "desc": "Models trained, served and monitored as production software: feature pipelines, drift detection, rollback paths."
+    },
+    "data": {
+      "name": "Data Intelligence",
+      "desc": "The layer AI depends on: warehouses, pipelines and decision dashboards that make your data usable before anything clever touches it."
+    },
+    "software": {
+      "name": "Custom Software & SaaS",
+      "desc": "Fifteen years of product engineering. Web platforms, internal tools and SaaS products built to outlive their launch."
+    },
+    "cloud": {
+      "name": "Cloud & DevOps",
+      "desc": "Infrastructure as code, CI/CD, observability and cost control across AWS, Azure and GCP."
+    }
+  },
+
+  "steps": {
+    "discover": {
+      "name": "Discover",
+      "desc": "We audit your data, workflows and constraints, and tell you plainly what AI can and cannot do for them."
+    },
+    "prototype": {
+      "name": "Prototype",
+      "desc": "A working system on your real data within weeks, measured against success criteria we agree up front."
+    },
+    "ship": {
+      "name": "Ship",
+      "desc": "Hardening for production: evals, monitoring, access control, failure modes handled before launch day."
+    },
+    "scale": {
+      "name": "Scale",
+      "desc": "Extend across teams and geographies. We hand over cleanly or stay on as your engineering partner."
+    }
+  },
+
+  "stats": {
+    "years": "YEARS SHIPPING",
+    "engineers": "ENGINEERS",
+    "countries": "COUNTRIES",
+    "projects": "PROJECTS DELIVERED"
+  },
+
+  "position": {
+    "accountable": {
+      "name": "One accountable team",
+      "desc": "The Big Four write the strategy and hand you a deck. Integrators build what the deck says, late. We do both, and the same team answers for the result."
+    },
+    "earnsPlace": {
+      "name": "AI where it earns its place",
+      "desc": "Most of what gets sold as AI is a workflow problem wearing a model. We will tell you when that is the case, including when it costs us the engagement."
+    },
+    "outlive": {
+      "name": "Built to outlive the launch",
+      "desc": "Evals, monitoring, access control and rollback paths are part of shipping, not a phase after it. The agent that impressed the board still runs a year later."
+    }
+  },
+
+  "sectors": {
+    "healthcare": {
+      "name": "Healthcare",
+      "desc": "Clinical documentation, triage support and patient correspondence, built where an audit trail and a human sign-off are not optional.",
+      "blurb": "Documentation and triage, with sign-off."
+    },
+    "finance": {
+      "name": "Finance",
+      "desc": "Reconciliation, reporting and document review, with every model output traceable to the record it came from.",
+      "blurb": "Reconciliation and review, fully traceable."
+    },
+    "real-estate": {
+      "name": "Real estate",
+      "desc": "Listing intelligence, valuation support and tenant correspondence across portfolios that outgrew their spreadsheets.",
+      "blurb": "Listings, valuation and tenant comms."
+    },
+    "retail": {
+      "name": "Retail & commerce",
+      "desc": "Catalogue enrichment, demand signals and support automation that survive a peak trading week.",
+      "blurb": "Catalogue, demand signals and support."
+    },
+    "education": {
+      "name": "Education",
+      "desc": "Assessment support, content generation and student-facing assistants, with a clear line between help and answer.",
+      "blurb": "Assessment and student-facing assistants."
+    },
+    "manufacturing": {
+      "name": "Manufacturing",
+      "desc": "Quality inspection, maintenance forecasting and shop-floor reporting on data that was never collected for AI.",
+      "blurb": "Inspection, maintenance and reporting."
+    },
+    "fintech": {
+      "name": "Fintech",
+      "desc": "Onboarding, KYC document handling and fraud signals, under the review process that regulation actually requires.",
+      "blurb": "Onboarding, KYC and fraud signals."
+    },
+    "legal": {
+      "name": "Legal & professional",
+      "desc": "Contract review, discovery and precedent search, where a confident wrong answer costs more than no answer.",
+      "blurb": "Contract review, discovery and precedent."
+    }
+  },
+
+  "works": {
+    "audit-platform": {
+      "name": "Automated Website Audit Platform",
+      "tags": "AI AGENTS · N8N · AUTOMATION"
+    },
+    "securance": {
+      "name": "Securance: Document Intelligence",
+      "tags": "RAG · LLM · COMPLIANCE"
+    },
+    "epictory": {
+      "name": "Epictory: Rendering at Scale",
+      "tags": "ENGINEERING · CLOUD"
+    }
+  },
+
+  "posts": {
+    "rag-security-review": {
+      "meta": "JUL 2026 · RAG",
+      "title": "Why RAG pilots fail security review, and how to design past it"
+    },
+    "agent-evals": {
+      "meta": "JUN 2026 · AGENTS",
+      "title": "Agent evals: what to measure before you let it touch production"
+    },
+    "boring-model": {
+      "meta": "MAY 2026 · STRATEGY",
+      "title": "Choose the boring model. Spend the budget on your data instead."
+    }
+  },
+
+  "offices": {
+    "sharjah": {
+      "city": "Sharjah",
+      "country": "United Arab Emirates",
+      "locality": "Sharjah Media City, UAE"
+    },
+    "lahore": {
+      "city": "Lahore",
+      "country": "Pakistan",
+      "locality": "Johar Town, Lahore, Pakistan"
+    },
+    "dubbo": {
+      "city": "Dubbo",
+      "country": "Australia",
+      "locality": "Dubbo NSW, Australia"
+    }
+  },
+
+  "menu": {
+    "groups": {
+      "theArgument": "THE ARGUMENT",
+      "theEvidence": "THE EVIDENCE",
+      "theFirm": "THE FIRM",
+      "workingTogether": "WORKING TOGETHER",
+      "regulated": "REGULATED",
+      "operations": "OPERATIONS",
+      "selectedWork": "SELECTED WORK",
+      "howItGetsBuilt": "HOW IT GETS BUILT",
+      "latest": "LATEST",
+      "talkToUs": "TALK TO US",
+      "offices": "OFFICES"
+    },
+    "items": {
+      "homePosition": {
+        "name": "Position",
+        "desc": "Why AI pilots stall, and what closes the gap."
+      },
+      "homeCapabilities": {
+        "name": "Capabilities",
+        "desc": "Six disciplines, one team."
+      },
+      "homeProcess": {
+        "name": "Process",
+        "desc": "Discover, prototype, ship, scale."
+      },
+      "homeWork": {
+        "name": "Selected work",
+        "desc": "Systems running in production."
+      },
+      "homeStats": {
+        "name": "By the numbers",
+        "desc": "Fifteen years, thirty engineers, three countries."
+      },
+      "homeInsights": {
+        "name": "Insights",
+        "desc": "Notes from the last build."
+      },
+      "aboutPosition": {
+        "name": "Position",
+        "desc": "Strategy and delivery from one accountable team."
+      },
+      "aboutStats": {
+        "name": "By the numbers",
+        "desc": "What fifteen years actually adds up to."
+      },
+      "aboutOffices": {
+        "name": "Offices",
+        "desc": "Sharjah, Lahore and Dubbo."
+      },
+      "aboutProcess": {
+        "name": "How we work",
+        "desc": "The four stages of an engagement."
+      },
+      "aboutWork": {
+        "name": "Selected work",
+        "desc": "What we have shipped and still run."
+      },
+      "aboutContact": {
+        "name": "Start a project",
+        "desc": "Tell us what has stalled."
+      },
+      "workCapabilities": {
+        "name": "Capabilities",
+        "desc": "The six disciplines behind every project."
+      },
+      "workProcess": {
+        "name": "Process",
+        "desc": "From audit to handover."
+      },
+      "workAll": {
+        "name": "All work",
+        "desc": "Everything we are able to show."
+      },
+      "contactStart": {
+        "name": "Start a project",
+        "desc": "Scope, timeline and whether we are the right team."
+      }
+    },
+    "emailDesc": "Straight to the people who answer."
+  }
+}

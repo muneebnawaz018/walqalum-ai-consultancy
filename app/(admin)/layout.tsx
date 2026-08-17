@@ -6,6 +6,7 @@ import "./admin.css";
 import { ThemeStyle } from "@/components/ThemeStyle";
 import { Header } from "@/components/wq/Header";
 import { en } from "@/lib/dictionaries/en";
+import { buildNav } from "@/lib/wq-menu";
 import { DEFAULT_THEME } from "@/lib/theme";
 
 export const metadata: Metadata = {
@@ -38,7 +39,9 @@ export default function AdminRootLayout({ children }: LayoutProps<"/">) {
         {/* The admin is not localised, so it takes the English labels directly
             rather than through the dictionary, which reads a route parameter
             that only exists under [lang]. */}
-        <Header labels={en.actions} />
+        {/* Admin is not localised, so it takes the English dictionary directly
+            rather than resolving one from a `[lang]` segment it does not have. */}
+        <Header nav={buildNav(en)} labels={en.actions} aria={en.aria} />
         <main id="main" className="wq-below-header">
           {children}
         </main>

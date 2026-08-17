@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 type State = "idle" | "sending" | "sent" | "error";
 
@@ -14,7 +15,7 @@ type State = "idle" | "sending" | "sent" | "error";
  * rather than duplicated in a third place — the server is the one that decides,
  * and a client-side copy only drifts.
  */
-export function ContactForm() {
+export function ContactForm({ t }: { t: Dictionary["form"] }) {
   const [state, setState] = useState<State>("idle");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -46,8 +47,8 @@ export function ContactForm() {
   if (state === "sent") {
     return (
       <div className="wq-form-done" role="status">
-        <h2>Thanks — that reached us.</h2>
-        <p>We read every enquiry ourselves and reply with a straight answer.</p>
+        <h2>{t.doneTitle}</h2>
+        <p>{t.doneBody}</p>
       </div>
     );
   }
@@ -55,32 +56,32 @@ export function ContactForm() {
   return (
     <form className="wq-form" onSubmit={onSubmit} noValidate={false}>
       <div className="wq-field">
-        <label htmlFor="name">Name</label>
+        <label htmlFor="name">{t.name}</label>
         <input id="name" name="name" required maxLength={160} autoComplete="name" />
       </div>
       <div className="wq-field">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">{t.email}</label>
         <input id="email" name="email" type="email" required autoComplete="email" />
       </div>
       <div className="wq-field">
-        <label htmlFor="company">Company</label>
+        <label htmlFor="company">{t.company}</label>
         <input id="company" name="company" maxLength={160} autoComplete="organization" />
       </div>
       <div className="wq-field">
-        <label htmlFor="message">What are you building?</label>
+        <label htmlFor="message">{t.message}</label>
         <textarea id="message" name="message" rows={5} maxLength={5000} />
       </div>
 
       <div className="wq-form-foot">
         <button type="submit" className="wq-cta wq-cta-lg" disabled={state === "sending"}>
-          {state === "sending" ? "Sending…" : "Send enquiry"}
+          {state === "sending" ? t.sending : t.submit}
         </button>
         {/* Announced when it appears, so a screen-reader user is told the send
             failed rather than left waiting on a button that stopped saying
             "Sending". */}
         {state === "error" ? (
           <p className="wq-form-error" role="alert">
-            That did not go through. Try again, or email us directly.
+            {t.error}
           </p>
         ) : null}
       </div>

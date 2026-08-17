@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { STEPS } from "@/lib/wq-content";
+import type { Step } from "@/lib/wq-content";
 
 /**
  * 03 / How we work.
@@ -9,7 +9,17 @@ import { STEPS } from "@/lib/wq-content";
  * A rule above the four steps that fills as the section crosses the viewport,
  * so the reader's progress through the process mirrors the process itself.
  */
-export function Process() {
+export function Process({
+  rows,
+  eyebrow,
+  title,
+  aria,
+}: {
+  rows: Step[];
+  eyebrow: string;
+  title: string;
+  aria: string;
+}) {
   const section = useRef<HTMLElement | null>(null);
   const [progress, setProgress] = useState(0);
 
@@ -51,14 +61,14 @@ export function Process() {
   }, []);
 
   return (
-    <section id="process" aria-label="Process" ref={section} className="wq-wrap wq-sec-b">
-      <p className="wq-eyebrow">03 / How we work</p>
-      <h2 className="wq-h2-lg wq-process-h2">Four steps. No theatre.</h2>
+    <section id="process" aria-label={aria} ref={section} className="wq-wrap wq-sec-b">
+      <p className="wq-eyebrow">{eyebrow}</p>
+      <h2 className="wq-h2-lg wq-process-h2">{title}</h2>
       <div className="wq-progress" aria-hidden="true">
         <div className="wq-progress-bar" style={{ transform: `scaleX(${progress})` }} />
       </div>
       <div className="wq-grid4">
-        {STEPS.map((s) => (
+        {rows.map((s) => (
           <div key={s.num}>
             <div className="wq-step-num">{s.num}</div>
             <h3 className="wq-step-name">{s.name}</h3>

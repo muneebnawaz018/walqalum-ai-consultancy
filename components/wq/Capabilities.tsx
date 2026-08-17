@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CAPABILITIES } from "@/lib/wq-content";
+import type { Capability } from "@/lib/wq-content";
 
 /**
  * 02 / Capabilities.
@@ -11,7 +11,17 @@ import { CAPABILITIES } from "@/lib/wq-content";
  * timer; an IntersectionObserver does the same job without running when the
  * section is off screen.
  */
-export function Capabilities() {
+export function Capabilities({
+  rows,
+  eyebrow,
+  note,
+  aria,
+}: {
+  rows: Capability[];
+  eyebrow: string;
+  note: string;
+  aria: string;
+}) {
   const [active, setActive] = useState(0);
   const items = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -73,20 +83,18 @@ export function Capabilities() {
   }, []);
 
   return (
-    <section id="capabilities" aria-label="Capabilities" className="wq-wrap wq-sec-b">
+    <section id="capabilities" aria-label={aria} className="wq-wrap wq-sec-b">
       <div className="wq-grid2 wq-grid2-start">
         <div className="wq-sticky-col">
-          <p className="wq-eyebrow">02 / Capabilities</p>
+          <p className="wq-eyebrow">{eyebrow}</p>
           <div className="wq-bignum">
             {String(active + 1).padStart(2, "0")}
             <span>.</span>
           </div>
-          <p className="wq-side-note">
-            Six disciplines, one team. Every engagement draws on all of them.
-          </p>
+          <p className="wq-side-note">{note}</p>
         </div>
         <div>
-          {CAPABILITIES.map((cap, i) => (
+          {rows.map((cap, i) => (
             <div
               key={cap.num}
               ref={(el) => {

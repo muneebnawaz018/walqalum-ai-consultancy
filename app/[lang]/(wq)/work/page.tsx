@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EndCta, PageHead } from "@/components/wq/Page";
-import { WORK } from "@/lib/wq-content";
+import { getDictionary, getLocale } from "@/lib/dictionaries";
+import { localeHref } from "@/lib/i18n";
+import { work } from "@/lib/wq-content";
 
-export const metadata: Metadata = {
-  title: "Work · WalQalum",
-  description:
-    "Selected projects: AI agents, document intelligence and rendering at scale. Built, shipped and still running.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return { title: t.meta.workTitle, description: t.meta.workDescription };
+}
 
 /**
  * Work — the portfolio.
@@ -17,23 +18,27 @@ export const metadata: Metadata = {
  * is that placeholders stay visibly labelled instead of being dressed up as
  * finished.
  */
-export default function Work() {
+export default async function Work() {
+  const t = await getDictionary();
+  const locale = await getLocale();
+
   return (
     <>
       <PageHead
-        eyebrow="01 / Work"
-        title={
-          <>
-            Built, shipped, <span className="wq-accent">running.</span>
-          </>
-        }
-        lede="A selection of systems in production. Client-confirmed outcomes are published once the client confirms them, and not before."
+        eyebrow={t.work.eyebrow}
+        title={t.work.titleLead}
+        accent={t.work.titleAccent}
+        lede={t.work.lede}
       />
 
       <section className="wq-wrap wq-sec-b">
         <div className="wq-grid3">
-          {WORK.map((w) => (
-            <Link key={w.slug} href={`/work/${w.slug}`} className="wq-card">
+          {work(t).map((w) => (
+            <Link
+              key={w.slug}
+              href={localeHref(`/work/${w.slug}`, locale)}
+              className="wq-card"
+            >
               <div className="wq-card-media" aria-hidden="true" />
               <div className="wq-card-row">
                 <h3>{w.name}</h3>
@@ -47,7 +52,7 @@ export default function Work() {
         </div>
       </section>
 
-      <EndCta title="Want something like this?" />
+      <EndCta title={t.work.ctaTitle} />
     </>
   );
 }

@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EndCta, PageHead } from "@/components/wq/Page";
-import { POSTS } from "@/lib/wq-content";
+import { getDictionary } from "@/lib/dictionaries";
+import { POST_SLUGS, posts } from "@/lib/wq-content";
 
 export function generateStaticParams() {
-  return POSTS.map((p) => ({ slug: p.slug }));
+  return POST_SLUGS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/insights/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const post = POSTS.find((p) => p.slug === slug);
+  const t = await getDictionary();
+  const post = posts(t).find((p) => p.slug === slug);
   return post ? { title: `${post.title} · WalQalum`, description: post.meta } : {};
 }
 
@@ -25,19 +27,17 @@ export async function generateMetadata({
  */
 export default async function Article({ params }: PageProps<"/[lang]/insights/[slug]">) {
   const { slug } = await params;
-  const post = POSTS.find((p) => p.slug === slug);
+  const t = await getDictionary();
+  const post = posts(t).find((p) => p.slug === slug);
   if (!post) notFound();
 
   return (
     <>
       <PageHead eyebrow={post.meta} title={post.title} />
       <section className="wq-wrap wq-sec-b">
-        <p className="wq-lede wq-case-note">
-          This piece is still being written. We publish once it says something
-          we would stand behind in a review, and not before.
-        </p>
+        <p className="wq-lede wq-case-note">{t.insights.articlePending}</p>
       </section>
-      <EndCta title="Want to talk it through instead?" />
+      <EndCta title={t.insights.ctaTitle} />
     </>
   );
 }

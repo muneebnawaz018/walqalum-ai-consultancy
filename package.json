@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "lint:md": "markdownlint-cli2",
+    "i18n:coverage": "node scripts/i18n-coverage.mjs",
     "seed:admin": "tsx --env-file=.env.development.local scripts/seed-admin.ts",
     "seed:demo": "tsx --env-file=.env.development.local scripts/seed-demo.ts",
     "test": "node --import tsx --test --env-file=.env.development.local tests/*.test.ts"

@@ -4,23 +4,13 @@ import { getDictionary, getLocale } from "@/lib/dictionaries";
 import { localeHref } from "@/lib/i18n";
 import { SoundToggle, ThemeToggle } from "@/components/wq/Toggles";
 import { Wordmark } from "@/components/wq/Wordmark";
-
-/** Where to write. The design's own address. */
-const EMAIL = "tafseel@walqalum.com";
+import { EMAIL, offices, telHref } from "@/lib/wq-pages";
 
 /**
- * The three offices.
- *
- * The design lists the localities; the phone numbers are the firm's own and are
- * kept, as live `tel:` links. The outgoing footer rendered them as anchors with
- * no href, which meant they could be neither focused nor dialled.
+ * Social handles are account names, not words — the same in every language, so
+ * they stay in code rather than going into a translation file where someone
+ * would eventually be tempted to localise them.
  */
-const OFFICES = [
-  { city: "Sharjah Media City, UAE", tel: "+971 54 744 8002" },
-  { city: "Johar Town, Lahore, Pakistan", tel: "+92 322 4696562" },
-  { city: "Dubbo NSW, Australia", tel: "+61 470 669 147" },
-] as const;
-
 const SOCIAL = [
   { href: "https://www.instagram.com/theqalamkars/", label: "Instagram" },
   { href: "https://x.com/qalamkars", label: "X" },
@@ -73,7 +63,7 @@ export async function Footer() {
           </div>
         </div>
 
-        <nav aria-label="Footer links">
+        <nav aria-label={t.aria.footerLinks}>
           <div className="wq-fhead">{t.footer.links}</div>
           <div className="wq-flist">
             {LINKS.map((l) => (
@@ -84,7 +74,7 @@ export async function Footer() {
           </div>
         </nav>
 
-        <nav aria-label="Explore">
+        <nav aria-label={t.aria.explore}>
           <div className="wq-fhead">{t.footer.explore}</div>
           <div className="wq-flist">
             {EXPLORE.map((l) => (
@@ -101,10 +91,12 @@ export async function Footer() {
             <a href={`mailto:${EMAIL}`} className="wq-femail">
               {EMAIL}
             </a>
-            {OFFICES.map((o) => (
-              <div key={o.city} className="wq-office">
-                <span>{o.city}</span>
-                <a href={`tel:${o.tel.replace(/\s/g, "")}`}>{o.tel}</a>
+            {offices(t).map((o) => (
+              <div key={o.id} className="wq-office">
+                {/* The footer uses the longer form — district and country on
+                    one line — which is why `locality` exists beside `city`. */}
+                <span>{o.locality}</span>
+                <a href={telHref(o.tel)}>{o.tel}</a>
               </div>
             ))}
           </div>

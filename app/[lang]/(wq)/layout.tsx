@@ -9,14 +9,19 @@ import { SITE_URL } from "@/lib/seo";
 import { DEFAULT_THEME } from "@/lib/theme";
 import { LOCALES, dirFor, hasLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
+import { buildNav } from "@/lib/wq-menu";
 import { notFound } from "next/navigation";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: "WalQalum · AI that makes it past the pilot",
-  description:
-    "An AI consultancy and engineering agency. We design and run production AI systems: agents, RAG platforms and automation pipelines, on fifteen years of real software engineering.",
-};
+/** Generated rather than static, because the title and description are now
+ *  per-locale strings like everything else. */
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: t.meta.siteTitle,
+    description: t.meta.siteDescription,
+  };
+}
 
 /**
  * The 2026 design's root layout.
@@ -72,7 +77,7 @@ export default async function WqLayout({ children, params }: LayoutProps<"/[lang
       </head>
       <body className="wq" suppressHydrationWarning>
         <SiteEffects />
-        <Header labels={t.actions} />
+        <Header nav={buildNav(t)} labels={t.actions} aria={t.aria} />
         <main id="main">{children}</main>
         <Footer />
       </body>

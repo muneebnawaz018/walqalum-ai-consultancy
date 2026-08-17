@@ -1,95 +1,82 @@
 /**
- * Copy for the inner pages.
+ * The inner pages' *structure*.
  *
- * The design only drew the home page, so this is written to match its voice
- * rather than copied from it: plain claims, no adjectives doing the work of
- * evidence, and the same refusal to promise what has not shipped.
+ * Same split as `wq-content.ts`: order, slugs and contact details live here,
+ * prose lives in `lib/dictionaries/*.json`.
  *
- * Nothing here invents a metric. Where a number would belong and is not
- * confirmed, the sentence is written without one.
+ * Phone numbers and the email address are deliberately code, not dictionary.
+ * They are the same in every language, and a translator editing a JSON file
+ * should not be able to change the number the firm answers on.
  */
 
-/** The eight sectors, carried over from the existing site's own list. */
-export const INDUSTRIES = [
-  {
-    num: "01",
-    slug: "healthcare",
-    name: "Healthcare",
-    desc: "Clinical documentation, triage support and patient correspondence, built where an audit trail and a human sign-off are not optional.",
-  },
-  {
-    num: "02",
-    slug: "finance",
-    name: "Finance",
-    desc: "Reconciliation, reporting and document review, with every model output traceable to the record it came from.",
-  },
-  {
-    num: "03",
-    slug: "real-estate",
-    name: "Real estate",
-    desc: "Listing intelligence, valuation support and tenant correspondence across portfolios that outgrew their spreadsheets.",
-  },
-  {
-    num: "04",
-    slug: "retail",
-    name: "Retail & commerce",
-    desc: "Catalogue enrichment, demand signals and support automation that survive a peak trading week.",
-  },
-  {
-    num: "05",
-    slug: "education",
-    name: "Education",
-    desc: "Assessment support, content generation and student-facing assistants, with a clear line between help and answer.",
-  },
-  {
-    num: "06",
-    slug: "manufacturing",
-    name: "Manufacturing",
-    desc: "Quality inspection, maintenance forecasting and shop-floor reporting on data that was never collected for AI.",
-  },
-  {
-    num: "07",
-    slug: "fintech",
-    name: "Fintech",
-    desc: "Onboarding, KYC document handling and fraud signals, under the review process that regulation actually requires.",
-  },
-  {
-    num: "08",
-    slug: "legal",
-    name: "Legal & professional",
-    desc: "Contract review, discovery and precedent search, where a confident wrong answer costs more than no answer.",
-  },
-];
+import type { Dictionary } from "@/lib/dictionaries/en";
 
-/** What the firm is, for the About page. */
-export const ABOUT = {
-  lede: "An AI consultancy and engineering agency. Fifteen years of production software under everything we ship, across three offices and eight sectors.",
-  position: [
-    {
-      num: "01",
-      name: "One accountable team",
-      desc: "The Big Four write the strategy and hand you a deck. Integrators build what the deck says, late. We do both, and the same team answers for the result.",
-    },
-    {
-      num: "02",
-      name: "AI where it earns its place",
-      desc: "Most of what gets sold as AI is a workflow problem wearing a model. We will tell you when that is the case, including when it costs us the engagement.",
-    },
-    {
-      num: "03",
-      name: "Built to outlive the launch",
-      desc: "Evals, monitoring, access control and rollback paths are part of shipping, not a phase after it. The agent that impressed the board still runs a year later.",
-    },
-  ],
-  offices: [
-    { city: "Sharjah", country: "United Arab Emirates", tel: "+971 54 744 8002" },
-    { city: "Lahore", country: "Pakistan", tel: "+92 322 4696562" },
-    { city: "Dubbo", country: "Australia", tel: "+61 470 669 147" },
-  ],
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** Where to write. The design's own address. */
+export const EMAIL = "tafseel@walqalum.com";
+
+export type Sector = { num: string; slug: string; name: string; desc: string };
+
+/** The eight sectors, in the existing site's own order. Slugs are anchor ids. */
+export const SECTOR_SLUGS = [
+  "healthcare",
+  "finance",
+  "real-estate",
+  "retail",
+  "education",
+  "manufacturing",
+  "fintech",
+  "legal",
+] as const;
+
+export function industries(t: Dictionary): Sector[] {
+  return SECTOR_SLUGS.map((slug, i) => ({
+    num: pad(i + 1),
+    slug,
+    name: t.sectors[slug].name,
+    desc: t.sectors[slug].desc,
+  }));
+}
+
+export type PositionRow = { num: string; name: string; desc: string };
+
+export const POSITION_IDS = ["accountable", "earnsPlace", "outlive"] as const;
+
+export function positions(t: Dictionary): PositionRow[] {
+  return POSITION_IDS.map((id, i) => ({
+    num: pad(i + 1),
+    name: t.position[id].name,
+    desc: t.position[id].desc,
+  }));
+}
+
+export type Office = {
+  id: string;
+  city: string;
+  country: string;
+  /** The footer's longer form: district and country on one line. */
+  locality: string;
+  tel: string;
 };
 
-/** How to reach the firm, for the Contact page. */
-export const CONTACT = {
-  email: "tafseel@walqalum.com",
-  lede: "Tell us what you are trying to build, or what has stalled. We reply with a straight answer about whether we are the right team for it.",
+export const OFFICE_IDS = ["sharjah", "lahore", "dubbo"] as const;
+
+const OFFICE_TEL: Record<(typeof OFFICE_IDS)[number], string> = {
+  sharjah: "+971 54 744 8002",
+  lahore: "+92 322 4696562",
+  dubbo: "+61 470 669 147",
 };
+
+export function offices(t: Dictionary): Office[] {
+  return OFFICE_IDS.map((id) => ({
+    id,
+    city: t.offices[id].city,
+    country: t.offices[id].country,
+    locality: t.offices[id].locality,
+    tel: OFFICE_TEL[id],
+  }));
+}
+
+/** A `tel:` href needs the number without its display spacing. */
+export const telHref = (tel: string) => `tel:${tel.replace(/\s/g, "")}`;

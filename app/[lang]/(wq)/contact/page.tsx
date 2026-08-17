@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { PageHead } from "@/components/wq/Page";
 import { ContactForm } from "@/components/wq/ContactForm";
-import { ABOUT, CONTACT } from "@/lib/wq-pages";
+import { getDictionary } from "@/lib/dictionaries";
+import { EMAIL, offices, telHref } from "@/lib/wq-pages";
 
-export const metadata: Metadata = {
-  title: "Contact · WalQalum",
-  description: CONTACT.lede,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return { title: t.meta.contactTitle, description: t.contact.lede };
+}
 
 /**
  * Contact.
@@ -15,37 +16,36 @@ export const metadata: Metadata = {
  * the same schema the old page used — the endpoint is unchanged, only the
  * surface around it is.
  */
-export default function Contact() {
+export default async function Contact() {
+  const t = await getDictionary();
+
   return (
     <>
       <PageHead
-        eyebrow="01 / Contact"
-        title={
-          <>
-            Tell us what you are <span className="wq-accent">building.</span>
-          </>
-        }
-        lede={CONTACT.lede}
+        eyebrow={t.contact.eyebrow}
+        title={t.contact.titleLead}
+        accent={t.contact.titleAccent}
+        lede={t.contact.lede}
       />
 
       <section className="wq-wrap wq-sec-b">
         <div className="wq-grid2 wq-grid2-start">
           <div className="wq-side">
-            <p className="wq-eyebrow">Direct</p>
+            <p className="wq-eyebrow">{t.contact.directLabel}</p>
             <div className="wq-tick" aria-hidden="true" />
             <div className="wq-contact-direct">
-              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-              {ABOUT.offices.map((o) => (
-                <div key={o.city} className="wq-office">
+              <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+              {offices(t).map((o) => (
+                <div key={o.id} className="wq-office">
                   <span>
                     {o.city}, {o.country}
                   </span>
-                  <a href={`tel:${o.tel.replace(/\s/g, "")}`}>{o.tel}</a>
+                  <a href={telHref(o.tel)}>{o.tel}</a>
                 </div>
               ))}
             </div>
           </div>
-          <ContactForm />
+          <ContactForm t={t.form} />
         </div>
       </section>
     </>

@@ -8,7 +8,7 @@ import { BurgerIcon, CloseIcon } from "@/components/wq/Icons";
 import { LangSwitch } from "@/components/wq/LangSwitch";
 import type { Dictionary } from "@/lib/dictionaries/en";
 import { SoundToggle, ThemeToggle } from "@/components/wq/Toggles";
-import { NAV } from "@/lib/wq-menu";
+import type { NavItem } from "@/lib/wq-menu";
 import { sound } from "@/lib/wq-sound";
 
 /**
@@ -25,8 +25,20 @@ const CLOSE_DELAY_MS = 180;
  * Fixed rather than sticky, 68px tall, and transparent until the page scrolls —
  * the design lets the hero run under it and only draws the hairline once there
  * is content behind it to separate.
+ *
+ * The navigation arrives as a prop rather than being imported. Every label in
+ * it is a translated string now, so it has to be built where the locale is
+ * known — which is the server layout, not this client component.
  */
-export function Header({ labels }: { labels: Dictionary["actions"] }) {
+export function Header({
+  nav,
+  labels,
+  aria,
+}: {
+  nav: NavItem[];
+  labels: Dictionary["actions"];
+  aria: Dictionary["aria"];
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -70,11 +82,17 @@ export function Header({ labels }: { labels: Dictionary["actions"] }) {
   }, []);
 
   /* A route change should close both; leaving either open would cover the page
-     the visitor just asked for. */
-  useEffect(() => {
+     the visitor just asked for.
+     Done during render rather than in an effect, which is React's own guidance
+     for adjusting state when a prop changes. An effect would commit the new
+     page with the panel still open and only close it on the following pass, so
+     the panel is painted over the new page for a frame. */
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setMenu(false);
     setMega(null);
-  }, [pathname]);
+  }
 
   return (
     <header
@@ -93,7 +111,7 @@ export function Header({ labels }: { labels: Dictionary["actions"] }) {
       }}
     >
       <div className="wq-header-in">
-        <LocaleLink href="/" className="wq-logo" aria-label="WalQalum home" data-magnetic="4">
+        <LocaleLink href="/" className="wq-logo" aria-label={aria.logoHome} data-magnetic="4">
           <Image
             src="/brand/walqalum-eagle.png"
             alt=""
@@ -106,10 +124,10 @@ export function Header({ labels }: { labels: Dictionary["actions"] }) {
 
         <nav
           className="wq-nav wq-desktop"
-          aria-label="Primary"
+          aria-label={aria.primaryNav}
           onMouseLeave={() => closeMega()}
         >
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <LocaleLink
               key={item.href}
               href={item.href}
@@ -155,7 +173,7 @@ export function Header({ labels }: { labels: Dictionary["actions"] }) {
           are visibility:hidden, which also keeps their links out of the tab
           order — display:none would kill the animation, opacity alone would
           leave invisible links focusable. */}
-      {NAV.map((item) => (
+      {nav.map((item) => (
         <div
           key={item.href}
           id={panelId(item.href)}
@@ -192,8 +210,8 @@ export function Header({ labels }: { labels: Dictionary["actions"] }) {
       {/* Kept in the DOM and hidden, so the drawer can transition rather than
           appearing instantly, and so its links stay findable. */}
       <div id="wq-drawer" className="wq-drawer" data-open={menu ? "" : undefined} hidden={!menu}>
-        <nav aria-label="Primary, mobile">
-          {NAV.map((item) => (
+        <nav aria-label={aria.mobileNav}>
+          {nav.map((item) => (
             <LocaleLink key={item.href} href={item.href}>
               {item.label}
             </LocaleLink>

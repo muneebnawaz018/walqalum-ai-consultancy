@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EndCta, PageHead } from "@/components/wq/Page";
-import { WORK } from "@/lib/wq-content";
+import { getDictionary } from "@/lib/dictionaries";
+import { WORK_SLUGS, work } from "@/lib/wq-content";
 
 export function generateStaticParams() {
-  return WORK.map((w) => ({ slug: w.slug }));
+  return WORK_SLUGS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[lang]/work/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const item = WORK.find((w) => w.slug === slug);
-  return item
-    ? { title: `${item.name} · WalQalum`, description: item.tags }
-    : {};
+  const t = await getDictionary();
+  const item = work(t).find((w) => w.slug === slug);
+  return item ? { title: `${item.name} · WalQalum`, description: item.tags } : {};
 }
 
 /**
@@ -27,7 +27,8 @@ export async function generateMetadata({
  */
 export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slug]">) {
   const { slug } = await params;
-  const item = WORK.find((w) => w.slug === slug);
+  const t = await getDictionary();
+  const item = work(t).find((w) => w.slug === slug);
   if (!item) notFound();
 
   return (
@@ -35,12 +36,9 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
       <PageHead eyebrow={item.tags} title={item.name} />
       <section className="wq-wrap wq-sec-b">
         <div className="wq-card-media wq-case-media" aria-hidden="true" />
-        <p className="wq-lede wq-case-note">
-          The full write-up for this project is with the client for approval. We
-          publish outcomes once they are confirmed, and not before.
-        </p>
+        <p className="wq-lede wq-case-note">{t.work.casePending}</p>
       </section>
-      <EndCta title="Want something like this?" />
+      <EndCta title={t.work.ctaTitle} />
     </>
   );
 }

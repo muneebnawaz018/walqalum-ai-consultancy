@@ -1,14 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink } from "@/components/wq/LocaleLink";
 import { useEffect, useState } from "react";
-
-/**
- * The words the headline rotates through. The design cycles these in the
- * accent colour so the sentence reads as a list of the things AI projects
- * usually stall at.
- */
-const CYCLE = ["pilot.", "prototype.", "concept.", "demo."] as const;
+import type { Dictionary } from "@/lib/dictionaries/en";
 
 const INTERVAL_MS = 2600;
 
@@ -18,8 +12,21 @@ const INTERVAL_MS = 2600;
  * Full viewport height, headline set very tight, and one word of it on a timer.
  * The cycler is measured against the longest word rather than sized to the
  * current one, so the line below never jumps as the word changes.
+ *
+ * The rotating words come from the dictionary as a list, so a language is free
+ * to use a different number of them — the timer and the ghost sizer both read
+ * the array's own length rather than a fixed four.
  */
-export function Hero() {
+export function Hero({
+  t,
+  actions,
+  aria,
+}: {
+  t: Dictionary["home"];
+  actions: Dictionary["actions"];
+  aria: string;
+}) {
+  const CYCLE = t.heroCycle;
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -30,7 +37,7 @@ export function Hero() {
     if (reduced || paused) return;
     const id = setInterval(() => setI((n) => (n + 1) % CYCLE.length), INTERVAL_MS);
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, CYCLE.length]);
 
   /* Pause while the tab is hidden: an unseen timer is wasted work, and the
      word would otherwise have moved on several times before the visitor
@@ -42,16 +49,14 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="wq-hero" aria-label="Intro">
+    <section className="wq-hero" aria-label={aria}>
       <div className="wq-hero-in">
-        <p className="wq-eyebrow wq-hero-eyebrow">
-          AI Consultancy &amp; Engineering · UAE · PK · AU
-        </p>
+        <p className="wq-eyebrow wq-hero-eyebrow">{t.heroEyebrow}</p>
 
         <h1 className="wq-hero-h1">
-          <span className="wq-hero-line">AI that makes it</span>
+          <span className="wq-hero-line">{t.heroLine1}</span>
           <span className="wq-hero-line">
-            past the{" "}
+            {t.heroLine2}{" "}
             {/* The live region is off: this is decoration, and announcing a new
                 word every few seconds would talk over the rest of the page. The
                 full sentence is still readable because every word is in the DOM. */}
@@ -74,22 +79,18 @@ export function Hero() {
           </span>
         </h1>
 
-        <p className="wq-hero-lede">
-          Adaptive to your business, your growth, your future. We design and run
-          production AI systems: agents, RAG platforms, automation pipelines, on
-          fifteen years of real software engineering.
-        </p>
+        <p className="wq-hero-lede">{t.heroLede}</p>
 
         <div className="wq-hero-cta">
-          <Link href="/contact" className="wq-cta wq-cta-lg">
-            Start a project
-          </Link>
-          <Link href="/work" className="wq-link">
-            See selected work
+          <LocaleLink href="/contact" className="wq-cta wq-cta-lg">
+            {actions.startProject}
+          </LocaleLink>
+          <LocaleLink href="/work" className="wq-link">
+            {actions.seeWork}
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
               <path d="M3 9L9 3M4.5 3H9v4.5" />
             </svg>
-          </Link>
+          </LocaleLink>
         </div>
       </div>
     </section>

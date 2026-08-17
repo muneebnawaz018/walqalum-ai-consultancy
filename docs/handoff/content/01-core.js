@@ -404,3 +404,10 @@ const C = {
     },
   ],
 };
+
+/* Exported so this reads as the module it actually is. Nothing imports it
+   today — it is the bilingual source the handoff was written against, and the
+   Arabic in it is the firm's own published wording, which is why it is worth
+   keeping rather than deleting once the strings have been lifted into
+   `lib/dictionaries/`. */
+export { C, T };
