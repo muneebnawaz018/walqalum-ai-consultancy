@@ -22,7 +22,11 @@
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: "Inter Tight", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter Tight",
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 16px;
   /* `normal`, as the design has it. A global 1.5 looked harmless and was not:
      every element that does not state its own leading — the nav links, the
@@ -133,7 +137,9 @@
   border-radius: 2px;
   border: 0;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .wq-cta:hover {
   background: var(--accent);
@@ -184,7 +190,10 @@
   right: 0;
   z-index: 1000;
   border-bottom: 1px solid transparent;
-  transition: background 0.25s, border-color 0.25s, backdrop-filter 0.25s;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    backdrop-filter 0.25s;
 }
 .wq-header[data-scrolled] {
   background: var(--header-veil);
@@ -428,7 +437,9 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .wq-mega {
-    transition: opacity 0.15s, visibility 0s 0.15s;
+    transition:
+      opacity 0.15s,
+      visibility 0s 0.15s;
     transform: none;
   }
   .wq-mega[data-open] {
@@ -737,7 +748,9 @@
   font-size: 15px;
   border-bottom: 1px solid var(--underline);
   padding-bottom: 3px;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 .wq-link:hover {
   color: var(--ink);
@@ -765,7 +778,9 @@
   grid-area: 1 / 1;
   opacity: 0;
   transform: translateY(0.12em);
-  transition: opacity 0.45s ease, transform 0.45s ease;
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
 }
 .wq-cycle-item[data-on] {
   opacity: 1;
@@ -1299,7 +1314,9 @@
   border-bottom: 1px solid var(--underline);
   padding-bottom: 3px;
   align-self: flex-start;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 .wq-contact-direct > a:hover {
   color: var(--accent);
@@ -1696,6 +1713,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
 
 /* ==== Arabic ====
    Direction itself needs almost nothing: the layout is built on `margin-inline`
