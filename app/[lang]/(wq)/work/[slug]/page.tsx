@@ -1,6 +1,11 @@
+/* eslint-disable @next/next/no-img-element --
+   The plates are local static SVGs. next/image refuses SVG unless the project
+   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
+   as markup — too much surface to open for placeholder art. There is nothing
+   for an optimiser to do to a 1KB vector anyway. */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EndCta, PageHead } from "@/components/wq/Page";
+import { EndCta, PageHead, Statement } from "@/components/wq/Page";
 import { getDictionary } from "@/lib/dictionaries";
 import { WORK_SLUGS, work } from "@/lib/wq-content";
 
@@ -34,10 +39,39 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
   return (
     <>
       <PageHead eyebrow={item.tags} title={item.name} />
+
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-card-media wq-case-media" aria-hidden="true" />
-        <p className="wq-lede wq-case-note">{t.work.casePending}</p>
+        <div
+          className="wq-card-media wq-case-media"
+          aria-hidden="true"
+          data-reveal-scale=""
+          data-reveal=""
+        >
+          <img
+            src={`/wq/dummy/0${(WORK_SLUGS.indexOf(slug as (typeof WORK_SLUGS)[number]) % 6) + 1}.svg`}
+            alt=""
+          />
+        </div>
       </section>
+
+      <section className="wq-wrap wq-sec-b">
+        <div className="wq-grid2 wq-grid2-start">
+          <div className="wq-side">
+            <p className="wq-eyebrow" data-reveal="">
+              {t.work.statusLabel}
+            </p>
+            <div className="wq-tick" aria-hidden="true" />
+          </div>
+          <Statement
+            lines={[
+              t.work.casePendingLead,
+              <em key="em">{t.work.casePendingEm}</em>,
+              t.work.casePendingTail,
+            ]}
+          />
+        </div>
+      </section>
+
       <EndCta title={t.work.ctaTitle} />
     </>
   );

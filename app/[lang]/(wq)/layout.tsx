@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../../wq.css";
 import { Footer } from "@/components/wq/Footer";
 import { Header } from "@/components/wq/Header";
+import { Motion } from "@/components/wq/Motion";
 import { SiteEffects } from "@/components/wq/SiteEffects";
 import { ThemeStyle } from "@/components/ThemeStyle";
 import { LocaleAlternates } from "@/components/wq/LocaleAlternates";
@@ -77,6 +78,7 @@ export default async function WqLayout({ children, params }: LayoutProps<"/[lang
       </head>
       <body className="wq" suppressHydrationWarning>
         <SiteEffects />
+        <Motion />
         <Header nav={buildNav(t)} labels={t.actions} aria={t.aria} />
         <main id="main">{children}</main>
         <Footer />

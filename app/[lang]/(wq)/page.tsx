@@ -1,4 +1,3 @@
-import { Capabilities } from "@/components/wq/Capabilities";
 import { Hero } from "@/components/wq/Hero";
 import { Process } from "@/components/wq/Process";
 import {
@@ -8,9 +7,10 @@ import {
   Positioning,
   SelectedWork,
 } from "@/components/wq/Sections";
+import { Services } from "@/components/wq/Services";
 import { Stats } from "@/components/wq/Stats";
 import { getDictionary } from "@/lib/dictionaries";
-import { capabilities, stats, steps } from "@/lib/wq-content";
+import { stats, steps } from "@/lib/wq-content";
 
 /**
  * The home page, in the design's own order.
@@ -27,12 +27,7 @@ export default async function Home() {
       <Hero t={t.home} actions={t.actions} aria={t.aria.intro} />
       <Marquee />
       <Positioning />
-      <Capabilities
-        rows={capabilities(t)}
-        eyebrow={t.home.capabilitiesEyebrow}
-        note={t.home.capabilitiesNote}
-        aria={t.aria.capabilities}
-      />
+      <Services />
       <Process
         rows={steps(t)}
         eyebrow={t.home.processEyebrow}

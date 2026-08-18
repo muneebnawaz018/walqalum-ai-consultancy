@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { FillText } from "@/components/wq/FillText";
+import { StackHead } from "@/components/wq/Page";
+import { WorkRing } from "@/components/wq/WorkRing";
 import { getDictionary, getLocale } from "@/lib/dictionaries";
 import { localeHref, type Locale } from "@/lib/i18n";
 import { CLIENTS, posts, work } from "@/lib/wq-content";
@@ -60,8 +63,12 @@ export async function Marquee() {
 export async function Positioning() {
   const t = await getDictionary();
   return (
-    <section id="position" aria-label={t.aria.positioning} className="wq-sec wq-wrap">
-      <div className="wq-grid2">
+    <section
+      id="position"
+      aria-label={t.aria.positioning}
+      className="wq-sec wq-wrap wq-guides"
+    >
+      <div className="wq-grid2 wq-grid2-wide">
         <div className="wq-side">
           <p className="wq-eyebrow">{t.home.positionEyebrow}</p>
           {/* A rule that fades out downward, the design's section marker. */}
@@ -70,49 +77,45 @@ export async function Positioning() {
         </div>
         {/* Three keys rather than one: the emphasised clause is the design's
             own device, and a translator needs to be able to move it inside the
-            sentence without editing markup. */}
-        <div className="wq-statement">
+            sentence without editing markup.
+
+            Left to flow rather than broken into fixed lines as the reference
+            has it: a hand-cut line break is a measurement of one language's
+            words, and the Arabic sentence is neither the same length nor read
+            in the same direction. `FillText` boxes each word, so the scroll
+            fill still runs in reading order wherever the lines happen to
+            break. */}
+        <FillText className="wq-statement">
           {t.home.statementLead} <em>{t.home.statementEm}</em>{" "}
           {t.home.statementTail}
-        </div>
+        </FillText>
       </div>
     </section>
   );
 }
 
-/** 04 / Selected work — three cards, image slots pending real screenshots. */
+/**
+ * 04 / Selected work — the reference's shape: a stacked heading, the slow ring
+ * of projects, and one link onward. The card grid lives on /work, where someone
+ * comparing projects can see them side by side; here the ring is the invitation.
+ */
 export async function SelectedWork() {
   const t = await getDictionary();
   const locale: Locale = await getLocale();
   return (
-    <section id="work" aria-label={t.aria.selectedWork} className="wq-wrap wq-sec-b">
-      <div className="wq-sec-head">
-        <div>
-          <p className="wq-eyebrow">{t.home.workEyebrow}</p>
-          <h2 className="wq-h2-lg">{t.home.workTitle}</h2>
-        </div>
+    <section
+      id="work"
+      aria-label={t.aria.selectedWork}
+      className="wq-wrap wq-sec-b wq-guides"
+    >
+      <StackHead
+        top={t.home.workTop}
+        bottom={t.home.workBottom}
+        note={t.home.workNote}
+      />
+      <WorkRing items={work(t)} locale={locale} />
+      <div className="wq-ring-cta">
         <ArrowLink href={localeHref("/work", locale)}>{t.actions.allWork}</ArrowLink>
-      </div>
-      <div className="wq-grid3">
-        {work(t).map((w) => (
-          <Link
-            key={w.slug}
-            href={localeHref(`/work/${w.slug}`, locale)}
-            className="wq-card"
-          >
-            {/* The design ships placeholder slots here. Left as an empty
-                surface rather than filled with stock imagery, so it reads as
-                deliberately pending rather than finished. */}
-            <div className="wq-card-media" aria-hidden="true" />
-            <div className="wq-card-row">
-              <h3>{w.name}</h3>
-              <span className="wq-arrow" aria-hidden="true">
-                →
-              </span>
-            </div>
-            <p className="wq-card-tags">{w.tags}</p>
-          </Link>
-        ))}
       </div>
     </section>
   );
@@ -123,7 +126,11 @@ export async function Insights() {
   const t = await getDictionary();
   const locale: Locale = await getLocale();
   return (
-    <section id="insights" aria-label={t.aria.insights} className="wq-sec wq-wrap">
+    <section
+      id="insights"
+      aria-label={t.aria.insights}
+      className="wq-sec wq-wrap wq-guides"
+    >
       <div className="wq-sec-head">
         <div>
           <p className="wq-eyebrow">{t.home.insightsEyebrow}</p>

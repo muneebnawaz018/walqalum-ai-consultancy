@@ -74,6 +74,9 @@
     "statementEm": "We close that gap.",
     "statementTail": "Applied AI on fifteen years of production engineering, so the agent that impressed the board still runs, audited and monitored, a year later.",
 
+    "servicesTop": "Our",
+    "servicesBottom": "Services",
+    "servicesEyebrow": "(a.) Services",
     "capabilitiesEyebrow": "02 / Capabilities",
     "capabilitiesNote": "Six disciplines, one team. Every engagement draws on all of them.",
 
@@ -81,6 +84,9 @@
     "processTitle": "Four steps. No theatre.",
     "stepLabel": "STEP",
 
+    "workTop": "Selected",
+    "workBottom": "Work",
+    "workNote": "A curated look at what we have been building — systems, agents and platforms shaped for production.",
     "workEyebrow": "04 / Selected work",
     "workTitle": "Built, shipped, running.",
 
@@ -95,10 +101,17 @@
     "titleLead": "Strategy and delivery, from",
     "titleAccent": "one team.",
     "lede": "An AI consultancy and engineering agency. Fifteen years of production software under everything we ship, across three offices and eight sectors.",
-    "positionLabel": "02 / Position",
-    "positionNote": "Fifteen years of production engineering, applied only where AI earns its place.",
-    "officesLabel": "03 / Offices",
-    "officesNote": "Three time zones, one team."
+    "gapLabel": "02 / The gap",
+    "gapNote": "Fifteen years of production engineering, applied only where AI earns its place.",
+    "statementLead": "Consultancies write the strategy and hand over a deck.",
+    "statementEm": "Integrators build what the deck says, late. We do both.",
+    "statementTail": "The same team answers for the result either way.",
+    "positionLabel": "03 / Position",
+    "positionNote": "Three commitments we will be held to, including the one that costs us work.",
+    "officesLabel": "05 / Offices",
+    "officesTitleLead": "Three time zones,",
+    "officesTitleTail": "one team.",
+    "officesNote": "Work follows the sun rather than waiting for a handover meeting."
   },
 
   "industries": {
@@ -106,6 +119,15 @@
     "titleLead": "Eight sectors where the constraints are",
     "titleAccent": "already known.",
     "lede": "What a model may decide, and what the data looks like underneath, differ by sector. These are the ones we have shipped into.",
+    "whyLabel": "02 / Why it matters",
+    "statementLead": "A model does not know which mistakes are expensive.",
+    "statementEm": "The sector decides that.",
+    "statementTail": "So we start from the rules you already work under, not from what the technology can do.",
+    "listLabel": "03 / The list",
+    "listTitle": "Where we have shipped.",
+    "listNote": "Ordered as we met them, not by size.",
+    "sectorsLabel": "03 / Sectors",
+    "sectorsNote": "Eight sectors, one team. What carries across them is the engineering, not the model.",
     "ctaTitle": "Working in one of these?"
   },
 
@@ -114,8 +136,16 @@
     "titleLead": "Built, shipped,",
     "titleAccent": "running.",
     "lede": "A selection of systems in production. Client-confirmed outcomes are published once the client confirms them, and not before.",
-    "ctaTitle": "Want something like this?",
-    "casePending": "The full write-up for this project is with the client for approval. We publish outcomes once they are confirmed, and not before."
+    "howLabel": "02 / How it goes",
+    "howLead": "Every one of these started as a conversation about what was already broken.",
+    "howEm": "None started with a model.",
+    "processLabel": "03 / Process",
+    "processNote": "The same four on every engagement, whatever the sector.",
+    "statusLabel": "02 / Status",
+    "casePendingLead": "The full write-up is with the client for approval.",
+    "casePendingEm": "We publish outcomes once",
+    "casePendingTail": "they are confirmed, and not before.",
+    "ctaTitle": "Want something like this?"
   },
 
   "insights": {
@@ -123,8 +153,15 @@
     "titleLead": "Notes from the",
     "titleAccent": "field.",
     "lede": "What we learned building the last thing, written down before we forget it.",
+    "whyLabel": "02 / Why we write",
+    "whyLead": "Every one of these was a thing we got wrong first.",
+    "whyEm": "Writing it down is cheaper",
+    "whyTail": "than learning it twice.",
+    "statusLabel": "02 / Status",
     "ctaTitle": "Want to talk it through instead?",
-    "articlePending": "This piece is still being written. We publish once it says something we would stand behind in a review, and not before."
+    "articlePendingLead": "This piece is still being written.",
+    "articlePendingEm": "We publish once it says",
+    "articlePendingTail": "something we would stand behind in a review."
   },
 
   "contact": {
@@ -132,7 +169,26 @@
     "titleLead": "Tell us what you are",
     "titleAccent": "building.",
     "lede": "Tell us what you are trying to build, or what has stalled. We reply with a straight answer about whether we are the right team for it.",
-    "directLabel": "Direct"
+    "directLabel": "02 / Direct",
+    "nextLabel": "03 / What happens next",
+    "nextTitleLead": "A straight answer,",
+    "nextTitleTail": "not a proposal deck.",
+    "nextSteps": {
+      "read": {
+        "name": "We read it ourselves",
+        "desc": "No form triage and no account manager in between. The people who would build it are the people who reply."
+      },
+      "fit": {
+        "name": "We say whether we fit",
+        "desc": "Including when we do not. If what you need is a workflow fix rather than a model, we would rather tell you than sell you."
+      },
+      "scope": {
+        "name": "We scope it properly",
+        "desc": "A call about your data and your constraints, then a written scope with what it costs and what it does not cover."
+      }
+    },
+    "closeLead": "If it is not a fit, we will say so in the first reply.",
+    "closeEm": "That is the whole process."
   },
 
   "form": {
@@ -150,27 +206,33 @@
   "capabilities": {
     "agents": {
       "name": "AI Agents & Automation",
-      "desc": "Autonomous and semi-autonomous agents that run real operations: triage, research, reporting, workflow orchestration, with guardrails and audit trails built in."
+      "desc": "Autonomous and semi-autonomous agents that run real operations: triage, research, reporting, workflow orchestration, with guardrails and audit trails built in.",
+      "bullets": ["AUTONOMOUS TRIAGE", "WORKFLOW ORCHESTRATION", "GUARDRAILS & AUDIT TRAILS", "HUMAN HANDOFF DESIGN"]
     },
     "rag": {
       "name": "LLM Integration & RAG Systems",
-      "desc": "Language models grounded in your documents and data. Retrieval pipelines, evaluation harnesses and versioned prompts, not a thin wrapper around an API."
+      "desc": "Language models grounded in your documents and data. Retrieval pipelines, evaluation harnesses and versioned prompts, not a thin wrapper around an API.",
+      "bullets": ["RETRIEVAL PIPELINES", "EVALUATION HARNESSES", "VERSIONED PROMPTS", "GROUNDED ANSWERING"]
     },
     "ml": {
       "name": "Machine Learning Engineering",
-      "desc": "Models trained, served and monitored as production software: feature pipelines, drift detection, rollback paths."
+      "desc": "Models trained, served and monitored as production software: feature pipelines, drift detection, rollback paths.",
+      "bullets": ["FEATURE PIPELINES", "MODEL SERVING", "DRIFT DETECTION", "ROLLBACK PATHS"]
     },
     "data": {
       "name": "Data Intelligence",
-      "desc": "The layer AI depends on: warehouses, pipelines and decision dashboards that make your data usable before anything clever touches it."
+      "desc": "The layer AI depends on: warehouses, pipelines and decision dashboards that make your data usable before anything clever touches it.",
+      "bullets": ["WAREHOUSE ARCHITECTURE", "INGESTION PIPELINES", "DECISION DASHBOARDS", "DATA QUALITY GATES"]
     },
     "software": {
       "name": "Custom Software & SaaS",
-      "desc": "Fifteen years of product engineering. Web platforms, internal tools and SaaS products built to outlive their launch."
+      "desc": "Fifteen years of product engineering. Web platforms, internal tools and SaaS products built to outlive their launch.",
+      "bullets": ["WEB PLATFORMS", "INTERNAL TOOLING", "SAAS PRODUCTS", "API DESIGN"]
     },
     "cloud": {
       "name": "Cloud & DevOps",
-      "desc": "Infrastructure as code, CI/CD, observability and cost control across AWS, Azure and GCP."
+      "desc": "Infrastructure as code, CI/CD, observability and cost control across AWS, Azure and GCP.",
+      "bullets": ["INFRASTRUCTURE AS CODE", "CI/CD PIPELINES", "OBSERVABILITY", "COST CONTROL"]
     }
   },
 

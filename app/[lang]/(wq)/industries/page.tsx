@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { EndCta, PageHead, RowList } from "@/components/wq/Page";
+import { EndCta, PageHead, SectionHead, Statement } from "@/components/wq/Page";
+import { SpyRows } from "@/components/wq/SpyRows";
 import { getDictionary } from "@/lib/dictionaries";
 import { industries } from "@/lib/wq-pages";
 
@@ -14,9 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Industries.
  *
- * Replaces the design's Services tab. Built on the home page's Capabilities
- * pattern — a numbered row list — because these are the same shape of content:
- * a named thing and one honest sentence about it.
+ * Replaces the design's Services tab, per the brief. Built on the reference
+ * site's device for a list of this length — a sticky index beside numbered rows
+ * that dim as they leave the middle of the screen — rather than a flat list,
+ * because eight rows read as a catalogue otherwise.
  */
 export default async function Industries() {
   const t = await getDictionary();
@@ -29,9 +31,38 @@ export default async function Industries() {
         accent={t.industries.titleAccent}
         lede={t.industries.lede}
       />
+
       <section className="wq-wrap wq-sec-b">
-        <RowList rows={industries(t)} />
+        <div className="wq-grid2 wq-grid2-start">
+          <div className="wq-side">
+            <p className="wq-eyebrow" data-reveal="">
+              {t.industries.whyLabel}
+            </p>
+            <div className="wq-tick" aria-hidden="true" />
+          </div>
+          <Statement
+            lines={[
+              t.industries.statementLead,
+              <em key="em">{t.industries.statementEm}</em>,
+              t.industries.statementTail,
+            ]}
+          />
+        </div>
       </section>
+
+      <div className="wq-wrap">
+        <SectionHead
+          index={t.industries.listLabel}
+          title={[t.industries.listTitle]}
+          note={t.industries.listNote}
+        />
+      </div>
+      <SpyRows
+        rows={industries(t)}
+        label={t.industries.sectorsLabel}
+        note={t.industries.sectorsNote}
+      />
+
       <EndCta title={t.industries.ctaTitle} />
     </>
   );

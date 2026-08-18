@@ -24,9 +24,18 @@
   color: var(--ink);
   font-family: "Inter Tight", system-ui, -apple-system, sans-serif;
   font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  /* `normal`, as the design has it. A global 1.5 looked harmless and was not:
+     every element that does not state its own leading — the nav links, the
+     wordmark, the CTA, the eyebrows — came out four pixels taller than the
+     design, and those four pixels accumulated down the page. The design sets
+     line-height only where the text is a paragraph; so does this file. */
+  line-height: normal;
+  /* No font-smoothing or text-rendering override: the design sets neither, and
+     both change how glyphs are rasterised without changing a single metric.
+     `-webkit-font-smoothing: antialiased` in particular swaps macOS from
+     subpixel to greyscale antialiasing, which renders every stroke lighter and
+     thinner than the design — the same text, same size, same weight, drawn with
+     less ink. It does not show up in measurements, only on screen. */
   overflow-x: hidden;
 }
 .wq *,
@@ -83,12 +92,16 @@
   max-width: 52ch;
 }
 /* The eyebrow: mono, spaced, and the one place the design uses uppercase. */
+/* Above a section heading the design gives the eyebrow 20px of air. Where it
+   sits in a side column instead, the column's own gap spaces it and it carries
+   no margin — which is why this is scoped rather than set on every eyebrow. */
+.wq-sec-head .wq-eyebrow,
+.wq-sec > .wq-eyebrow,
+.wq-sec-b > .wq-eyebrow {
+  margin-bottom: 20px;
+}
 .wq-eyebrow {
   font-family: "JetBrains Mono", ui-monospace, monospace;
-  /* The design sets no global line-height, so its eyebrows sit at `normal`.
-     Ours inherit 1.5 from the shell, which made every one of them two pixels
-     taller and pushed the whole page down by that much per section. */
-  line-height: normal;
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0.16em;
@@ -178,32 +191,24 @@
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom-color: var(--hairline);
 }
-/* Three tracks rather than space-between: with the logo and the actions being
-   different widths, space-between leaves the nav sitting left of centre and
-   drifting as the actions change (the language button, the sound toggle). The
-   1fr on each side pins it to the middle of the header at every width. */
+/* space-between, as the design has it. An earlier version used a three-track
+   grid to centre the nav, which reads as tidier in isolation but puts the tabs
+   78px right of where the design puts them. */
 .wq-header-in {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   height: 68px;
+  /* content-box, unlike every section on the page. That is the design's own
+     inconsistency, not a tidy-up opportunity: its sections declare border-box
+     and cap at 1720 including the gutter, while its header does not, so the
+     header's real ceiling is 1720 + 96. Between those two numbers the header
+     still runs full width while ours had already started centring, which put
+     our logo 40px further in than the design's on a ~1800px screen. */
+  box-sizing: content-box;
   max-width: 1720px;
   margin-inline: auto;
   padding-inline: clamp(20px, 4vw, 48px);
-}
-.wq-header-in > .wq-logo {
-  justify-self: start;
-}
-.wq-header-in > .wq-actions {
-  justify-self: end;
-}
-/* Below 1024px the nav and most actions are hidden, so the middle track would
-   collapse and leave the logo adrift. */
-@media (max-width: 1023px) {
-  .wq-header-in {
-    display: flex;
-    justify-content: space-between;
-  }
 }
 
 /* The mark is a gradient, so unlike the old lockup it cannot be recoloured
@@ -295,6 +300,33 @@
   transform: scaleX(0);
   transform-origin: 0 50%;
   will-change: transform;
+}
+
+/* ---- inner-page devices ----
+   The vocabulary the redesigned pages share: an oversized section heading with
+   a note under it, cards that tilt toward the pointer, and the statement block
+   set in fixed lines. */
+.wq-sec-note {
+  margin-top: 20px;
+  max-width: 42ch;
+}
+/* The tilt is applied to an inner wrapper so the card's own hover transitions
+   and the transform do not fight over the same property. */
+[data-tilt] {
+  transform-style: preserve-3d;
+}
+[data-tilt-inner] {
+  will-change: transform;
+}
+.wq-office-card {
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 28px;
+  background: var(--surface);
+  transition: border-color 0.25s;
+}
+.wq-office-card:hover {
+  border-color: var(--accent);
 }
 
 /* ---- mega panel ----
@@ -783,6 +815,13 @@
 .wq-grid2-start {
   align-items: start;
 }
+/* A narrower caption against a wider claim, for the one section where the
+   statement is the section. Kept as a modifier rather than changed on
+   `.wq-grid2` itself — every other pairing on the site is matched to the
+   design's own 5/7 split. */
+.wq-grid2-wide {
+  grid-template-columns: 2fr 10fr;
+}
 .wq-grid3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -834,9 +873,33 @@
   line-height: 1.22;
   text-wrap: pretty;
 }
+/* Each line its own block, as the design has it. */
+.wq-statement > span {
+  display: block;
+}
 .wq-statement em {
   font-style: normal;
   color: var(--accent);
+}
+
+/* ---- scroll fill ----
+   The front advances in reading order, one word at a time, so each word needs a
+   box of its own — see FillText, which makes them. Position in the sequence is
+   not something CSS can know, so the motion layer writes the opacity and the
+   float per word on scroll.
+
+   Dimming by opacity rather than by swapping the colour is deliberate: it keeps
+   the accent clause accented while it is still unread, and one animatable
+   property per word is far cheaper than recomputing a colour for each.
+
+   Nothing here hides anything. With no JavaScript every word stays at full
+   opacity, unmoved, and the statement simply reads. */
+[data-fill] [data-w] {
+  /* Inline boxes ignore transforms, so the float needs inline-block. Safe at
+     the word layer: the break points are the spaces between these boxes, and a
+     word can no longer be broken through the middle. */
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 /* ---- marquee ----
@@ -1311,6 +1374,328 @@
 .wq-case-note {
   margin-top: 32px;
 }
+
+/* ---- projects ring ----
+   Ten tiles on a slow circle, each linking to its project. Geometry and timing
+   are the reference's own: radius 2.1x the tile, ten positions from the top,
+   one revolution every 180s. The tile size steps at its breakpoints too, and
+   the stage is sized 2r + tile + 40 so the circle never clips.
+
+   Every position is a static CSS transform rather than a per-tile value written
+   from script — `rotate(a) translateY(-r)` puts a tile exactly where the
+   reference's cos/sin pair does, and leaves it turned by the same angle. So the
+   ring is laid out and turning before any JavaScript runs. */
+.wq-ring-stage {
+  --wq-tile: 140px;
+  --wq-r: calc(var(--wq-tile) * 2.1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(2 * var(--wq-r) + var(--wq-tile) + 40px);
+}
+@media (min-width: 1024px) {
+  .wq-ring-stage {
+    --wq-tile: 170px;
+  }
+}
+@media (min-width: 1280px) {
+  .wq-ring-stage {
+    --wq-tile: 200px;
+  }
+}
+.wq-ring {
+  position: relative;
+  width: 0;
+  height: 0;
+  animation: wq-ring-spin 180s linear infinite;
+}
+/* Paused until scrolled to, so a ring off screen is not turning for nobody.
+   The attribute is toggled by the motion layer; without script it simply
+   turns. */
+.wq-ring[data-spin-idle] {
+  animation-play-state: paused;
+}
+/* The reference stops the whole ring while a tile is under the pointer, so the
+   one being read holds still rather than drifting out from under the cursor. */
+.wq-ring:hover,
+.wq-ring:focus-within {
+  animation-play-state: paused;
+}
+@keyframes wq-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.wq-ring-tile {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--wq-tile);
+  height: var(--wq-tile);
+  margin-left: calc(var(--wq-tile) / -2);
+  margin-top: calc(var(--wq-tile) / -2);
+  overflow: hidden;
+  text-align: center;
+  background: var(--tint);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 4px 16px var(--shadow);
+  transform: rotate(var(--a)) translateY(calc(-1 * var(--wq-r)));
+  transition:
+    scale 0.5s ease-out,
+    box-shadow 0.5s ease-out,
+    border-color 0.5s ease-out;
+  will-change: transform;
+}
+/* `scale` on its own property, not folded into the transform — the transform
+   is carrying the tile's position and must not be rewritten to hover it. */
+.wq-ring-tile:hover,
+.wq-ring-tile:focus-visible {
+  scale: 1.06;
+  border-color: var(--accent);
+  box-shadow: 0 12px 36px var(--shadow-strong);
+}
+.wq-ring-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The caption sits over the plate on a veil, so it stays readable whatever the
+   picture behind it turns out to be. It rides the tile's own angle rather than
+   being counter-turned: the tilt is the effect, and a level label on a tilted
+   tile reads as a bug. */
+.wq-ring-label {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 10px 12px;
+  background: var(--veil);
+}
+.wq-ring-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.wq-ring-tags {
+  display: block;
+  margin-top: 8px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+/* A circle this size does not fit a phone, and a ten-item carousel on a small
+   screen is a worse way to read three projects than a list is. */
+@media (max-width: 767px) {
+  .wq-ring-stage {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wq-ring {
+    animation: none;
+  }
+}
+
+/* ---- column guides ----
+   Five hairlines running the height of a section, spaced across the same gutter
+   the content uses. The reference puts this behind nearly every section; it is
+   what makes the page read as ruled rather than as stacked blocks.
+
+   Drawn on a pseudo-element from a repeating gradient rather than as five
+   divs — the reference ships five empty elements per section, which is markup
+   that exists only to be looked at. `4fr` between the outer pair puts the lines
+   at 0/25/50/75/100% of the measure, matching theirs.
+
+   Behind everything and untouchable: the guides must never take a click or
+   raise a section's stacking order. */
+.wq-guides {
+  position: relative;
+}
+.wq-guides::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  margin-inline: clamp(20px, 4vw, 48px);
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--hairline) 0 1px,
+    transparent 1px 25%
+  );
+  /* The repeat above draws the first four; this adds the closing line, which a
+     repeat cannot reach without landing one pixel outside the box. */
+  box-shadow: inset -1px 0 0 0 var(--hairline);
+}
+/* Content sits above the ruling. Applied to the section's own children so a
+   section does not need a wrapper div to opt in. */
+.wq-guides > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- services index ----
+   The reference's three-track split: bullets, plate, titles. Its own ratios,
+   which are deliberately uneven — the title column is the widest because the
+   titles are the section. */
+.wq-svc {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+  margin-top: clamp(48px, 6vw, 80px);
+}
+@media (min-width: 900px) {
+  .wq-svc {
+    grid-template-columns: minmax(180px, 1fr) 1.6fr 1.8fr;
+  }
+}
+.wq-svc-bullets {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.wq-svc-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+.wq-svc-bullets span:first-child {
+  user-select: none;
+  color: var(--muted);
+}
+/* Square, as the reference has it — the plate is a fixed shape the images are
+   cropped into, not a frame that follows whatever was uploaded. */
+.wq-svc-plate {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  overflow: hidden;
+  background: var(--tint);
+  border: 1px solid var(--hairline);
+}
+.wq-svc-plate img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.wq-svc-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.wq-svc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 6px 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.wq-svc-row:hover,
+.wq-svc-row:focus-visible {
+  /* The reference nudges the whole row right rather than underlining it. */
+  transform: translateX(12px);
+}
+.wq-svc-num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-3);
+  transition: color 0.4s;
+}
+.wq-svc-title {
+  font-size: clamp(24px, 3.4vw, 44px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--muted-3);
+  transition: color 0.4s;
+}
+/* Only the selected row is at full strength; the rest sit back. That contrast
+   is the whole mechanism — it is how the list shows what the plate is. */
+.wq-svc-row[aria-pressed="true"] .wq-svc-title {
+  color: var(--ink);
+}
+.wq-svc-row[aria-pressed="true"] .wq-svc-num {
+  color: var(--muted-2);
+}
+
+/* ---- stacked display heading ----
+   Two oversized lines, the first set back and the second solid, each wiping in
+   from its own top edge. The reference's signature section opener. */
+.wq-stack-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.wq-stack-head span {
+  display: block;
+  font-size: clamp(48px, 9vw, 128px);
+  font-weight: 500;
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.wq-stack-head span:first-child {
+  color: var(--muted-3);
+}
+/* The caption the reference hangs off the end of the heading row. */
+.wq-stack-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (min-width: 768px) {
+  .wq-stack-row {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 48px;
+  }
+  .wq-stack-note {
+    margin-left: auto;
+  }
+}
+.wq-stack-note {
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+/* The one link out of the ring section. */
+.wq-ring-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+/* Plates fill their slot. The media boxes were empty surfaces while there was
+   nothing to put in them; now they crop whatever they are given. */
+.wq-card-media img,
+.wq-case-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 
 /* ==== Arabic ====
    Direction itself needs almost nothing: the layout is built on `margin-inline`

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EndCta, PageHead, RowList, Split } from "@/components/wq/Page";
+import { EndCta, PageHead, RowList, SectionHead, Split, Statement } from "@/components/wq/Page";
 import { Stats } from "@/components/wq/Stats";
 import { getDictionary } from "@/lib/dictionaries";
 import { offices, positions, telHref } from "@/lib/wq-pages";
@@ -13,8 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * About.
  *
- * Reuses the home page's Stats band rather than restating the figures in a new
- * shape — the same numbers in the same treatment is the point.
+ * Opens on a claim rather than a history, which is the reference site's own
+ * order: the statement carries the page and the numbers underneath it are the
+ * evidence. Reuses the home page's Stats band rather than restating the figures
+ * in a new shape — the same numbers in the same treatment is the point.
  */
 export default async function About() {
   const t = await getDictionary();
@@ -28,26 +30,48 @@ export default async function About() {
         lede={t.about.lede}
       />
 
+      <Split id="gap" label={t.about.gapLabel} note={t.about.gapNote}>
+        {/* One key per line, so the editorial breaks survive translation: a
+            line here is a phrase, and the Arabic phrase is not the same length
+            as the English one. */}
+        <Statement
+          lines={[
+            t.about.statementLead,
+            <em key="em">{t.about.statementEm}</em>,
+            t.about.statementTail,
+          ]}
+        />
+      </Split>
+
       <Split id="position" label={t.about.positionLabel} note={t.about.positionNote}>
         <RowList rows={positions(t)} />
       </Split>
 
-      <Stats rows={stats(t)} aria={t.aria.stats} />
+      <div id="stats">
+        <Stats rows={stats(t)} aria={t.aria.stats} />
+      </div>
 
-      <Split id="offices" label={t.about.officesLabel} note={t.about.officesNote}>
-        <div className="wq-grid3">
+      <section className="wq-wrap wq-sec-b" id="offices">
+        <SectionHead
+          index={t.about.officesLabel}
+          title={[t.about.officesTitleLead, t.about.officesTitleTail]}
+          note={t.about.officesNote}
+        />
+        <div className="wq-grid3" data-reveal-group="">
           {offices(t).map((o) => (
-            <div key={o.id} className="wq-office-card">
-              <h3>{o.city}</h3>
-              <p>{o.country}</p>
-              {/* A real link, not decoration: the outgoing footer rendered
-                  these as anchors with no href, which meant they could not be
-                  focused or dialled. */}
-              <a href={telHref(o.tel)}>{o.tel}</a>
+            <div key={o.id} className="wq-office-card" data-tilt="">
+              <div data-tilt-inner="">
+                <h3>{o.city}</h3>
+                <p>{o.country}</p>
+                {/* A real link, not decoration: the outgoing footer rendered
+                    these as anchors with no href, which meant they could not be
+                    focused or dialled. */}
+                <a href={telHref(o.tel)}>{o.tel}</a>
+              </div>
             </div>
           ))}
         </div>
-      </Split>
+      </section>
 
       <EndCta />
     </>

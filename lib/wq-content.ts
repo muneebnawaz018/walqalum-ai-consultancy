@@ -29,7 +29,7 @@ export const CLIENTS = [
   "Misk",
 ] as const;
 
-export type Capability = { num: string; name: string; desc: string };
+export type Capability = { num: string; name: string; desc: string; bullets: string[] };
 
 /** Display order. The number beside each one is its position, not a stored value. */
 export const CAPABILITY_IDS = [
@@ -46,6 +46,7 @@ export function capabilities(t: Dictionary): Capability[] {
     num: pad(i + 1),
     name: t.capabilities[id].name,
     desc: t.capabilities[id].desc,
+    bullets: t.capabilities[id].bullets,
   }));
 }
 
