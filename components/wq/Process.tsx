@@ -61,7 +61,7 @@ export function Process({
   }, []);
 
   return (
-    <section id="process" aria-label={aria} ref={section} className="wq-wrap wq-sec-b wq-guides">
+    <section id="process" aria-label={aria} ref={section} className="wq-wrap wq-sec-b">
       <p className="wq-eyebrow">{eyebrow}</p>
       <h2 className="wq-h2-lg wq-process-h2">{title}</h2>
       <div className="wq-progress" aria-hidden="true">

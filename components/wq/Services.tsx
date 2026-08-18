@@ -28,7 +28,7 @@ export async function Services() {
     <section
       id="capabilities"
       aria-label={t.aria.capabilities}
-      className="wq-wrap wq-sec-b wq-guides"
+      className="wq-wrap wq-sec-b"
     >
       <StackHead
         top={t.home.servicesTop}

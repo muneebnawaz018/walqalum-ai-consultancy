@@ -1516,44 +1516,6 @@
   }
 }
 
-/* ---- column guides ----
-   Five hairlines running the height of a section, spaced across the same gutter
-   the content uses. The reference puts this behind nearly every section; it is
-   what makes the page read as ruled rather than as stacked blocks.
-
-   Drawn on a pseudo-element from a repeating gradient rather than as five
-   divs — the reference ships five empty elements per section, which is markup
-   that exists only to be looked at. `4fr` between the outer pair puts the lines
-   at 0/25/50/75/100% of the measure, matching theirs.
-
-   Behind everything and untouchable: the guides must never take a click or
-   raise a section's stacking order. */
-.wq-guides {
-  position: relative;
-}
-.wq-guides::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  margin-inline: clamp(20px, 4vw, 48px);
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--hairline) 0 1px,
-    transparent 1px 25%
-  );
-  /* The repeat above draws the first four; this adds the closing line, which a
-     repeat cannot reach without landing one pixel outside the box. */
-  box-shadow: inset -1px 0 0 0 var(--hairline);
-}
-/* Content sits above the ruling. Applied to the section's own children so a
-   section does not need a wrapper div to opt in. */
-.wq-guides > * {
-  position: relative;
-  z-index: 1;
-}
-
 /* ---- services index ----
    The reference's three-track split: bullets, plate, titles. Its own ratios,
    which are deliberately uneven — the title column is the widest because the

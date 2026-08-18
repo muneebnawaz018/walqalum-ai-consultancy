@@ -66,7 +66,7 @@ export async function Positioning() {
     <section
       id="position"
       aria-label={t.aria.positioning}
-      className="wq-sec wq-wrap wq-guides"
+      className="wq-sec wq-wrap"
     >
       <div className="wq-grid2 wq-grid2-wide">
         <div className="wq-side">
@@ -106,7 +106,7 @@ export async function SelectedWork() {
     <section
       id="work"
       aria-label={t.aria.selectedWork}
-      className="wq-wrap wq-sec-b wq-guides"
+      className="wq-wrap wq-sec-b"
     >
       <StackHead
         top={t.home.workTop}
@@ -129,7 +129,7 @@ export async function Insights() {
     <section
       id="insights"
       aria-label={t.aria.insights}
-      className="wq-sec wq-wrap wq-guides"
+      className="wq-sec wq-wrap"
     >
       <div className="wq-sec-head">
         <div>
