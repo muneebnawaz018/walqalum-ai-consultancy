@@ -220,8 +220,10 @@ export function Motion() {
     const SOFT = 0.5;
     /** Where an unread word sits. Matches the reference's 25% ink. */
     const DIM = 0.25;
-    /** How far an unread word sits below its line, as a share of its size. */
-    const RISE = 0.5;
+    /** Where the fill starts: the block's top, as a share of the viewport. */
+    const START = 0.7;
+    /** Where it finishes: the block's *bottom*, same measure. */
+    const END = 0.3;
 
     const fills = Array.from(document.querySelectorAll<HTMLElement>("[data-fill]")).map(
       (el) => ({ el, words: Array.from(el.querySelectorAll<HTMLElement>("[data-w]")) }),
@@ -233,22 +235,36 @@ export function Motion() {
       const vh = window.innerHeight;
       for (const { el, words } of fills) {
         const r = el.getBoundingClientRect();
-        /* The reference's window: begins when the block's top reaches 75% down
-           the viewport, ends when its centre reaches 40% — so the last word
-           lands while the reader is still looking at it, not after it has
-           travelled off the top. */
-        const total = vh * 0.35 + r.height / 2;
-        const p = Math.min(1, Math.max(0, (vh * 0.75 - r.top) / total));
-        /* Overshoot by the ramp so the last word lands rather than stopping
-           part-way up. */
-        const front = p * (words.length + SOFT);
+        /* Begins when the block's top reaches 80% down the viewport and ends
+           when its *bottom* reaches 35%. Measuring the end from the bottom
+           rather than from the centre is what stops a tall block finishing
+           while half a screen of it is still coming up — the whole paragraph
+           has to be read past before the last word lands. */
+        const total = vh * (START - END) + r.height;
+        const p = Math.min(1, Math.max(0, (vh * START - r.top) / total));
+        /* Seeded at exactly one word's ramp, with the remaining travel shared
+           out over the rest: the first word is lit the moment the block
+           appears, so it reads as a front already moving rather than as dead
+           text waiting to be scrolled at.
+
+           Seeding the ramp rather than a whole step matters at the margin. A
+           word needs only SOFT of a step to light, so seeding a full step puts
+           the second word one hundredth of the window away — near enough that
+           a block sitting just inside the start opens on two lit words instead
+           of one. */
+        const front = SOFT + p * (words.length - 1 + SOFT);
         words.forEach((w, i) => {
           const t = Math.min(1, Math.max(0, front - i) / SOFT);
           /* Eased, so a word settles into place rather than sliding at a
              constant rate and stopping dead. */
           const e = 1 - (1 - t) ** 3;
+          /* Opacity only. The reference floats each word up into place as it
+             fills, which works there because its statement is one word per
+             beat on a short measure. On a full paragraph it puts the unread
+             words half a line below the read ones, so every line renders on
+             two baselines at once and the block reads as broken rather than
+             as filling. */
           w.style.opacity = (DIM + (1 - DIM) * e).toFixed(3);
-          w.style.transform = `translateY(${((1 - e) * RISE).toFixed(4)}em)`;
         });
       }
     };
@@ -260,7 +276,6 @@ export function Motion() {
         fills.forEach(({ words }) =>
           words.forEach((w) => {
             w.style.opacity = "1";
-            w.style.transform = "none";
           }),
         );
       } else {
@@ -272,7 +287,18 @@ export function Motion() {
         paint();
         window.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", onScroll);
+        /* The first paint happens on the fallback face's metrics. When the
+           real one arrives every block moves, and without this nothing would
+           recompute until the reader scrolled — which is how a statement ends
+           up part-filled before it has been reached. */
+        document.fonts?.ready.then(onScroll);
+        /* Same problem from the other direction: a block that reflows — an
+           image landing above it, a filter changing the list length — moves
+           without the page scrolling. */
+        const ro = new ResizeObserver(onScroll);
+        fills.forEach(({ el }) => ro.observe(el));
         cleanups.push(() => {
+          ro.disconnect();
           window.removeEventListener("scroll", onScroll);
           window.removeEventListener("resize", onScroll);
           if (raf) cancelAnimationFrame(raf);

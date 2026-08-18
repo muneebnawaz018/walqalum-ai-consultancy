@@ -147,7 +147,10 @@ export async function Insights() {
             href={localeHref(`/insights/${p.slug}`, locale)}
             className="wq-post"
           >
-            <p className="wq-post-meta">{p.meta}</p>
+            <p className="wq-post-meta">
+              <span>{p.date}</span>
+              <span className="wq-post-topic">{p.topic}</span>
+            </p>
             <h3>{p.title}</h3>
           </Link>
         ))}

@@ -16,7 +16,14 @@ const pad = (n: number) => String(n).padStart(2, "0");
 /** Where to write. The design's own address. */
 export const EMAIL = "tafseel@walqalum.com";
 
-export type Sector = { num: string; slug: string; name: string; desc: string };
+export type Sector = {
+  num: string;
+  slug: string;
+  name: string;
+  desc: string;
+  /** The one-line version, set as a kicker above the paragraph. */
+  blurb: string;
+};
 
 /** The eight sectors, in the existing site's own order. Slugs are anchor ids. */
 export const SECTOR_SLUGS = [
@@ -36,6 +43,7 @@ export function industries(t: Dictionary): Sector[] {
     slug,
     name: t.sectors[slug].name,
     desc: t.sectors[slug].desc,
+    blurb: t.sectors[slug].blurb,
   }));
 }
 

@@ -193,19 +193,6 @@ export function Split({
 }
 
 /**
- * The statement block: a claim set large, broken into fixed lines so it wipes
- * in one line at a time. The breaks are editorial — each line is a phrase, not
- * a measure — which is why they are passed in rather than left to wrap.
- */
-export function Statement({ lines }: { lines: React.ReactNode[] }) {
-  return (
-    <div className="wq-statement" data-lines="">
-      <Lines lines={lines} />
-    </div>
-  );
-}
-
-/**
  * The closing band, so every page ends on the same invitation.
  *
  * Reads its own default from the dictionary rather than taking an English
@@ -261,5 +248,54 @@ export function StackHead({
         </p>
       ) : null}
     </div>
+  );
+}
+
+/** The tag row a project carries, used under a case heading and on its tiles. */
+export function Chips({ items }: { items: string[] }) {
+  return (
+    <ul className="wq-chips" data-reveal="">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * The "more of this" block every detail page closes on, above the call to
+ * action.
+ *
+ * The reference calls it out with a line of its own rather than a bare list,
+ * because a reader who has finished one case study is the likeliest person on
+ * the site to read a second. Whatever they just read is filtered out by the
+ * caller — offering the page you are already on is the one link that cannot
+ * help.
+ */
+export function NextItems({
+  label,
+  items,
+}: {
+  label: string;
+  items: { href: string; name: string; meta?: string }[];
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className="wq-wrap wq-sec-b">
+      <p className="wq-eyebrow" data-reveal="">
+        {label}
+      </p>
+      <div className="wq-next" data-reveal-group="">
+        {items.map((item) => (
+          <Link key={item.href} href={item.href} className="wq-next-row">
+            <h3>{item.name}</h3>
+            {item.meta ? <span className="wq-next-meta">{item.meta}</span> : null}
+            <span className="wq-arrow" aria-hidden="true">
+              →
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }

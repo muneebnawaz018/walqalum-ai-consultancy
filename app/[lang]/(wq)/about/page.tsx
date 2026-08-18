@@ -1,5 +1,10 @@
+/* eslint-disable @next/next/no-img-element --
+   The plates are local static SVGs. next/image refuses SVG unless the project
+   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
+   as markup — too much surface to open for placeholder art. */
 import type { Metadata } from "next";
-import { EndCta, PageHead, RowList, SectionHead, Split, Statement } from "@/components/wq/Page";
+import { FillText } from "@/components/wq/FillText";
+import { EndCta, PageHead, RowList, SectionHead, Split } from "@/components/wq/Page";
 import { Stats } from "@/components/wq/Stats";
 import { getDictionary } from "@/lib/dictionaries";
 import { offices, positions, telHref } from "@/lib/wq-pages";
@@ -31,17 +36,25 @@ export default async function About() {
       />
 
       <Split id="gap" label={t.about.gapLabel} note={t.about.gapNote}>
-        {/* One key per line, so the editorial breaks survive translation: a
-            line here is a phrase, and the Arabic phrase is not the same length
-            as the English one. */}
-        <Statement
-          lines={[
-            t.about.statementLead,
-            <em key="em">{t.about.statementEm}</em>,
-            t.about.statementTail,
-          ]}
-        />
+        {/* Left to flow rather than broken into fixed lines: a hand-cut break
+            measures one language's words, and `FillText` boxes each word so the
+            scroll fill still runs in reading order wherever the lines land. */}
+        <FillText className="wq-statement">
+          {t.about.statementLead} <em>{t.about.statementEm}</em>{" "}
+          {t.about.statementTail}
+        </FillText>
       </Split>
+
+      <section className="wq-wrap wq-sec-b">
+        <div
+          className="wq-plate-wide"
+          aria-hidden="true"
+          data-reveal-scale=""
+          data-reveal=""
+        >
+          <img src="/wq/dummy/02.svg" alt="" loading="lazy" />
+        </div>
+      </section>
 
       <Split id="position" label={t.about.positionLabel} note={t.about.positionNote}>
         <RowList rows={positions(t)} />
@@ -62,6 +75,7 @@ export default async function About() {
             <div key={o.id} className="wq-office-card" data-tilt="">
               <div data-tilt-inner="">
                 <h3>{o.city}</h3>
+                <p className="wq-office-locality">{o.locality}</p>
                 <p>{o.country}</p>
                 {/* A real link, not decoration: the outgoing footer rendered
                     these as anchors with no href, which meant they could not be

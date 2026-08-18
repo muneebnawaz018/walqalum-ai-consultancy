@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { EndCta, PageHead, SectionHead, Statement } from "@/components/wq/Page";
+import { FillText } from "@/components/wq/FillText";
+import { EndCta, PageHead, SectionHead } from "@/components/wq/Page";
 import { SpyRows } from "@/components/wq/SpyRows";
 import { getDictionary } from "@/lib/dictionaries";
 import { industries } from "@/lib/wq-pages";
@@ -40,13 +41,10 @@ export default async function Industries() {
             </p>
             <div className="wq-tick" aria-hidden="true" />
           </div>
-          <Statement
-            lines={[
-              t.industries.statementLead,
-              <em key="em">{t.industries.statementEm}</em>,
-              t.industries.statementTail,
-            ]}
-          />
+          <FillText className="wq-statement">
+            {t.industries.statementLead} <em>{t.industries.statementEm}</em>{" "}
+            {t.industries.statementTail}
+          </FillText>
         </div>
       </section>
 

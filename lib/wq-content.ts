@@ -82,7 +82,7 @@ export function stats(t: Dictionary): Stat[] {
   }));
 }
 
-export type WorkItem = { slug: string; name: string; tags: string };
+export type WorkItem = { slug: string; name: string; tags: string[] };
 
 /** Slugs are URLs, so they stay in English in both locales. */
 export const WORK_SLUGS = ["audit-platform", "securance", "epictory"] as const;
@@ -95,7 +95,12 @@ export function work(t: Dictionary): WorkItem[] {
   }));
 }
 
-export type Post = { slug: string; meta: string; title: string };
+/** Every tag used by the work, in the order the projects introduce them. */
+export function workTags(t: Dictionary): string[] {
+  return [...new Set(work(t).flatMap((w) => w.tags))];
+}
+
+export type Post = { slug: string; date: string; topic: string; title: string };
 
 export const POST_SLUGS = [
   "rag-security-review",
@@ -103,10 +108,16 @@ export const POST_SLUGS = [
   "boring-model",
 ] as const;
 
+/** Every topic used by the posts, newest first, for the insights filter. */
+export function postTopics(t: Dictionary): string[] {
+  return [...new Set(posts(t).map((p) => p.topic))];
+}
+
 export function posts(t: Dictionary): Post[] {
   return POST_SLUGS.map((slug) => ({
     slug,
-    meta: t.posts[slug].meta,
+    date: t.posts[slug].date,
+    topic: t.posts[slug].topic,
     title: t.posts[slug].title,
   }));
 }

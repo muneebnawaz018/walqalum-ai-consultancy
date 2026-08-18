@@ -1,15 +1,10 @@
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. There is nothing
-   for an optimiser to do to a 1KB vector anyway. */
 import type { Metadata } from "next";
-import Link from "next/link";
-import { EndCta, PageHead, SectionHead, Statement } from "@/components/wq/Page";
-import { WorkRing } from "@/components/wq/WorkRing";
+import { FillText } from "@/components/wq/FillText";
+import { EndCta, PageHead } from "@/components/wq/Page";
+import { WorkGrid, type WorkCard } from "@/components/wq/WorkGrid";
 import { getDictionary, getLocale } from "@/lib/dictionaries";
 import { localeHref } from "@/lib/i18n";
-import { steps, work } from "@/lib/wq-content";
+import { work } from "@/lib/wq-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();
@@ -17,19 +12,30 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Work — the portfolio.
+ * Work — the portfolio index.
  *
- * The reference site's shape: a grid of cards that tilt toward the pointer,
- * under a heading that wipes in a line at a time, with the process spelled out
- * below so the work is read as a way of building rather than a gallery.
+ * A filter bar over a grid whose first tile is the feature. The home page
+ * carries the ring and the process band; repeating either here would make the
+ * two pages read as the same page twice. What this page owes a visitor that
+ * the home page does not is a way to search by discipline, which is what the
+ * filter is for.
  *
- * Media slots stay empty rather than filled with stock imagery. The brief's own
- * rule is that placeholders stay visibly labelled instead of dressed up as
- * finished.
+ * Media slots are labelled placeholders rather than stock imagery, per the
+ * brief's own rule.
  */
 export default async function Work() {
   const t = await getDictionary();
   const locale = await getLocale();
+
+  const items: WorkCard[] = work(t).map((w, i) => ({
+    slug: w.slug,
+    name: w.name,
+    tags: w.tags,
+    href: localeHref(`/work/${w.slug}`, locale),
+    /* The plate cycles on the project's index rather than its slug, so two
+       neighbouring tiles never land on the same picture. */
+    image: `/wq/dummy/0${(i % 6) + 1}.svg`,
+  }));
 
   return (
     <>
@@ -40,38 +46,13 @@ export default async function Work() {
         lede={t.work.lede}
       />
 
-      {/* The ring, above the grid rather than instead of it: it is the way in
-          for someone browsing, and the grid is the way through for someone
-          comparing. Hidden below 768px, where a circle this size does not fit
-          and the grid is the better read anyway. */}
-      <section className="wq-wrap">
-        <WorkRing items={work(t)} locale={locale} />
-      </section>
-
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-grid3" data-reveal-group="">
-          {work(t).map((w, i) => (
-            <Link
-              key={w.slug}
-              href={localeHref(`/work/${w.slug}`, locale)}
-              className="wq-card"
-              data-tilt=""
-            >
-              <div data-tilt-inner="">
-                <div className="wq-card-media" aria-hidden="true">
-                  <img src={`/wq/dummy/0${(i % 6) + 1}.svg`} alt="" loading="lazy" />
-                </div>
-                <div className="wq-card-row">
-                  <h3>{w.name}</h3>
-                  <span className="wq-arrow" aria-hidden="true">
-                    →
-                  </span>
-                </div>
-                <p className="wq-card-tags">{w.tags}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <WorkGrid
+          items={items}
+          allLabel={t.actions.allWork}
+          filterLabel={t.aria.workFilter}
+          emptyLabel={t.work.filterEmpty}
+        />
       </section>
 
       <section className="wq-wrap wq-sec-b">
@@ -82,28 +63,12 @@ export default async function Work() {
             </p>
             <div className="wq-tick" aria-hidden="true" />
           </div>
-          <Statement
-            lines={[t.work.howLead, <em key="em">{t.work.howEm}</em>]}
-          />
-        </div>
-      </section>
-
-      <section className="wq-wrap wq-sec-b">
-        {/* The home page's process band, restated here for someone who arrived
-            on /work: same four steps, same dictionary keys. */}
-        <SectionHead
-          index={t.work.processLabel}
-          title={[t.home.processTitle]}
-          note={t.work.processNote}
-        />
-        <div className="wq-grid4" data-reveal-group="">
-          {steps(t).map((step) => (
-            <div key={step.num}>
-              <div className="wq-step-num">{step.num}</div>
-              <h3 className="wq-step-name">{step.name}</h3>
-              <p className="wq-step-desc">{step.desc}</p>
-            </div>
-          ))}
+          {/* The same word-by-word fill the other claims carry, rather than
+              the line wipe: the two devices side by side read as two different
+              kinds of statement. */}
+          <FillText className="wq-statement">
+            {t.work.howLead} <em>{t.work.howEm}</em>
+          </FillText>
         </div>
       </section>
 

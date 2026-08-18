@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EndCta, PageHead, Statement } from "@/components/wq/Page";
-import { getDictionary } from "@/lib/dictionaries";
+import { FillText } from "@/components/wq/FillText";
+import { EndCta, NextItems, PageHead } from "@/components/wq/Page";
+import { getDictionary, getLocale } from "@/lib/dictionaries";
+import { localeHref } from "@/lib/i18n";
 import { POST_SLUGS, posts } from "@/lib/wq-content";
 
 export function generateStaticParams() {
@@ -14,26 +16,38 @@ export async function generateMetadata({
   const { slug } = await params;
   const t = await getDictionary();
   const post = posts(t).find((p) => p.slug === slug);
-  return post ? { title: `${post.title} · WalQalum`, description: post.meta } : {};
+  return post
+    ? { title: `${post.title} · WalQalum`, description: `${post.date} · ${post.topic}` }
+    : {};
 }
 
 /**
  * An article.
  *
- * The Insights list and the header's panel both linked here before this route
- * existed, which meant every headline was a 404. The bodies themselves are not
- * written yet — these three headlines come from the design — so the page states
- * that plainly rather than inventing an article under someone's byline.
+ * The bodies are not written yet — these three headlines come from the design —
+ * so the page states that plainly rather than inventing an article under
+ * someone's byline. What it does carry is the frame the finished piece will
+ * live in: the dateline, the topic, and the rest of the writing underneath.
  */
 export default async function Article({ params }: PageProps<"/[lang]/insights/[slug]">) {
   const { slug } = await params;
   const t = await getDictionary();
-  const post = posts(t).find((p) => p.slug === slug);
+  const locale = await getLocale();
+  const all = posts(t);
+  const post = all.find((p) => p.slug === slug);
   if (!post) notFound();
+
+  const others = all
+    .filter((p) => p.slug !== slug)
+    .map((p) => ({
+      href: localeHref(`/insights/${p.slug}`, locale),
+      name: p.title,
+      meta: `${p.date} · ${p.topic}`,
+    }));
 
   return (
     <>
-      <PageHead eyebrow={post.meta} title={post.title} />
+      <PageHead eyebrow={`${post.date} · ${post.topic}`} title={post.title} />
 
       <section className="wq-wrap wq-sec-b">
         <div className="wq-grid2 wq-grid2-start">
@@ -43,15 +57,14 @@ export default async function Article({ params }: PageProps<"/[lang]/insights/[s
             </p>
             <div className="wq-tick" aria-hidden="true" />
           </div>
-          <Statement
-            lines={[
-              t.insights.articlePendingLead,
-              <em key="em">{t.insights.articlePendingEm}</em>,
-              t.insights.articlePendingTail,
-            ]}
-          />
+          <FillText className="wq-statement">
+            {t.insights.articlePendingLead} <em>{t.insights.articlePendingEm}</em>{" "}
+            {t.insights.articlePendingTail}
+          </FillText>
         </div>
       </section>
+
+      <NextItems label={t.insights.moreLabel} items={others} />
 
       <EndCta title={t.insights.ctaTitle} />
     </>

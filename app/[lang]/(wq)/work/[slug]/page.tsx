@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element --
    The plates are local static SVGs. next/image refuses SVG unless the project
    turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. There is nothing
-   for an optimiser to do to a 1KB vector anyway. */
+   as markup — too much surface to open for placeholder art. */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EndCta, PageHead, Statement } from "@/components/wq/Page";
-import { getDictionary } from "@/lib/dictionaries";
+import { FillText } from "@/components/wq/FillText";
+import { Chips, EndCta, NextItems, PageHead } from "@/components/wq/Page";
+import { getDictionary, getLocale } from "@/lib/dictionaries";
+import { localeHref } from "@/lib/i18n";
 import { WORK_SLUGS, work } from "@/lib/wq-content";
 
 export function generateStaticParams() {
@@ -19,26 +20,44 @@ export async function generateMetadata({
   const { slug } = await params;
   const t = await getDictionary();
   const item = work(t).find((w) => w.slug === slug);
-  return item ? { title: `${item.name} · WalQalum`, description: item.tags } : {};
+  return item
+    ? { title: `${item.name} · WalQalum`, description: t.work.lede }
+    : {};
 }
 
 /**
  * A case study.
  *
- * The write-ups are not yet cleared for publication, and the brief's rule is
- * that placeholders stay visibly labelled rather than dressed up as finished.
- * So this states plainly that the detail is pending instead of padding the page
- * with invented narrative or an unconfirmed metric.
+ * The write-ups are not published yet, so this is the case *frame* rather than
+ * a case: the disciplines the project drew on, the plate, and a plain statement
+ * of why the outcome is not here. Inventing results under a client's name is
+ * the one thing this page must never do, and a page that says so reads better
+ * than a page padded to look finished.
+ *
+ * The other projects sit below it. Someone who has read this far is the
+ * likeliest person on the site to read a second one, and the one link that
+ * cannot help them is the page they are already on.
  */
 export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slug]">) {
   const { slug } = await params;
   const t = await getDictionary();
-  const item = work(t).find((w) => w.slug === slug);
+  const locale = await getLocale();
+  const all = work(t);
+  const item = all.find((w) => w.slug === slug);
   if (!item) notFound();
+
+  const index = all.indexOf(item);
+  const others = all
+    .filter((w) => w.slug !== slug)
+    .map((w) => ({
+      href: localeHref(`/work/${w.slug}`, locale),
+      name: w.name,
+      meta: w.tags.join(" · "),
+    }));
 
   return (
     <>
-      <PageHead eyebrow={item.tags} title={item.name} />
+      <PageHead eyebrow={item.tags.join(" · ")} title={item.name} />
 
       <section className="wq-wrap wq-sec-b">
         <div
@@ -47,10 +66,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
           data-reveal-scale=""
           data-reveal=""
         >
-          <img
-            src={`/wq/dummy/0${(WORK_SLUGS.indexOf(slug as (typeof WORK_SLUGS)[number]) % 6) + 1}.svg`}
-            alt=""
-          />
+          <img src={`/wq/dummy/0${(index % 6) + 1}.svg`} alt="" />
         </div>
       </section>
 
@@ -58,19 +74,19 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
         <div className="wq-grid2 wq-grid2-start">
           <div className="wq-side">
             <p className="wq-eyebrow" data-reveal="">
-              {t.work.statusLabel}
+              {t.work.caseTagsLabel}
             </p>
             <div className="wq-tick" aria-hidden="true" />
+            <Chips items={item.tags} />
           </div>
-          <Statement
-            lines={[
-              t.work.casePendingLead,
-              <em key="em">{t.work.casePendingEm}</em>,
-              t.work.casePendingTail,
-            ]}
-          />
+          <FillText className="wq-statement">
+            {t.work.casePendingLead} <em>{t.work.casePendingEm}</em>{" "}
+            {t.work.casePendingTail}
+          </FillText>
         </div>
       </section>
+
+      <NextItems label={t.work.moreLabel} items={others} />
 
       <EndCta title={t.work.ctaTitle} />
     </>

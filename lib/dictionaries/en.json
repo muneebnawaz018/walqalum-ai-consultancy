@@ -47,7 +47,9 @@
     "selectedWork": "Selected work",
     "stats": "Stats",
     "insights": "Insights",
-    "cta": "Call to action"
+    "cta": "Call to action",
+    "workFilter": "Filter work by service",
+    "insightsFilter": "Filter insights by topic"
   },
 
   "footer": {
@@ -77,8 +79,6 @@
     "servicesTop": "Our",
     "servicesBottom": "Services",
     "servicesEyebrow": "(a.) Services",
-    "capabilitiesEyebrow": "02 / Capabilities",
-    "capabilitiesNote": "Six disciplines, one team. Every engagement draws on all of them.",
 
     "processEyebrow": "03 / How we work",
     "processTitle": "Four steps. No theatre.",
@@ -145,7 +145,10 @@
     "casePendingLead": "The full write-up is with the client for approval.",
     "casePendingEm": "We publish outcomes once",
     "casePendingTail": "they are confirmed, and not before.",
-    "ctaTitle": "Want something like this?"
+    "ctaTitle": "Want something like this?",
+    "filterEmpty": "No project under that tag yet.",
+    "moreLabel": "More work",
+    "caseTagsLabel": "Services on this project"
   },
 
   "insights": {
@@ -161,7 +164,9 @@
     "ctaTitle": "Want to talk it through instead?",
     "articlePendingLead": "This piece is still being written.",
     "articlePendingEm": "We publish once it says",
-    "articlePendingTail": "something we would stand behind in a review."
+    "articlePendingTail": "something we would stand behind in a review.",
+    "filterEmpty": "Nothing under that topic yet.",
+    "moreLabel": "More reading"
   },
 
   "contact": {
@@ -323,29 +328,32 @@
   "works": {
     "audit-platform": {
       "name": "Automated Website Audit Platform",
-      "tags": "AI AGENTS · N8N · AUTOMATION"
+      "tags": ["AI AGENTS", "N8N", "AUTOMATION"]
     },
     "securance": {
       "name": "Securance: Document Intelligence",
-      "tags": "RAG · LLM · COMPLIANCE"
+      "tags": ["RAG", "LLM", "COMPLIANCE"]
     },
     "epictory": {
       "name": "Epictory: Rendering at Scale",
-      "tags": "ENGINEERING · CLOUD"
+      "tags": ["ENGINEERING", "CLOUD"]
     }
   },
 
   "posts": {
     "rag-security-review": {
-      "meta": "JUL 2026 · RAG",
+      "date": "JUL 2026",
+      "topic": "RAG",
       "title": "Why RAG pilots fail security review, and how to design past it"
     },
     "agent-evals": {
-      "meta": "JUN 2026 · AGENTS",
+      "date": "JUN 2026",
+      "topic": "AGENTS",
       "title": "Agent evals: what to measure before you let it touch production"
     },
     "boring-model": {
-      "meta": "MAY 2026 · STRATEGY",
+      "date": "MAY 2026",
+      "topic": "STRATEGY",
       "title": "Choose the boring model. Spend the budget on your data instead."
     }
   },

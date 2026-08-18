@@ -530,7 +530,7 @@
 }
 .wq-fabout {
   margin-top: 16px;
-  max-width: 34ch;
+  max-width: 38ch;
   font-size: 14.5px;
   line-height: 1.6;
   color: var(--muted);
@@ -897,24 +897,40 @@
   color: var(--accent);
 }
 
+/* ---- line wipe ----
+   Each line slides up from behind a mask, and the mask is the wrapper span the
+   motion layer sets `overflow: hidden` on. A line box is exactly the type size
+   at `line-height: 1`, so the descenders of g, y and a comma hang below it and
+   the mask cut them off.
+
+   The padding gives the mask that overhang back, and the negative margin takes
+   the same amount out of the flow, so the heading occupies the space it did
+   before. The travel is 110% of the line's own height, which is far more than
+   this padding, so a line waiting to come up is still out of sight. */
+[data-lines] > span {
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+
 /* ---- scroll fill ----
    The front advances in reading order, one word at a time, so each word needs a
    box of its own — see FillText, which makes them. Position in the sequence is
-   not something CSS can know, so the motion layer writes the opacity and the
-   float per word on scroll.
+   not something CSS can know, so the motion layer writes the opacity per word
+   on scroll.
 
    Dimming by opacity rather than by swapping the colour is deliberate: it keeps
    the accent clause accented while it is still unread, and one animatable
    property per word is far cheaper than recomputing a colour for each.
 
    Nothing here hides anything. With no JavaScript every word stays at full
-   opacity, unmoved, and the statement simply reads. */
+   opacity and the statement simply reads. */
 [data-fill] [data-w] {
-  /* Inline boxes ignore transforms, so the float needs inline-block. Safe at
-     the word layer: the break points are the spaces between these boxes, and a
-     word can no longer be broken through the middle. */
+  /* inline-block so a word is one box and can never be hyphenated through the
+     middle. The break points stay the spaces between the boxes. Their baselines
+     are their own, so every word still sits on the line's baseline — the fill
+     changes opacity and nothing about position. */
   display: inline-block;
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 /* ---- marquee ----
@@ -1527,7 +1543,10 @@
 }
 @media (min-width: 900px) {
   .wq-svc {
-    grid-template-columns: minmax(180px, 1fr) 1.6fr 1.8fr;
+    /* The title column no longer needs to be the widest: the titles are set at
+       a size that fits the column rather than one that overruns it, and the
+       slack it used to carry showed as an empty band down the right edge. */
+    grid-template-columns: minmax(180px, 0.9fr) 1.5fr 1.35fr;
   }
 }
 .wq-svc-bullets {
@@ -1571,28 +1590,37 @@
   object-fit: cover;
   transition: opacity 0.5s cubic-bezier(0.45, 0, 0.55, 1);
 }
+/* A compact stack held against the middle of the plate, as the reference has
+   it — not a ruled index down the full height of the section. The rows are
+   close enough to read as one block of type, which is what makes the single
+   lit row stand out of it. */
 .wq-svc-list {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+/* Two tracks, not a flex row: the number keeps its own column, so a title that
+   wraps to two lines does not drag the number down with it. Baseline alignment
+   sits the number on the title's first line, which is where the reference
+   hangs it. */
 .wq-svc-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 4ch 1fr;
   align-items: baseline;
-  gap: 20px;
-  padding: 6px 0;
-  background: none;
+  gap: 16px;
+  padding: clamp(5px, 0.6vw, 9px) 0;
   border: 0;
+  background: none;
   cursor: pointer;
-  text-align: left;
+  text-align: start;
   font: inherit;
   color: inherit;
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: padding-inline-start 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .wq-svc-row:hover,
 .wq-svc-row:focus-visible {
-  /* The reference nudges the whole row right rather than underlining it. */
-  transform: translateX(12px);
+  /* The reference nudges the row inward rather than underlining it. */
+  padding-inline-start: 12px;
 }
 .wq-svc-num {
   font-family: "JetBrains Mono", ui-monospace, monospace;
@@ -1602,11 +1630,15 @@
   transition: color 0.4s;
 }
 .wq-svc-title {
-  font-size: clamp(24px, 3.4vw, 44px);
+  /* Sized so the longest of the six still holds one line. The reference's own
+     titles are shorter than ours, so matching its type size to the pixel would
+     break half of these across the column. */
+  font-size: clamp(20px, 2.3vw, 34px);
   font-weight: 500;
-  line-height: 1.05;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--muted-3);
+  text-wrap: balance;
   transition: color 0.4s;
 }
 /* Only the selected row is at full strength; the rest sit back. That contrast
@@ -1675,6 +1707,319 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* The sector's one-line summary, set in the mono face between the name and the
+   paragraph. It is the line someone scanning the list reads; the paragraph is
+   for whoever stopped. */
+.wq-cap-blurb {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+/* ---- wide plate ----
+   The full-measure image band the reference alternates with its text blocks.
+   16:9 so it reads as a still rather than as a banner, and ruled like every
+   other surface on the site. */
+.wq-plate-wide {
+  /* A band rather than a 16:9 still. At the page's full 1720px measure a 16:9
+     box is nearly a thousand pixels tall — taller than most screens, so the
+     plate filled the viewport on its own and the sections either side of it
+     could never be seen with it. The viewport cap holds that true on a short
+     window as well as a wide one. */
+  aspect-ratio: 21 / 9;
+  max-height: 62vh;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+}
+.wq-plate-wide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The district line, between the city and the country. Mono, so the three
+   cards read as an index rather than as three paragraphs. */
+.wq-office-locality {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ---- filter bar ----
+   A row of tags above an index. Set in the mono face at eyebrow size so it
+   reads as apparatus rather than as content, and wraps rather than scrolls:
+   a hidden horizontal scroller on a filter is a filter nobody finds. */
+.wq-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+.wq-filter-btn {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.wq-filter-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+/* The selected tag inverts, the same move the primary action makes. One
+   emphasis device reused rather than a second one invented. */
+.wq-filter-btn[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+/* ---- tag chips ----
+   The tags a project carries, shown as read-only siblings of the filter above
+   them. Deliberately not buttons: on a case page there is nothing to filter. */
+.wq-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wq-chips li {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 5px 10px;
+}
+
+/* ---- work index ----
+   Three tracks, with the first tile spanning two of them. The feature is the
+   way in for someone browsing; the rest of the grid is the way through for
+   someone comparing. Under a filter the span is dropped — every result is
+   equally the answer to the question that was just asked. */
+.wq-work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 44px);
+}
+@media (max-width: 1023px) {
+  .wq-work-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 639px) {
+  .wq-work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.wq-work-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.wq-work-card[data-feature] {
+  grid-column: span 2;
+}
+@media (max-width: 639px) {
+  .wq-work-card[data-feature] {
+    grid-column: auto;
+  }
+}
+/* The plate keeps a fixed ratio so a row of tiles lines up whatever the art
+   inside them is. The feature is wider, so it is given a wider ratio rather
+   than a taller box — otherwise it would push the row below it down the page. */
+.wq-work-plate {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface, transparent);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+}
+.wq-work-card[data-feature] .wq-work-plate {
+  aspect-ratio: 16 / 9;
+}
+.wq-work-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wq-work-card:hover .wq-work-plate img {
+  transform: scale(1.03);
+}
+.wq-work-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+.wq-work-row h3 {
+  font-size: clamp(19px, 1.7vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.wq-work-card[data-feature] .wq-work-row h3 {
+  font-size: clamp(24px, 2.6vw, 40px);
+}
+
+/* ---- insights index ----
+   The newest piece set large, then the rest as dated rows. A newsroom is read
+   by date, so the date leads the row in its own column instead of sitting
+   inside the headline. */
+.wq-post-lead {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding-bottom: clamp(32px, 4vw, 56px);
+  border-bottom: 1px solid var(--hairline);
+}
+.wq-post-lead h2 {
+  font-size: clamp(30px, 4.4vw, 68px);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  /* Runs the full measure. Capped at 20ch it broke a headline over three
+     lines down the left half of the page while the right half stayed empty —
+     a measure that suits a paragraph, not a headline that *is* the section. */
+  max-width: 34ch;
+  text-wrap: balance;
+  margin-top: 16px;
+}
+.wq-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wq-post-topic {
+  color: var(--accent);
+}
+.wq-post-rows {
+  display: flex;
+  flex-direction: column;
+}
+/* Four tracks: date, topic, headline, arrow. The headline takes the slack so
+   the two mono columns stay the same width down the whole list and read as a
+   column rather than as ragged prefixes. */
+.wq-post-row {
+  display: grid;
+  grid-template-columns: 10ch 12ch 1fr auto;
+  align-items: baseline;
+  gap: 20px;
+  padding: clamp(22px, 2.4vw, 34px) 0;
+  border-bottom: 1px solid var(--hairline);
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+.wq-post-row:hover {
+  color: var(--accent);
+}
+.wq-post-row .wq-post-date,
+.wq-post-row .wq-post-topic {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.wq-post-row .wq-post-date {
+  color: var(--muted);
+}
+.wq-post-row h3 {
+  font-size: clamp(18px, 1.7vw, 27px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 767px) {
+  .wq-post-row {
+    grid-template-columns: 1fr auto;
+    gap: 6px 20px;
+  }
+  .wq-post-row .wq-post-date,
+  .wq-post-row .wq-post-topic {
+    grid-row: 1;
+  }
+  .wq-post-row .wq-post-topic {
+    justify-self: end;
+  }
+  .wq-post-row h3 {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- next items ----
+   The block a detail page closes on: whoever finished this one is the likeliest
+   person on the site to read a second. */
+.wq-next {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--hairline);
+}
+.wq-next-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: clamp(20px, 2.2vw, 30px) 0;
+  border-bottom: 1px solid var(--hairline);
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+.wq-next-row:hover {
+  color: var(--accent);
+}
+.wq-next-row h3 {
+  font-size: clamp(18px, 1.8vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.wq-next-meta {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: end;
+}
+
+/* Shown when a filter matches nothing. It cannot happen with the tags built
+   from the content itself, but a filter with no visible answer is the one
+   state that reads as a broken page rather than an empty one. */
+.wq-empty {
+  padding-block: clamp(40px, 6vw, 80px);
+  color: var(--muted);
 }
 
 /* ==== Arabic ====

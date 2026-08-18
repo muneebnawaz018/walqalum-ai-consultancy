@@ -30,11 +30,7 @@ export async function Services() {
       aria-label={t.aria.capabilities}
       className="wq-wrap wq-sec-b"
     >
-      <StackHead
-        top={t.home.servicesTop}
-        bottom={t.home.servicesBottom}
-        note={t.home.capabilitiesNote}
-      />
+      <StackHead top={t.home.servicesTop} bottom={t.home.servicesBottom} />
       <ServiceIndex services={services} eyebrow={t.home.servicesEyebrow} />
     </section>
   );

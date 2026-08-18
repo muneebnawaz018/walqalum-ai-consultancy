@@ -128,7 +128,7 @@ export function buildNav(t: Dictionary): NavItem[] {
           label: t.menu.groups.selectedWork,
           items: work(t).map((w) => ({
             name: w.name,
-            desc: w.tags,
+            desc: w.tags.join(" · "),
             href: `/work/${w.slug}`,
           })),
         },
@@ -150,7 +150,7 @@ export function buildNav(t: Dictionary): NavItem[] {
           label: t.menu.groups.latest,
           items: posts(t).map((p) => ({
             name: p.title,
-            desc: p.meta,
+            desc: `${p.date} · ${p.topic}`,
             href: `/insights/${p.slug}`,
           })),
         },

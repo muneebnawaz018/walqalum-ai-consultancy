@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type Row = { num: string; name: string; desc: string; slug?: string };
+type Row = {
+  num: string;
+  name: string;
+  desc: string;
+  /** Optional one-line summary, set in the mono face above the paragraph. */
+  blurb?: string;
+  slug?: string;
+};
 
 /**
  * A numbered list beside a sticky index that tracks it.
@@ -109,6 +116,7 @@ export function SpyRows({
               <span className="wq-cap-num">{row.num}</span>
               <div>
                 <h3>{row.name}</h3>
+                {row.blurb ? <p className="wq-cap-blurb">{row.blurb}</p> : null}
                 <p>{row.desc}</p>
               </div>
             </div>
