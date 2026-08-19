@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { FillText } from "@/components/wq/FillText";
-import { EndCta, PageHead, SectionHead } from "@/components/wq/Page";
+import { PageHead, SectionHead } from "@/components/wq/Page";
 import { SpyRows } from "@/components/wq/SpyRows";
 import { getDictionary } from "@/lib/dictionaries";
 import { industries } from "@/lib/wq-pages";
@@ -34,7 +34,7 @@ export default async function Industries() {
       />
 
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-grid2 wq-grid2-start">
+        <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
           <div className="wq-side">
             <p className="wq-eyebrow" data-reveal="">
               {t.industries.whyLabel}
@@ -55,13 +55,10 @@ export default async function Industries() {
           note={t.industries.listNote}
         />
       </div>
-      <SpyRows
-        rows={industries(t)}
-        label={t.industries.sectorsLabel}
-        note={t.industries.sectorsNote}
-      />
-
-      <EndCta title={t.industries.ctaTitle} />
+      {/* No label of its own: the heading above is the section's heading, and
+          a second eyebrow with the same number beside it read as two headers
+          for one list. The sticky column keeps the running number. */}
+      <SpyRows rows={industries(t)} />
     </>
   );
 }

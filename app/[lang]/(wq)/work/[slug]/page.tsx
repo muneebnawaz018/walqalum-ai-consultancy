@@ -63,15 +63,14 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
         <div
           className="wq-card-media wq-case-media"
           aria-hidden="true"
-          data-reveal-scale=""
-          data-reveal=""
+          data-parallax-scale=""
         >
           <img src={`/wq/dummy/0${(index % 6) + 1}.svg`} alt="" />
         </div>
       </section>
 
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-grid2 wq-grid2-start">
+        <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
           <div className="wq-side">
             <p className="wq-eyebrow" data-reveal="">
               {t.work.caseTagsLabel}

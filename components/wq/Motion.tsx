@@ -16,6 +16,8 @@ import { useEffect } from "react";
  *   data-reveal-group  the same, staggered across the element's children
  *   data-lines         each [data-line] wipes up from behind its own edge
  *   data-tilt          a slight parallax tilt toward the pointer
+ *   data-parallax      drifts against the scroll, `data-parallax-strength`
+ *   data-parallax-scale  its first child grows from 0.7 as the block rises
  *
  * The starting states are set from script, not CSS, and that is deliberate: if
  * the JavaScript never runs, nothing was ever hidden, so the page reads
@@ -310,6 +312,87 @@ export function Motion() {
           );
         });
       }
+    }
+
+    /* ---- parallax ----
+       Two scroll-linked devices, both with the reference's own numbers.
+
+       `data-parallax` drifts an element against the scroll: the offset is its
+       distance from the top of the viewport times a strength, default an
+       eighth, overridable per element. The transition is a fifth of a second
+       and linear — long enough to smooth the step between frames, short enough
+       that the element never appears to lag behind the page.
+
+       `data-parallax-scale` grows a plate from 0.7 to 1 as it rises: the
+       inner element is the one that moves, so the frame around it stays put
+       and the picture grows inside it. Held to wide screens, as the reference
+       holds it, because on a narrow one the plate is most of the viewport and
+       a plate that resizes under the reader is a distraction rather than
+       depth.
+
+       Both are skipped outright under reduced motion — this is the one kind of
+       movement on the page that nothing on it depends on. */
+    const DRIFT = 0.125;
+    /** Where the plate reaches full size, as a share of the viewport. */
+    const SCALE_AT = 0.5;
+    const MIN_SCALE = 0.7;
+
+    const drifters = reduced
+      ? []
+      : Array.from(document.querySelectorAll<HTMLElement>("[data-parallax]")).map((el) => ({
+          el,
+          strength: Number(el.dataset.parallaxStrength) || DRIFT,
+        }));
+
+    const platesWide = window.matchMedia("(min-width: 1025px)").matches;
+    const scalers =
+      reduced || !platesWide
+        ? []
+        : Array.from(document.querySelectorAll<HTMLElement>("[data-parallax-scale]"))
+            .map((el) => el.firstElementChild as HTMLElement | null)
+            .filter((el): el is HTMLElement => el !== null);
+
+    if (drifters.length || scalers.length) {
+      let praf = 0;
+      const place = () => {
+        praf = 0;
+        const vh = window.innerHeight;
+        drifters.forEach(({ el, strength }) => {
+          el.style.transform = `translateY(${(el.getBoundingClientRect().top * strength).toFixed(1)}px)`;
+        });
+        scalers.forEach((inner) => {
+          const top = inner.getBoundingClientRect().top;
+          /* Pinned small at the very top of the document: without this a plate
+             that starts on screen is already full size and never grows. */
+          const raw = window.scrollY === 0 ? MIN_SCALE : 1 - top / vh + SCALE_AT;
+          const scale = Math.min(1, Math.max(MIN_SCALE, raw));
+          inner.style.transform = `scale(${scale.toFixed(3)})`;
+        });
+      };
+      const onPlace = () => {
+        if (!praf) praf = requestAnimationFrame(place);
+      };
+      drifters.forEach(({ el }) => {
+        el.style.transition = "transform .2s linear";
+        el.style.willChange = "transform";
+      });
+      scalers.forEach((inner) => {
+        inner.style.transition = `transform .5s ${EASE}`;
+        inner.style.willChange = "transform";
+      });
+      place();
+      window.addEventListener("scroll", onPlace, { passive: true });
+      window.addEventListener("resize", onPlace);
+      cleanups.push(() => {
+        window.removeEventListener("scroll", onPlace);
+        window.removeEventListener("resize", onPlace);
+        if (praf) cancelAnimationFrame(praf);
+        [...drifters.map((d) => d.el), ...scalers].forEach((el) => {
+          el.style.transform = "";
+          el.style.transition = "";
+          el.style.willChange = "";
+        });
+      });
     }
 
     /* ---- spin only while watched ----

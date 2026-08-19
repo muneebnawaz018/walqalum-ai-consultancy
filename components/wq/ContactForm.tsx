@@ -6,6 +6,46 @@ import type { Dictionary } from "@/lib/dictionaries/en";
 type State = "idle" | "sending" | "sent" | "error";
 
 /**
+ * One field: an underlined control with its label sitting on the line until
+ * there is something to read there.
+ *
+ * The label floats on focus and stays floated once the field has content. That
+ * second half is what makes it a label rather than a placeholder — a
+ * placeholder disappears the moment you type, and a filled form with no labels
+ * cannot be checked over before sending.
+ *
+ * The state is CSS, not React: `:focus-within` covers the first case and
+ * `:has(:not(:placeholder-shown))` the second, which is why every control
+ * carries a single-space placeholder. Nothing to re-render, and it works
+ * before hydration.
+ */
+function Field({
+  id,
+  label,
+  required,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="wq-fc">
+      <div className="wq-fc-label">
+        <label htmlFor={id}>
+          {label}
+          {/* Decoration, not information: the control itself carries `required`,
+              which is what a screen reader announces. */}
+          {required ? <span aria-hidden="true">*</span> : null}
+        </label>
+      </div>
+      <div className="wq-fc-field">{children}</div>
+    </div>
+  );
+}
+
+/**
  * The enquiry form.
  *
  * Posts the same payload shape `/api/enquiries` already validates, so the
@@ -55,25 +95,58 @@ export function ContactForm({ t }: { t: Dictionary["form"] }) {
 
   return (
     <form className="wq-form" onSubmit={onSubmit} noValidate={false}>
-      <div className="wq-field">
-        <label htmlFor="name">{t.name}</label>
-        <input id="name" name="name" required maxLength={160} autoComplete="name" />
-      </div>
-      <div className="wq-field">
-        <label htmlFor="email">{t.email}</label>
-        <input id="email" name="email" type="email" required autoComplete="email" />
-      </div>
-      <div className="wq-field">
-        <label htmlFor="company">{t.company}</label>
-        <input id="company" name="company" maxLength={160} autoComplete="organization" />
-      </div>
-      <div className="wq-field">
-        <label htmlFor="message">{t.message}</label>
-        <textarea id="message" name="message" rows={5} maxLength={5000} />
+      <div className="wq-fields">
+        <Field id="name" label={t.name} required>
+          <input
+            id="name"
+            name="name"
+            required
+            maxLength={160}
+            autoComplete="name"
+            placeholder=" "
+          />
+        </Field>
+
+        <Field id="email" label={t.email} required>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder=" "
+          />
+        </Field>
+
+        <Field id="company" label={t.company}>
+          <input
+            id="company"
+            name="company"
+            maxLength={160}
+            autoComplete="organization"
+            placeholder=" "
+          />
+        </Field>
+
+        <Field id="message" label={t.message} required>
+          <textarea
+            id="message"
+            name="message"
+            rows={4}
+            maxLength={5000}
+            required
+            placeholder=" "
+          />
+        </Field>
       </div>
 
       <div className="wq-form-foot">
-        <button type="submit" className="wq-cta wq-cta-lg" disabled={state === "sending"}>
+        <button
+          type="submit"
+          className="wq-cta wq-cta-lg"
+          disabled={state === "sending"}
+          data-magnetic="8"
+        >
           {state === "sending" ? t.sending : t.submit}
         </button>
         {/* Announced when it appears, so a screen-reader user is told the send

@@ -34,11 +34,14 @@ export function WorkGrid({
   allLabel,
   filterLabel,
   emptyLabel,
+  viewLabel,
 }: {
   items: WorkCard[];
   allLabel: string;
   filterLabel: string;
   emptyLabel: string;
+  /** The word the cursor carries over a tile. */
+  viewLabel: string;
 }) {
   const [active, setActive] = useState<string | null>(null);
   const tags = useMemo(() => [...new Set(items.flatMap((i) => i.tags))], [items]);
@@ -62,6 +65,7 @@ export function WorkGrid({
             key={item.slug}
             href={item.href}
             className="wq-work-card"
+            data-cursor-label={viewLabel}
             /* Only the first tile of the unfiltered view is the feature. Under
                a filter every tile is equally the answer to the question the
                visitor just asked. */
@@ -70,7 +74,20 @@ export function WorkGrid({
           >
             <div data-tilt-inner="">
               <div className="wq-work-plate" aria-hidden="true">
-                <img src={item.image} alt="" loading="lazy" />
+                {/* The picture drifts inside its frame rather than the frame
+                    drifting on the page, so the grid stays where it is. The
+                    plate crops the slack the drift needs. */}
+                <img
+                  src={item.image}
+                  alt=""
+                  loading="lazy"
+                  data-parallax=""
+                  /* Far under the reference's default eighth: theirs drifts a
+                     whole element down the page, this one drifts a picture
+                     inside a fixed frame, and the travel has to stay inside
+                     the crop or the frame shows an edge. */
+                  data-parallax-strength="0.03"
+                />
               </div>
               <div className="wq-work-row">
                 <h3>{item.name}</h3>

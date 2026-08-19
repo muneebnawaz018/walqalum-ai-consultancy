@@ -30,7 +30,9 @@ export function SpyRows({
   note,
 }: {
   rows: Row[];
-  label: string;
+  /** Optional: omitted where the section already carries a heading of its own,
+      so the sticky column is just the running number. */
+  label?: string;
   note?: string;
 }) {
   const [active, setActive] = useState(0);
@@ -93,9 +95,9 @@ export function SpyRows({
 
   return (
     <section className="wq-wrap wq-sec-b">
-      <div className="wq-grid2 wq-grid2-start">
+      <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
         <div className="wq-sticky-col">
-          <p className="wq-eyebrow">{label}</p>
+          {label ? <p className="wq-eyebrow">{label}</p> : null}
           <div className="wq-bignum" aria-hidden="true">
             {String(active + 1).padStart(2, "0")}
             <span>.</span>

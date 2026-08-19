@@ -61,9 +61,14 @@
   margin-inline: auto;
   padding-inline: clamp(20px, 4vw, 48px);
 }
-/* Section padding, as the design writes it. */
+/* Section padding.
+   The design drew one section in isolation and gave it 200px of air; on a page
+   of seven that reads as a gap between pages rather than a rhythm between
+   blocks. These are the reference's own steps — its spacing clusters at 64,
+   96 and 128px — so a section still breathes without a screen of nothing
+   between one and the next. */
 .wq-sec {
-  padding-block: clamp(120px, 14vw, 200px);
+  padding-block: clamp(64px, 8vw, 128px);
 }
 
 /* Hairlines are the ink colour at low alpha rather than a grey of their own, so
@@ -802,7 +807,7 @@
 
 /* ---- section scaffolding ---- */
 .wq-sec-b {
-  padding-bottom: clamp(120px, 14vw, 200px);
+  padding-bottom: clamp(64px, 8vw, 128px);
 }
 .wq-sec-head {
   display: flex;
@@ -830,12 +835,14 @@
 .wq-grid2-start {
   align-items: start;
 }
-/* A narrower caption against a wider claim, for the one section where the
-   statement is the section. Kept as a modifier rather than changed on
-   `.wq-grid2` itself — every other pairing on the site is matched to the
-   design's own 5/7 split. */
+/* A narrow caption against a wide claim.
+   The 5/7 split is right where both columns carry content — the contact page,
+   where the left column holds the email and the offices. Everywhere else the
+   left column is an eyebrow, a one-pixel tick and sometimes a short note, and
+   5fr of a 1720px measure left roughly 600px of nothing beside every
+   statement on the site. */
 .wq-grid2-wide {
-  grid-template-columns: 2fr 10fr;
+  grid-template-columns: 3fr 9fr;
 }
 .wq-grid3 {
   display: grid;
@@ -997,7 +1004,7 @@
   align-items: baseline;
   gap: 20px;
   border-top: 1px solid var(--hairline-strong);
-  padding-block: clamp(32px, 3.5vw, 52px);
+  padding-block: clamp(24px, 2.6vw, 40px);
   opacity: 0.34;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1163,7 +1170,9 @@
 /* ---- closing call to action ---- */
 .wq-cta-band {
   border-top: 1px solid var(--hairline);
-  padding: clamp(120px, 16vw, 220px) clamp(20px, 4vw, 48px);
+  /* Still the tallest band on the page — it is the one that has to feel like
+     an ending — but no longer twice the height of the sections above it. */
+  padding: clamp(88px, 11vw, 160px) clamp(20px, 4vw, 48px);
   text-align: center;
 }
 .wq-cta-band h2 {
@@ -1223,12 +1232,49 @@
   border: 1px solid var(--ring-border);
   z-index: 99998;
   transition: opacity 0.3s;
+  /* The label lives inside the ring, so it has to be able to centre in it. */
+  display: grid;
+  place-items: center;
+}
+/* ---- cursor label ----
+   The word a link says when the pointer is on it, set inside the ring. The
+   ring is scaled by script and the label is scaled back by the same amount, so
+   the letters stay one size while the ring grows around them. */
+.wq-cursor-label {
+  display: flex;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* One box per letter, so each can carry its own delay. They start invisible
+   and the script adds the class a frame after writing them — a letter faded in
+   with no transition to run would simply appear. */
+.wq-cursor-label span {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.wq-cursor-label-on span {
+  opacity: 1;
+}
+/* The ring is a hairline circle at rest and a filled disc once it is carrying
+   a word: unfilled, the letters sit on whatever is behind them and cannot be
+   read against a picture. */
+.wq-cursor-ring:has(.wq-cursor-label-on) {
+  background: var(--bg);
+  border-color: var(--ink);
 }
 
 /* ---- inner page furniture ---- */
 .wq-pagehead {
-  padding-top: calc(68px + clamp(80px, 11vw, 160px));
-  padding-bottom: clamp(56px, 7vw, 96px);
+  /* The 68px is the fixed header the masthead sits under; the rest is its own
+     air above the eyebrow. */
+  padding-top: calc(68px + clamp(56px, 7vw, 112px));
+  padding-bottom: clamp(40px, 5vw, 72px);
 }
 .wq-pagehead-h1 {
   margin: 28px 0 0;
@@ -1338,41 +1384,103 @@
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+/* ---- enquiry form ----
+   The reference's own shape: no boxes, no filled surfaces. Every control is a
+   rule with type sitting on it, and the label rides that rule until there is
+   something to read there. Its numbers throughout — the 2.25rem between
+   fields, the 0.65 the label shrinks to, the 0.15s it takes to get there. */
 .wq-form {
-  display: grid;
-  gap: 22px;
-  max-width: 640px;
+  max-width: 860px;
+  /* Headroom for the first field's label once it floats — it rises above its
+     own control, and the fields below it float into the 2.25rem the field
+     above leaves behind. */
+  padding-top: 1.5rem;
 }
-.wq-field {
+.wq-fields {
   display: grid;
-  gap: 8px;
 }
-.wq-field label {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.14em;
+.wq-fc {
+  position: relative;
+  margin-bottom: 2.25rem;
+}
+/* The label sits over the field, so it occupies no space of its own and the
+   rule stays where the eye expects it whether the label is up or down. */
+.wq-fc-label {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  pointer-events: none;
+  transform-origin: top left;
+  transition: transform 0.15s ease-in-out;
+}
+/* The origin is a corner, so it has to be the corner the reading starts at. */
+[dir="rtl"] .wq-fc-label {
+  transform-origin: top right;
+}
+.wq-fc-label label {
+  display: inline-block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
-  color: var(--muted-3);
+  padding-block: 0.5rem;
+  padding-inline: 0 0.5rem;
+  color: var(--muted);
+  /* Slow on purpose: the label moves quickly and recolours gently, so the two
+     do not read as one jump. */
+  transition: color 0.9s linear;
+  pointer-events: all;
 }
-.wq-field input,
-.wq-field textarea {
-  background: var(--surface);
-  border: 1px solid var(--field-border);
-  border-radius: 2px;
-  color: var(--ink);
+.wq-fc-label label span {
+  color: var(--accent);
+}
+/* Floated while the field has focus, and *kept* floated once it holds
+   anything — that second rule is the difference between a label and a
+   placeholder. The single-space placeholder on every control is what makes
+   `:placeholder-shown` mean "empty" here. */
+.wq-fc:focus-within .wq-fc-label,
+.wq-fc:has(.wq-fc-field :not(:placeholder-shown)) .wq-fc-label {
+  transform: scale(0.65) translateY(-2.25rem);
+}
+.wq-fc:focus-within .wq-fc-label label {
+  color: var(--accent);
+}
+.wq-fc-field input,
+.wq-fc-field textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--field-border);
+  border-radius: 0;
+  color: var(--accent);
   font-family: inherit;
-  /* 16px minimum, or iOS Safari zooms the page when the field takes focus. */
-  font-size: 16px;
-  padding: 13px 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding-block: 0.5rem 0.6rem;
+  padding-inline: 0 0.5rem;
   transition: border-color 0.2s;
 }
-.wq-field input:focus,
-.wq-field textarea:focus {
+.wq-fc-field input:focus,
+.wq-fc-field textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-bottom-color: var(--accent);
 }
-.wq-field textarea {
-  resize: vertical;
+/* Fixed height, as the reference has it: a field that grows as it is typed
+   into pushes the button down the page under the reader's hand. */
+.wq-fc-field textarea {
+  display: block;
+  line-height: 1.4;
+  min-width: 100%;
+  max-width: 100%;
+  resize: none;
+}
+/* The browser's own autofill paints its own background over the rule. This is
+   the only way to refuse it that every engine honours. */
+.wq-fc-field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--accent);
+  transition: background-color 100000s;
 }
 .wq-form-foot {
   display: flex;
@@ -1860,15 +1968,17 @@
 .wq-work-card[data-feature] .wq-work-plate {
   aspect-ratio: 16 / 9;
 }
+/* Taller than its frame and pulled up by the difference, so the drift has
+   somewhere to travel: the picture moves against the scroll and the frame
+   never shows an edge. The hover scale that used to live here is gone — the
+   drift writes the same property, and the two would overwrite each other. */
 .wq-work-plate img {
   display: block;
+  position: relative;
+  top: -15%;
   width: 100%;
-  height: 100%;
+  height: 130%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.wq-work-card:hover .wq-work-plate img {
-  transform: scale(1.03);
 }
 .wq-work-row {
   display: flex;

@@ -46,12 +46,7 @@ export default async function About() {
       </Split>
 
       <section className="wq-wrap wq-sec-b">
-        <div
-          className="wq-plate-wide"
-          aria-hidden="true"
-          data-reveal-scale=""
-          data-reveal=""
-        >
+        <div className="wq-plate-wide" aria-hidden="true" data-parallax-scale="">
           <img src="/wq/dummy/02.svg" alt="" loading="lazy" />
         </div>
       </section>
@@ -87,7 +82,7 @@ export default async function About() {
         </div>
       </section>
 
-      <EndCta />
+      <EndCta title={t.about.ctaTitle} />
     </>
   );
 }

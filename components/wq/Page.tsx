@@ -174,7 +174,7 @@ export function Split({
 }) {
   return (
     <section id={id} className="wq-sec-b wq-wrap">
-      <div className="wq-grid2 wq-grid2-start">
+      <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
         <div className="wq-side">
           <p className="wq-eyebrow" data-reveal="">
             {label}
@@ -193,19 +193,21 @@ export function Split({
 }
 
 /**
- * The closing band, so every page ends on the same invitation.
+ * The closing band.
  *
- * Reads its own default from the dictionary rather than taking an English
- * fallback in the signature — a default argument is exactly the kind of string
- * that never makes it into a translation file.
+ * Not on every page: the home page, insights and industries end on their own
+ * content instead. Where it does appear the question is the module's own — a
+ * case study asks something a list of sectors would not — so the title is
+ * required rather than defaulted. A shared default is how six pages end up
+ * asking the same question.
  */
-export async function EndCta({ title }: { title?: string }) {
+export async function EndCta({ title }: { title: string }) {
   const t = await getDictionary();
   const locale = await getLocale();
   return (
     <section aria-label={t.aria.cta} className="wq-cta-band">
       <h2 data-lines="">
-        <Lines lines={[title ?? t.home.ctaTitle]} />
+        <Lines lines={[title]} />
       </h2>
       <Link
         href={localeHref("/contact", locale)}

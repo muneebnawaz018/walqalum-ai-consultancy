@@ -81,8 +81,13 @@ export function SiteEffects() {
          to the pointer reads as a bigger cursor, not as weight. */
       const dot = document.createElement("div");
       const ring = document.createElement("div");
+      /* The ring carries the label, so the text scales and moves with it
+         rather than being a third element chasing the same coordinates. */
+      const label = document.createElement("span");
       dot.className = "wq-cursor-dot";
       ring.className = "wq-cursor-ring";
+      label.className = "wq-cursor-label";
+      ring.append(label);
       dot.setAttribute("aria-hidden", "true");
       ring.setAttribute("aria-hidden", "true");
       document.body.append(dot, ring);
@@ -96,6 +101,37 @@ export function SiteEffects() {
       let scale = 1;
       let seen = false;
       let raf = 0;
+      /* The reference waits out its own move transition before writing the
+         letters, so the ring is already at size when they arrive rather than
+         growing around them. */
+      const LABEL_DELAY = 150;
+      let labelTimer: ReturnType<typeof setTimeout> | undefined;
+      let labelled: Element | null = null;
+
+      /** Writes the label one letter at a time, as the reference does. */
+      const setLabel = (text: string) => {
+        label.textContent = "";
+        [...text].forEach((ch, i) => {
+          const span = document.createElement("span");
+          /* A space collapses to nothing inside an inline-block, so it is
+             carried as a non-breaking one and the words stay apart. */
+          span.textContent = ch === " " ? "\u00a0" : ch;
+          /* The same 0.05s per letter the reference staggers by. */
+          span.style.transitionDelay = `${i * 0.05}s`;
+          label.append(span);
+        });
+        /* Next frame, so the letters have been laid out at zero opacity before
+           the class that fades them in is added — otherwise there is no
+           transition to run. */
+        requestAnimationFrame(() => label.classList.add("wq-cursor-label-on"));
+      };
+
+      const clearLabel = () => {
+        clearTimeout(labelTimer);
+        labelled = null;
+        label.classList.remove("wq-cursor-label-on");
+        label.textContent = "";
+      };
 
       const onMove = (e: MouseEvent) => {
         mx = e.clientX;
@@ -109,7 +145,25 @@ export function SiteEffects() {
           dot.style.opacity = "1";
           ring.style.opacity = "1";
         }
-        target = (e.target as Element | null)?.closest?.(INTERACTIVE) ? 1.8 : 1;
+        const el = e.target as Element | null;
+        const labelHost = el?.closest?.("[data-cursor-label]") ?? null;
+        const text = labelHost?.getAttribute("data-cursor-label") ?? "";
+
+        if (labelHost && text) {
+          /* Three sizes, as the reference has them: at rest, over anything
+             interactive, and over something that has a word to say. */
+          target = 3.6;
+          if (labelHost !== labelled) {
+            labelled = labelHost;
+            clearTimeout(labelTimer);
+            label.classList.remove("wq-cursor-label-on");
+            labelTimer = setTimeout(() => setLabel(text), LABEL_DELAY);
+          }
+          return;
+        }
+
+        if (labelled) clearLabel();
+        target = el?.closest?.(INTERACTIVE) ? 1.8 : 1;
       };
 
       const onOut = (e: MouseEvent) => {
@@ -118,6 +172,8 @@ export function SiteEffects() {
           dot.style.opacity = "0";
           ring.style.opacity = "0";
           seen = false;
+          clearLabel();
+          target = 1;
         }
       };
 
@@ -127,6 +183,9 @@ export function SiteEffects() {
         scale += (target - scale) * 0.14;
         dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
         ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px) scale(${scale.toFixed(3)})`;
+        /* Countered against the ring's own scale so the letters stay one size
+           whatever the ring is doing. */
+        label.style.transform = `scale(${(1 / scale).toFixed(3)})`;
         raf = requestAnimationFrame(loop);
       };
       raf = requestAnimationFrame(loop);
@@ -159,6 +218,7 @@ export function SiteEffects() {
 
       cleanupPointer = () => {
         cancelAnimationFrame(raf);
+        clearTimeout(labelTimer);
         window.removeEventListener("mousemove", onMove);
         window.removeEventListener("mouseout", onOut);
         document.removeEventListener("mousemove", onMagnetMove);

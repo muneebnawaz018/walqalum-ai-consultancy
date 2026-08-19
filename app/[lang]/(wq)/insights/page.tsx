@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EndCta, PageHead } from "@/components/wq/Page";
+import { PageHead } from "@/components/wq/Page";
 import { PostList, type PostCard } from "@/components/wq/PostList";
 import { getDictionary, getLocale } from "@/lib/dictionaries";
 import { localeHref } from "@/lib/i18n";
@@ -48,10 +48,9 @@ export default async function Insights() {
           allLabel={t.actions.allInsights}
           filterLabel={t.aria.insightsFilter}
           emptyLabel={t.insights.filterEmpty}
+          readLabel={t.actions.readPost}
         />
       </section>
-
-      <EndCta />
     </>
   );
 }

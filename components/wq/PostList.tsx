@@ -30,11 +30,14 @@ export function PostList({
   allLabel,
   filterLabel,
   emptyLabel,
+  readLabel,
 }: {
   posts: PostCard[];
   allLabel: string;
   filterLabel: string;
   emptyLabel: string;
+  /** The word the cursor carries over a headline. */
+  readLabel: string;
 }) {
   const [active, setActive] = useState<string | null>(null);
   const topics = useMemo(() => [...new Set(posts.map((p) => p.topic))], [posts]);
@@ -52,7 +55,13 @@ export function PostList({
       />
 
       {lead ? (
-        <Link href={lead.href} className="wq-post-lead" key={lead.slug} data-reveal="">
+        <Link
+          href={lead.href}
+          className="wq-post-lead"
+          key={lead.slug}
+          data-reveal=""
+          data-cursor-label={readLabel}
+        >
           <p className="wq-post-meta">
             <span>{lead.date}</span>
             <span className="wq-post-topic">{lead.topic}</span>
@@ -68,7 +77,12 @@ export function PostList({
 
       <div className="wq-post-rows" key={active ?? "all"} data-reveal-group="">
         {rest.map((p) => (
-          <Link key={p.slug} href={p.href} className="wq-post-row">
+          <Link
+            key={p.slug}
+            href={p.href}
+            className="wq-post-row"
+            data-cursor-label={readLabel}
+          >
             <span className="wq-post-date">{p.date}</span>
             <span className="wq-post-topic">{p.topic}</span>
             <h3>{p.title}</h3>

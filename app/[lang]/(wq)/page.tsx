@@ -1,7 +1,6 @@
 import { Hero } from "@/components/wq/Hero";
 import { Process } from "@/components/wq/Process";
 import {
-  CallToAction,
   Insights,
   Marquee,
   Positioning,
@@ -37,7 +36,6 @@ export default async function Home() {
       <SelectedWork />
       <Stats rows={stats(t)} aria={t.aria.stats} />
       <Insights />
-      <CallToAction />
     </>
   );
 }

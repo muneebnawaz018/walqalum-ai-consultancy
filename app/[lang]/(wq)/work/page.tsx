@@ -52,11 +52,12 @@ export default async function Work() {
           allLabel={t.actions.allWork}
           filterLabel={t.aria.workFilter}
           emptyLabel={t.work.filterEmpty}
+          viewLabel={t.actions.viewProject}
         />
       </section>
 
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-grid2 wq-grid2-start">
+        <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
           <div className="wq-side">
             <p className="wq-eyebrow" data-reveal="">
               {t.work.howLabel}

@@ -30,7 +30,9 @@
     "closeMenu": "Close menu",
     "toggleSound": "Toggle interface sound",
     "toggleTheme": "Toggle light and dark theme",
-    "switchLanguage": "Switch language"
+    "switchLanguage": "Switch language",
+    "viewProject": "View",
+    "readPost": "Read"
   },
 
   "aria": {
@@ -80,20 +82,17 @@
     "servicesBottom": "Services",
     "servicesEyebrow": "(a.) Services",
 
-    "processEyebrow": "03 / How we work",
+    "processEyebrow": "02 / How we work",
     "processTitle": "Four steps. No theatre.",
     "stepLabel": "STEP",
 
     "workTop": "Selected",
     "workBottom": "Work",
     "workNote": "A curated look at what we have been building — systems, agents and platforms shaped for production.",
-    "workEyebrow": "04 / Selected work",
     "workTitle": "Built, shipped, running.",
 
-    "insightsEyebrow": "06 / Insights",
-    "insightsTitle": "Notes from the field.",
-
-    "ctaTitle": "Have a system in mind?"
+    "insightsEyebrow": "03 / Insights",
+    "insightsTitle": "Notes from the field."
   },
 
   "about": {
@@ -108,10 +107,11 @@
     "statementTail": "The same team answers for the result either way.",
     "positionLabel": "03 / Position",
     "positionNote": "Three commitments we will be held to, including the one that costs us work.",
-    "officesLabel": "05 / Offices",
+    "officesLabel": "04 / Offices",
     "officesTitleLead": "Three time zones,",
     "officesTitleTail": "one team.",
-    "officesNote": "Work follows the sun rather than waiting for a handover meeting."
+    "officesNote": "Work follows the sun rather than waiting for a handover meeting.",
+    "ctaTitle": "Have a system in mind?"
   },
 
   "industries": {
@@ -125,10 +125,7 @@
     "statementTail": "So we start from the rules you already work under, not from what the technology can do.",
     "listLabel": "03 / The list",
     "listTitle": "Where we have shipped.",
-    "listNote": "Ordered as we met them, not by size.",
-    "sectorsLabel": "03 / Sectors",
-    "sectorsNote": "Eight sectors, one team. What carries across them is the engineering, not the model.",
-    "ctaTitle": "Working in one of these?"
+    "listNote": "Ordered as we met them, not by size."
   },
 
   "work": {
@@ -139,9 +136,6 @@
     "howLabel": "02 / How it goes",
     "howLead": "Every one of these started as a conversation about what was already broken.",
     "howEm": "None started with a model.",
-    "processLabel": "03 / Process",
-    "processNote": "The same four on every engagement, whatever the sector.",
-    "statusLabel": "02 / Status",
     "casePendingLead": "The full write-up is with the client for approval.",
     "casePendingEm": "We publish outcomes once",
     "casePendingTail": "they are confirmed, and not before.",
@@ -156,10 +150,6 @@
     "titleLead": "Notes from the",
     "titleAccent": "field.",
     "lede": "What we learned building the last thing, written down before we forget it.",
-    "whyLabel": "02 / Why we write",
-    "whyLead": "Every one of these was a thing we got wrong first.",
-    "whyEm": "Writing it down is cheaper",
-    "whyTail": "than learning it twice.",
     "statusLabel": "02 / Status",
     "ctaTitle": "Want to talk it through instead?",
     "articlePendingLead": "This piece is still being written.",
@@ -191,9 +181,7 @@
         "name": "We scope it properly",
         "desc": "A call about your data and your constraints, then a written scope with what it costs and what it does not cover."
       }
-    },
-    "closeLead": "If it is not a fit, we will say so in the first reply.",
-    "closeEm": "That is the whole process."
+    }
   },
 
   "form": {

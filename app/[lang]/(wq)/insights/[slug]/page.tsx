@@ -50,7 +50,7 @@ export default async function Article({ params }: PageProps<"/[lang]/insights/[s
       <PageHead eyebrow={`${post.date} · ${post.topic}`} title={post.title} />
 
       <section className="wq-wrap wq-sec-b">
-        <div className="wq-grid2 wq-grid2-start">
+        <div className="wq-grid2 wq-grid2-wide wq-grid2-start">
           <div className="wq-side">
             <p className="wq-eyebrow" data-reveal="">
               {t.insights.statusLabel}

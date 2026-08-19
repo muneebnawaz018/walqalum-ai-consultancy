@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/wq/ContactForm";
-import { FillText } from "@/components/wq/FillText";
 import { PageHead, SectionHead } from "@/components/wq/Page";
 import { getDictionary } from "@/lib/dictionaries";
 import { EMAIL, offices, telHref } from "@/lib/wq-pages";
@@ -74,12 +73,6 @@ export default async function Contact() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className="wq-wrap wq-sec-b">
-        <FillText className="wq-statement">
-          {t.contact.closeLead} <em>{t.contact.closeEm}</em>
-        </FillText>
       </section>
     </>
   );

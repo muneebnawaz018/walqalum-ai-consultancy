@@ -159,16 +159,3 @@ export async function Insights() {
   );
 }
 
-/** The closing call to action. */
-export async function CallToAction() {
-  const t = await getDictionary();
-  const locale: Locale = await getLocale();
-  return (
-    <section aria-label={t.aria.cta} className="wq-cta-band">
-      <h2>{t.home.ctaTitle}</h2>
-      <Link href={localeHref("/contact", locale)} className="wq-cta wq-cta-xl">
-        {t.actions.startProject}
-      </Link>
-    </section>
-  );
-}
