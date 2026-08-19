@@ -60,7 +60,7 @@ export function buildNav(t: Dictionary): NavItem[] {
           label: t.menu.groups.theArgument,
           items: [
             item("homePosition", "/#position"),
-            item("homeCapabilities", "/#capabilities"),
+            item("homeServices", "/#services"),
             item("homeProcess", "/#process"),
           ],
         },
@@ -135,7 +135,7 @@ export function buildNav(t: Dictionary): NavItem[] {
         {
           label: t.menu.groups.howItGetsBuilt,
           items: [
-            item("workCapabilities", "/#capabilities"),
+            item("workServices", "/#services"),
             item("workProcess", "/#process"),
             item("workAll", "/work"),
           ],

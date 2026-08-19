@@ -89,7 +89,6 @@
     "workTop": "Selected",
     "workBottom": "Work",
     "workNote": "A curated look at what we have been building — systems, agents and platforms shaped for production.",
-    "workTitle": "Built, shipped, running.",
 
     "insightsEyebrow": "03 / Insights",
     "insightsTitle": "Notes from the field."
@@ -383,8 +382,8 @@
         "name": "Position",
         "desc": "Why AI pilots stall, and what closes the gap."
       },
-      "homeCapabilities": {
-        "name": "Capabilities",
+      "homeServices": {
+        "name": "Services",
         "desc": "Six disciplines, one team."
       },
       "homeProcess": {
@@ -427,8 +426,8 @@
         "name": "Start a project",
         "desc": "Tell us what has stalled."
       },
-      "workCapabilities": {
-        "name": "Capabilities",
+      "workServices": {
+        "name": "Services",
         "desc": "The six disciplines behind every project."
       },
       "workProcess": {

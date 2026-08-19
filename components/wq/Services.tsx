@@ -26,7 +26,7 @@ export async function Services() {
 
   return (
     <section
-      id="capabilities"
+      id="services"
       aria-label={t.aria.capabilities}
       className="wq-wrap wq-sec-b"
     >
