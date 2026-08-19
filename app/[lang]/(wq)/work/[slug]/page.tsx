@@ -43,7 +43,6 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
   const item = all.find((w) => w.slug === slug);
   if (!item) notFound();
 
-  const index = all.indexOf(item);
   const others = all
     .filter((w) => w.slug !== slug)
     .map((w) => ({
@@ -63,7 +62,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
           data-parallax-scale=""
         >
           <Image
-            src={`/wq/plates/0${(index % 6) + 1}.jpg`}
+            src={item.image}
             alt=""
             fill
             sizes="(max-width: 1100px) 100vw, 1100px"

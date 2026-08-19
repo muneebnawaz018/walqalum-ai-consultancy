@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { localeHref, type Locale } from "@/lib/i18n";
-import type { WorkItem } from "@/lib/wq-content";
+import { plate, type WorkItem } from "@/lib/wq-content";
 
 /**
  * The projects ring.
@@ -34,7 +34,7 @@ export function WorkRing({ items, locale }: { items: WorkItem[]; locale: Locale 
      land on the same picture and read as a duplicate. */
   const tiles = Array.from({ length: COUNT }, (_, i) => ({
     ...items[i % items.length],
-    image: `/wq/plates/0${(i % 6) + 1}.jpg`,
+    image: plate(i),
   }));
 
   return (

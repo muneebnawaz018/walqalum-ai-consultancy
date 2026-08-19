@@ -32,6 +32,7 @@
     "toggleTheme": "Toggle light and dark theme",
     "switchLanguage": "Switch language",
     "viewProject": "View",
+    "viewSector": "Sector",
     "readPost": "Read"
   },
 
@@ -124,7 +125,13 @@
     "statementTail": "So we start from the rules you already work under, not from what the technology can do.",
     "listLabel": "03 / The list",
     "listTitle": "Where we have shipped.",
-    "listNote": "Ordered as we met them, not by size."
+    "listNote": "Ordered as we met them, not by size.",
+    "detailWorkLabel": "01 / Selected work",
+    "detailWorkTitle": "In this sector.",
+    "detailEmpty": "Nothing published in this sector yet. The work exists; the write-up does not.",
+    "detailOtherLabel": "02 / Other sectors",
+    "detailBack": "All industries",
+    "detailCta": "Tell us what your sector makes expensive."
   },
 
   "work": {
@@ -324,6 +331,42 @@
     "epictory": {
       "name": "Epictory: Rendering at Scale",
       "tags": ["ENGINEERING", "CLOUD"]
+    },
+    "clinical-notes": {
+      "name": "Clinical Notes Assistant",
+      "tags": ["SPEECH", "LLM", "HEALTHCARE"]
+    },
+    "triage-router": {
+      "name": "Triage Routing for a Clinic Group",
+      "tags": ["ML", "WORKFLOW"]
+    },
+    "ledger-reconciler": {
+      "name": "Ledger Reconciliation Engine",
+      "tags": ["ML", "DATA"]
+    },
+    "portfolio-valuation": {
+      "name": "Portfolio Valuation Support",
+      "tags": ["DATA", "FORECASTING"]
+    },
+    "catalogue-enrichment": {
+      "name": "Catalogue Enrichment Pipeline",
+      "tags": ["DATA", "LLM"]
+    },
+    "marking-assistant": {
+      "name": "Assessment Marking Assistant",
+      "tags": ["LLM", "EVALS"]
+    },
+    "line-inspection": {
+      "name": "Visual Line Inspection",
+      "tags": ["COMPUTER VISION", "EDGE"]
+    },
+    "kyc-intake": {
+      "name": "KYC Document Intake",
+      "tags": ["OCR", "RAG", "COMPLIANCE"]
+    },
+    "contract-review": {
+      "name": "Contract Review Workbench",
+      "tags": ["RAG", "LLM", "SEARCH"]
     }
   },
 

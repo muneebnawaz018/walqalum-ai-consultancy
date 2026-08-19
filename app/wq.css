@@ -68,7 +68,7 @@
    96 and 128px — so a section still breathes without a screen of nothing
    between one and the next. */
 .wq-sec {
-  padding-block: clamp(64px, 8vw, 128px);
+  padding-block: clamp(52px, 6vw, 96px);
 }
 
 /* Hairlines are the ink colour at low alpha rather than a grey of their own, so
@@ -807,7 +807,7 @@
 
 /* ---- section scaffolding ---- */
 .wq-sec-b {
-  padding-bottom: clamp(64px, 8vw, 128px);
+  padding-bottom: clamp(52px, 6vw, 96px);
 }
 .wq-sec-head {
   display: flex;
@@ -1004,7 +1004,7 @@
   align-items: baseline;
   gap: 20px;
   border-top: 1px solid var(--hairline-strong);
-  padding-block: clamp(24px, 2.6vw, 40px);
+  padding-block: clamp(22px, 2.1vw, 32px);
   opacity: 0.34;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1173,7 +1173,7 @@
   border-top: 1px solid var(--hairline);
   /* Still the tallest band on the page — it is the one that has to feel like
      an ending — but no longer twice the height of the sections above it. */
-  padding: clamp(88px, 11vw, 160px) clamp(20px, 4vw, 48px);
+  padding: clamp(76px, 8.5vw, 124px) clamp(20px, 4vw, 48px);
   text-align: center;
 }
 .wq-cta-band h2 {
@@ -1275,7 +1275,7 @@
   /* The 68px is the fixed header the masthead sits under; the rest is its own
      air above the eyebrow. */
   padding-top: calc(68px + clamp(56px, 7vw, 112px));
-  padding-bottom: clamp(40px, 5vw, 72px);
+  padding-bottom: clamp(36px, 4vw, 56px);
 }
 .wq-pagehead-h1 {
   margin: 28px 0 0;
@@ -2195,4 +2195,30 @@
    chance of the two copies drifting apart. */
 [dir="rtl"] .wq-arrow {
   transform: scaleX(-1);
+}
+
+/* The sector row's heading is itself the link — `RowList` wraps the whole row
+   in one, so the existing `.wq-cap-link:hover h3` cannot reach this case. The
+   arrow sits inline with the words rather than out at the row's edge: at this
+   type size an arrow flush right reads as belonging to the paragraph below. */
+h3 > .wq-cap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+h3 > .wq-cap-link:hover {
+  color: var(--accent);
+}
+h3 > .wq-cap-link .wq-arrow {
+  font-size: 0.62em;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+h3 > .wq-cap-link:hover .wq-arrow {
+  transform: translateX(0.25em);
+}
+[dir="rtl"] h3 > .wq-cap-link .wq-arrow {
+  transform: scaleX(-1);
+}
+[dir="rtl"] h3 > .wq-cap-link:hover .wq-arrow {
+  transform: scaleX(-1) translateX(0.25em);
 }

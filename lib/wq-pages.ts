@@ -10,6 +10,7 @@
  */
 
 import type { Dictionary } from "@/lib/dictionaries/en";
+import { plate } from "@/lib/wq-content";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -18,11 +19,13 @@ export const EMAIL = "tafseel@walqalum.com";
 
 export type Sector = {
   num: string;
-  slug: string;
+  slug: SectorSlug;
   name: string;
   desc: string;
   /** The one-line version, set as a kicker above the paragraph. */
   blurb: string;
+  /** Stand-in photography, from the same set the work uses. */
+  image: string;
 };
 
 /** The eight sectors, in the existing site's own order. Slugs are anchor ids. */
@@ -37,6 +40,8 @@ export const SECTOR_SLUGS = [
   "legal",
 ] as const;
 
+export type SectorSlug = (typeof SECTOR_SLUGS)[number];
+
 export function industries(t: Dictionary): Sector[] {
   return SECTOR_SLUGS.map((slug, i) => ({
     num: pad(i + 1),
@@ -44,6 +49,9 @@ export function industries(t: Dictionary): Sector[] {
     name: t.sectors[slug].name,
     desc: t.sectors[slug].desc,
     blurb: t.sectors[slug].blurb,
+    /* Offset so a sector and the first project under it never land on the
+       same picture — the two sit on the same page. */
+    image: plate(i + 3),
   }));
 }
 

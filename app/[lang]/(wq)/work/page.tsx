@@ -27,15 +27,12 @@ export default async function Work() {
   const t = await getDictionary();
   const locale = await getLocale();
 
-  const items: WorkCard[] = work(t).map((w, i) => ({
+  const items: WorkCard[] = work(t).map((w) => ({
     slug: w.slug,
     name: w.name,
     tags: w.tags,
     href: localeHref(`/work/${w.slug}`, locale),
-    /* The plate cycles on the project's index rather than its slug, so two
-       neighbouring tiles never land on the same picture. Stand-in photography
-       until the real screenshots exist — see `public/wq/plates`. */
-    image: `/wq/plates/0${(i % 6) + 1}.jpg`,
+    image: w.image,
   }));
 
   return (

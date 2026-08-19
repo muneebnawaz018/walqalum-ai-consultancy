@@ -188,7 +188,7 @@ already sized and positioned, so images fill them.
 
 ### Placeholder plates
 
-`public/wq/plates/01–06.jpg` stand in for work we cannot show yet: the case
+`public/wq/plates/01–12.jpg` stand in for work we cannot show yet: the case
 write-ups are unpublished and the screenshots do not exist. They are Unsplash
 photographs pulled through Lorem Picsum by fixed id, so the set is reproducible
 and the licence permits commercial use without attribution. They are committed
@@ -199,6 +199,12 @@ They are deliberately generic scenes rather than product shots. A convincing
 fake screenshot on a case study is a claim about work we have not done; a
 photograph of a server rack is scenery. Replace them with the real thing as each
 case study clears client approval.
+
+One picture per project, one per sector, assigned by `plate(i)` in
+`lib/wq-content.ts` rather than by each page working out its own modulo — a
+project shown on the index, on an industry page and in the ring has to carry
+the same picture on all three, and three separate expressions will not stay
+in step.
 
 Cover images upload to MongoDB via GridFS rather than S3: `POST /api/upload`
 (auth required, 5MB cap, magic-byte sniffing, SVG refused because it is a script

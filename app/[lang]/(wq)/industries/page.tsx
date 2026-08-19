@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { FillText } from "@/components/wq/FillText";
 import { PageHead, SectionHead } from "@/components/wq/Page";
 import { SpyRows } from "@/components/wq/SpyRows";
-import { getDictionary } from "@/lib/dictionaries";
+import { getDictionary, getLocale } from "@/lib/dictionaries";
+import { localeHref } from "@/lib/i18n";
 import { industries } from "@/lib/wq-pages";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,6 +24,14 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function Industries() {
   const t = await getDictionary();
+  const locale = await getLocale();
+
+  /* Each row is now a page: the sector list answers "which sectors", and the
+     page behind a row answers the question that follows it. */
+  const rows = industries(t).map((s) => ({
+    ...s,
+    href: localeHref(`/industries/${s.slug}`, locale),
+  }));
 
   return (
     <>
@@ -58,7 +67,7 @@ export default async function Industries() {
       {/* No label of its own: the heading above is the section's heading, and
           a second eyebrow with the same number beside it read as two headers
           for one list. The sticky column keeps the running number. */}
-      <SpyRows rows={industries(t)} />
+      <SpyRows rows={rows} linkLabel={t.actions.viewSector} />
     </>
   );
 }

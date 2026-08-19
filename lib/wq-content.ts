@@ -15,6 +15,7 @@
  */
 
 import type { Dictionary } from "@/lib/dictionaries/en";
+import type { SectorSlug } from "@/lib/wq-pages";
 
 /** "01", "02", … — the design's numbering, derived from position, never stored. */
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -82,16 +83,75 @@ export function stats(t: Dictionary): Stat[] {
   }));
 }
 
-export type WorkItem = { slug: string; name: string; tags: string[] };
+export type WorkItem = {
+  slug: WorkSlug;
+  name: string;
+  tags: string[];
+  /** The sectors this project was built for — how `/industries/[slug]` finds it. */
+  sectors: readonly SectorSlug[];
+  /** Stand-in photography. See `public/wq/plates` and the README. */
+  image: string;
+};
 
 /** Slugs are URLs, so they stay in English in both locales. */
-export const WORK_SLUGS = ["audit-platform", "securance", "epictory"] as const;
+export const WORK_SLUGS = [
+  "audit-platform",
+  "securance",
+  "epictory",
+  "clinical-notes",
+  "triage-router",
+  "ledger-reconciler",
+  "portfolio-valuation",
+  "catalogue-enrichment",
+  "marking-assistant",
+  "line-inspection",
+  "kyc-intake",
+  "contract-review",
+] as const;
+
+export type WorkSlug = (typeof WORK_SLUGS)[number];
+
+/**
+ * Which sectors each project belongs to.
+ *
+ * Structure, not copy: an industry page is a filter over this map, so a
+ * translator moving lines in a JSON file must not be able to change which
+ * project appears under which sector. A project may belong to two — document
+ * review is the same problem in a law firm and in a bank.
+ */
+const WORK_SECTORS: Record<WorkSlug, readonly SectorSlug[]> = {
+  "audit-platform": ["retail", "real-estate"],
+  securance: ["legal", "finance"],
+  epictory: ["retail", "manufacturing"],
+  "clinical-notes": ["healthcare"],
+  "triage-router": ["healthcare"],
+  "ledger-reconciler": ["finance"],
+  "portfolio-valuation": ["real-estate", "finance"],
+  "catalogue-enrichment": ["retail"],
+  "marking-assistant": ["education"],
+  "line-inspection": ["manufacturing"],
+  "kyc-intake": ["fintech"],
+  "contract-review": ["legal"],
+};
+
+/**
+ * The stand-in picture for the nth item in any list.
+ *
+ * One function rather than the same modulo written at five call sites: the
+ * plates are a fixed set, and every surface that shows one has to agree on
+ * which one, or the same project carries two different pictures on two pages.
+ */
+export const PLATE_COUNT = 12;
+export const plate = (i: number) =>
+  `/wq/plates/${String((((i % PLATE_COUNT) + PLATE_COUNT) % PLATE_COUNT) + 1).padStart(2, "0")}.jpg`;
 
 export function work(t: Dictionary): WorkItem[] {
-  return WORK_SLUGS.map((slug) => ({
+  return WORK_SLUGS.map((slug, i) => ({
     slug,
     name: t.works[slug].name,
     tags: t.works[slug].tags,
+    sectors: WORK_SECTORS[slug],
+    image: plate(i),
   }));
 }
 
@@ -100,7 +160,20 @@ export function workTags(t: Dictionary): string[] {
   return [...new Set(work(t).flatMap((w) => w.tags))];
 }
 
-export type Post = { slug: string; date: string; topic: string; title: string };
+/** The projects shown on an industry page. */
+export function workInSector(t: Dictionary, sector: SectorSlug): WorkItem[] {
+  return work(t).filter((w) => w.sectors.includes(sector));
+}
+
+export type Post = {
+  slug: string;
+  date: string;
+  topic: string;
+  title: string;
+  /** Stand-in photography, offset off the work set so a project and an article
+      linked from the same page never carry the same picture. */
+  image: string;
+};
 
 export const POST_SLUGS = [
   "rag-security-review",
@@ -114,8 +187,9 @@ export function postTopics(t: Dictionary): string[] {
 }
 
 export function posts(t: Dictionary): Post[] {
-  return POST_SLUGS.map((slug) => ({
+  return POST_SLUGS.map((slug, i) => ({
     slug,
+    image: plate(i + 8),
     date: t.posts[slug].date,
     topic: t.posts[slug].topic,
     title: t.posts[slug].title,

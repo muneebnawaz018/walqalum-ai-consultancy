@@ -1,7 +1,7 @@
 import { StackHead } from "@/components/wq/Page";
 import { ServiceIndex, type Service } from "@/components/wq/ServiceIndex";
 import { getDictionary } from "@/lib/dictionaries";
-import { capabilities } from "@/lib/wq-content";
+import { capabilities, plate } from "@/lib/wq-content";
 
 /**
  * 02 / Services — the reference's index section, on our own capabilities.
@@ -22,7 +22,7 @@ export async function Services() {
     number: c.num,
     title: c.name,
     bullets: c.bullets,
-    image: `/wq/plates/0${i + 1}.jpg`,
+    image: plate(i),
   }));
 
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { FillText } from "@/components/wq/FillText";
 import { EndCta, NextItems, PageHead } from "@/components/wq/Page";
@@ -48,6 +49,19 @@ export default async function Article({ params }: PageProps<"/[lang]/insights/[s
   return (
     <>
       <PageHead eyebrow={`${post.date} · ${post.topic}`} title={post.title} />
+
+      <section className="wq-wrap wq-sec-b">
+        <div className="wq-card-media wq-case-media" aria-hidden="true" data-parallax-scale="">
+          <Image
+            src={post.image}
+            alt=""
+            fill
+            sizes="(max-width: 1100px) 100vw, 1100px"
+            priority
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+      </section>
 
       <section className="wq-wrap wq-sec-b">
         <div className="wq-grid2 wq-grid2-wide wq-grid2-start">

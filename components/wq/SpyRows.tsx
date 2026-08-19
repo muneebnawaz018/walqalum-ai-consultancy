@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 type Row = {
@@ -9,6 +10,8 @@ type Row = {
   /** Optional one-line summary, set in the mono face above the paragraph. */
   blurb?: string;
   slug?: string;
+  /** Where the row goes when it has a page of its own. */
+  href?: string;
 };
 
 /**
@@ -28,8 +31,11 @@ export function SpyRows({
   rows,
   label,
   note,
+  linkLabel,
 }: {
   rows: Row[];
+  /** The word the cursor carries over a row that links somewhere. */
+  linkLabel?: string;
   /** Optional: omitted where the section already carries a heading of its own,
       so the sticky column is just the running number. */
   label?: string;
@@ -117,7 +123,26 @@ export function SpyRows({
             >
               <span className="wq-cap-num">{row.num}</span>
               <div>
-                <h3>{row.name}</h3>
+                {/* The heading is the link, not the whole row: the paragraph
+                    below it is prose someone may want to select, and a link
+                    wrapped around a block of text cannot be selected without
+                    dragging a click. */}
+                <h3>
+                  {row.href ? (
+                    <Link
+                      href={row.href}
+                      className="wq-cap-link"
+                      data-cursor-label={linkLabel}
+                    >
+                      {row.name}
+                      <span className="wq-arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  ) : (
+                    row.name
+                  )}
+                </h3>
                 {row.blurb ? <p className="wq-cap-blurb">{row.blurb}</p> : null}
                 <p>{row.desc}</p>
               </div>
