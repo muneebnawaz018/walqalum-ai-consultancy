@@ -1,8 +1,5 @@
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. */
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { FillText } from "@/components/wq/FillText";
 import { Chips, EndCta, NextItems, PageHead } from "@/components/wq/Page";
@@ -65,7 +62,14 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
           aria-hidden="true"
           data-parallax-scale=""
         >
-          <img src={`/wq/dummy/0${(index % 6) + 1}.svg`} alt="" />
+          <Image
+            src={`/wq/plates/0${(index % 6) + 1}.jpg`}
+            alt=""
+            fill
+            sizes="(max-width: 1100px) 100vw, 1100px"
+            priority
+            style={{ objectFit: "cover" }}
+          />
         </div>
       </section>
 

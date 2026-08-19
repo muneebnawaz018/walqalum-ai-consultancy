@@ -1,8 +1,4 @@
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. There is nothing
-   for an optimiser to do to a 1KB vector anyway. */
+import Image from "next/image";
 import Link from "next/link";
 import { localeHref, type Locale } from "@/lib/i18n";
 import type { WorkItem } from "@/lib/wq-content";
@@ -38,7 +34,7 @@ export function WorkRing({ items, locale }: { items: WorkItem[]; locale: Locale 
      land on the same picture and read as a duplicate. */
   const tiles = Array.from({ length: COUNT }, (_, i) => ({
     ...items[i % items.length],
-    image: `/wq/dummy/0${(i % 6) + 1}.svg`,
+    image: `/wq/plates/0${(i % 6) + 1}.jpg`,
   }));
 
   return (
@@ -58,7 +54,15 @@ export function WorkRing({ items, locale }: { items: WorkItem[]; locale: Locale 
             tabIndex={-1}
             style={{ "--a": `${(i / COUNT) * 360}deg` } as React.CSSProperties}
           >
-            <img src={item.image} alt="" loading="lazy" className="wq-ring-img" />
+            <Image
+              src={item.image}
+              alt=""
+              fill
+              /* The tile steps 140 → 170 → 200px at its breakpoints. */
+              sizes="200px"
+              className="wq-ring-img"
+              style={{ objectFit: "cover" }}
+            />
             {/* Counter-turned so the caption reads level while the tile sits at
                 its angle. The tile itself stays turned, as the reference has
                 it — that tilt is most of the effect. */}

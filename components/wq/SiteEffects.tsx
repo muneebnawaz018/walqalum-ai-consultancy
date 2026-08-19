@@ -150,9 +150,10 @@ export function SiteEffects() {
         const text = labelHost?.getAttribute("data-cursor-label") ?? "";
 
         if (labelHost && text) {
-          /* Three sizes, as the reference has them: at rest, over anything
-             interactive, and over something that has a word to say. */
-          target = 3.6;
+          /* Three sizes: at rest, over anything interactive, and over
+             something that has a word to say. The last one only has to hold
+             four mono characters — at 3.6 the ring was a hole in the page. */
+          target = 2.2;
           if (labelHost !== labelled) {
             labelled = labelHost;
             clearTimeout(labelTimer);
@@ -181,6 +182,10 @@ export function SiteEffects() {
         rx += (mx - rx) * 0.16;
         ry += (my - ry) * 0.16;
         scale += (target - scale) * 0.14;
+        /* Hidden while the ring is carrying a word: the dot sits at the exact
+           centre of the ring, which is where the label is, and it was landing
+           in the middle of the text. */
+        dot.style.opacity = labelled ? "0" : seen ? "1" : "0";
         dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
         ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px) scale(${scale.toFixed(3)})`;
         /* Countered against the ring's own scale so the letters stay one size

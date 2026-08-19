@@ -1,11 +1,6 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. There is nothing
-   for an optimiser to do to a 1KB vector anyway. */
-
+import Image from "next/image";
 import { useCallback, useState } from "react";
 
 /**
@@ -63,12 +58,13 @@ export function ServiceIndex({
           nothing to load at the moment of switching. */}
       <div className="wq-svc-plate" aria-hidden="true">
         {services.map((s) => (
-          <img
+          <Image
             key={s.id}
             src={s.image}
             alt=""
-            loading="lazy"
-            style={{ opacity: s.id === current.id ? 1 : 0 }}
+            fill
+            sizes="(max-width: 899px) 100vw, 40vw"
+            style={{ objectFit: "cover", opacity: s.id === current.id ? 1 : 0 }}
           />
         ))}
       </div>

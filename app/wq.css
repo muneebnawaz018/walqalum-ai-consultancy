@@ -1074,6 +1074,7 @@
   display: block;
 }
 .wq-card-media {
+  position: relative;
   aspect-ratio: 4 / 3;
   border-radius: 2px;
   background: var(--surface);
@@ -1834,6 +1835,7 @@
    16:9 so it reads as a still rather than as a banner, and ruled like every
    other surface on the site. */
 .wq-plate-wide {
+  position: relative;
   /* A band rather than a 16:9 still. At the page's full 1720px measure a 16:9
      box is nearly a thousand pixels tall — taller than most screens, so the
      plate filled the viewport on its own and the sections either side of it
@@ -1942,10 +1944,19 @@
     grid-template-columns: 1fr;
   }
 }
+/* A column, so the plate can absorb whatever height the row turns out to be.
+   Grid stretches every card to the tallest in its row; without this the card
+   was a block and the feature simply sat shorter than its neighbour. */
 .wq-work-card {
   text-decoration: none;
   color: inherit;
-  display: block;
+  display: flex;
+  flex-direction: column;
+}
+.wq-work-card > [data-tilt-inner] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 .wq-work-card[data-feature] {
   grid-column: span 2;
@@ -1955,31 +1966,43 @@
     grid-column: auto;
   }
 }
-/* The plate keeps a fixed ratio so a row of tiles lines up whatever the art
-   inside them is. The feature is wider, so it is given a wider ratio rather
-   than a taller box — otherwise it would push the row below it down the page. */
+/* The single-column tiles keep a fixed 4:3, so they set the height of the row
+   they are in. The plate also grows, which is what the feature needs: it is
+   twice as wide, and a ratio of its own made it far taller than the tile
+   beside it. */
 .wq-work-plate {
+  position: relative;
+  /* Fixed, not grown: if one caption wraps to two lines and its neighbour's
+     does not, a growing plate would swallow the difference and the two would
+     no longer match. */
+  flex: none;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--surface, transparent);
   border: 1px solid var(--hairline);
   border-radius: 2px;
 }
+/* Taller than the frame and centred on it, so the drift has somewhere to
+   travel and no edge can come into view. `next/image` with `fill` positions
+   itself against this, which is why the slack lives here and not on the
+   image. */
+.wq-work-plate-inner {
+  position: absolute;
+  inset: -15% 0;
+}
+/* No ratio of its own: it takes the height its row-mate sets, and its width
+   comes from spanning two columns. That is what lines the two up. */
 .wq-work-card[data-feature] .wq-work-plate {
-  aspect-ratio: 16 / 9;
+  flex: 1;
+  aspect-ratio: auto;
 }
-/* Taller than its frame and pulled up by the difference, so the drift has
-   somewhere to travel: the picture moves against the scroll and the frame
-   never shows an edge. The hover scale that used to live here is gone — the
-   drift writes the same property, and the two would overwrite each other. */
-.wq-work-plate img {
-  display: block;
-  position: relative;
-  top: -15%;
-  width: 100%;
-  height: 130%;
-  object-fit: cover;
+/* Alone in a row — the last row, or a filtered view — there is nothing to
+   take a height from, so it falls back to a ratio suited to its width. */
+.wq-work-card[data-feature]:only-child .wq-work-plate {
+  aspect-ratio: 21 / 9;
 }
+/* No hover scale here: the drift writes `transform` on the wrapper, and a
+   second transform on the image would fight it. */
 .wq-work-row {
   display: flex;
   align-items: baseline;
@@ -1993,9 +2016,10 @@
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
-.wq-work-card[data-feature] .wq-work-row h3 {
-  font-size: clamp(24px, 2.6vw, 40px);
-}
+/* Deliberately the same size as every other tile. Set larger, the feature's
+   caption was taller, so its plate ended higher than its neighbour's even
+   though the two cards matched. The feature is already twice the width; it
+   does not need the type as well. */
 
 /* ---- insights index ----
    The newest piece set large, then the rest as dated rows. A newsroom is read

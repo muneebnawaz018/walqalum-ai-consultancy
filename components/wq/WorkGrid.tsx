@@ -1,10 +1,6 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. */
-
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { TagFilter } from "@/components/wq/TagFilter";
@@ -76,18 +72,25 @@ export function WorkGrid({
               <div className="wq-work-plate" aria-hidden="true">
                 {/* The picture drifts inside its frame rather than the frame
                     drifting on the page, so the grid stays where it is. The
-                    plate crops the slack the drift needs. */}
-                <img
-                  src={item.image}
-                  alt=""
-                  loading="lazy"
+                    drift is on this wrapper rather than on the image, because
+                    `fill` owns the image's own position. */}
+                <div
+                  className="wq-work-plate-inner"
                   data-parallax=""
                   /* Far under the reference's default eighth: theirs drifts a
                      whole element down the page, this one drifts a picture
                      inside a fixed frame, and the travel has to stay inside
                      the crop or the frame shows an edge. */
                   data-parallax-strength="0.03"
-                />
+                >
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
               </div>
               <div className="wq-work-row">
                 <h3>{item.name}</h3>

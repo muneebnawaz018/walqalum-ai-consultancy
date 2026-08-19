@@ -186,6 +186,20 @@ pre-launch pass (Lighthouse, axe, real devices) is still to do.
 Every image goes through `next/image`. The artifact's plate containers are
 already sized and positioned, so images fill them.
 
+### Placeholder plates
+
+`public/wq/plates/01–06.jpg` stand in for work we cannot show yet: the case
+write-ups are unpublished and the screenshots do not exist. They are Unsplash
+photographs pulled through Lorem Picsum by fixed id, so the set is reproducible
+and the licence permits commercial use without attribution. They are committed
+rather than hotlinked — the pages should not depend on a third-party host at
+request time, and nothing about a reader's visit needs to reach one.
+
+They are deliberately generic scenes rather than product shots. A convincing
+fake screenshot on a case study is a claim about work we have not done; a
+photograph of a server rack is scenery. Replace them with the real thing as each
+case study clears client approval.
+
 Cover images upload to MongoDB via GridFS rather than S3: `POST /api/upload`
 (auth required, 5MB cap, magic-byte sniffing, SVG refused because it is a script
 container served from our own origin), and `GET /api/images/<id>` serves them

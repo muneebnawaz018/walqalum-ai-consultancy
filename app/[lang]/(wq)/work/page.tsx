@@ -33,8 +33,9 @@ export default async function Work() {
     tags: w.tags,
     href: localeHref(`/work/${w.slug}`, locale),
     /* The plate cycles on the project's index rather than its slug, so two
-       neighbouring tiles never land on the same picture. */
-    image: `/wq/dummy/0${(i % 6) + 1}.svg`,
+       neighbouring tiles never land on the same picture. Stand-in photography
+       until the real screenshots exist — see `public/wq/plates`. */
+    image: `/wq/plates/0${(i % 6) + 1}.jpg`,
   }));
 
   return (

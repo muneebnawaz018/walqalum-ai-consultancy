@@ -1,8 +1,5 @@
-/* eslint-disable @next/next/no-img-element --
-   The plates are local static SVGs. next/image refuses SVG unless the project
-   turns on `dangerouslyAllowSVG`, which would let any future remote SVG render
-   as markup — too much surface to open for placeholder art. */
 import type { Metadata } from "next";
+import Image from "next/image";
 import { FillText } from "@/components/wq/FillText";
 import { EndCta, PageHead, RowList, SectionHead, Split } from "@/components/wq/Page";
 import { Stats } from "@/components/wq/Stats";
@@ -47,7 +44,13 @@ export default async function About() {
 
       <section className="wq-wrap wq-sec-b">
         <div className="wq-plate-wide" aria-hidden="true" data-parallax-scale="">
-          <img src="/wq/dummy/02.svg" alt="" loading="lazy" />
+          <Image
+            src="/wq/plates/02.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+          />
         </div>
       </section>
 
